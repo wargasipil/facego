@@ -1,0 +1,21 @@
+server:
+  host: "0.0.0.0"
+  port: "8080"
+
+database:
+  host: "db"
+  port: "5432"
+  username: "facego"
+  password: "facego_secret"
+  database: "facego"
+  ssl_mode: "disable"
+
+log:
+  level: "info"
+
+storage:
+  uploads_dir: "/var/facego/uploads"
+
+auth:
+  jwt_secret: "change-me-in-production"
+  admin_seed_password: "admin123"

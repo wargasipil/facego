@@ -22,3 +22,6 @@
 - implement reset password in setting
 
 
+# Docker image
+- kampretcode/attendance_backend_go
+- kampretcode/attendance_frontend

@@ -1,0 +1,5 @@
+*.exe
+server.exe
+dist/
+uploads/
+.git

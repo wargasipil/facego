@@ -1,47 +1,32 @@
-import { Box, Input, Text, HStack, Badge, AvatarRoot, AvatarFallback } from '@chakra-ui/react'
+import { Box, Text, Badge } from '@chakra-ui/react'
 import { FiChevronDown, FiSearch, FiX } from 'react-icons/fi'
 import { useState, useEffect, useRef } from 'react'
 
-export interface TeacherOption {
-  id: number        // DB primary key
-  name: string
-  teacher_id: string  // human-readable code e.g. "T001"
-  subject: string
+export interface GradeOption {
+  id: number
+  level: string
+  label: string
 }
 
 interface Props {
-  teachers: TeacherOption[]
-  value: number     // teacher DB id, 0 = nothing selected
+  grades: GradeOption[]
+  value: number   // grade DB id, 0 = nothing selected
   onChange: (id: number) => void
   invalid?: boolean
 }
 
-function initials(name: string) {
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-}
-
-// rotate through a small palette based on name to give each teacher a consistent colour
-const AVATAR_COLORS = ['blue', 'teal', 'purple', 'orange', 'pink', 'cyan', 'green']
-function avatarColor(name: string) {
-  let h = 0
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff
-  return AVATAR_COLORS[h % AVATAR_COLORS.length]
-}
-
-export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
+export function GradeSelector({ grades, value, onChange, invalid }: Props) {
   const [open, setOpen]     = useState(false)
   const [search, setSearch] = useState('')
   const containerRef        = useRef<HTMLDivElement>(null)
   const searchRef           = useRef<HTMLInputElement>(null)
 
-  const selected = teachers.find(t => t.id === value) ?? null
-  const filtered = teachers.filter(t =>
-    t.name.toLowerCase().includes(search.toLowerCase()) ||
-    t.subject.toLowerCase().includes(search.toLowerCase()) ||
-    t.teacher_id.toLowerCase().includes(search.toLowerCase())
+  const selected = grades.find(g => g.id === value) ?? null
+  const filtered = grades.filter(g =>
+    g.label.toLowerCase().includes(search.toLowerCase()) ||
+    g.level.includes(search)
   )
 
-  // close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -53,7 +38,6 @@ export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
-  // close on Escape
   useEffect(() => {
     if (!open) return
     const handler = (e: KeyboardEvent) => {
@@ -63,7 +47,6 @@ export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
     return () => document.removeEventListener('keydown', handler)
   }, [open])
 
-  // focus search when opened
   useEffect(() => {
     if (open) setTimeout(() => searchRef.current?.focus(), 50)
   }, [open])
@@ -83,8 +66,6 @@ export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
 
   return (
     <Box ref={containerRef} position="relative" w="full">
-
-      {/* ── Trigger ───────────────────────────────────────────────────────── */}
       <Box
         onClick={() => setOpen(o => !o)}
         border="1px solid"
@@ -103,13 +84,10 @@ export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
       >
         {selected ? (
           <>
-            <AvatarRoot size="xs" colorPalette={avatarColor(selected.name)}>
-              <AvatarFallback fontSize="10px">{initials(selected.name)}</AvatarFallback>
-            </AvatarRoot>
-            <Box flex={1} minW={0}>
-              <Text fontSize="sm" fontWeight="medium" lineClamp={1}>{selected.name}</Text>
-              <Text fontSize="xs" color="gray.500" lineClamp={1}>{selected.subject} · {selected.teacher_id}</Text>
-            </Box>
+            <Badge colorPalette="purple" variant="solid" fontSize="xs" minW="28px" textAlign="center">
+              {selected.level}
+            </Badge>
+            <Text fontSize="sm" flex={1}>{selected.label}</Text>
             <Box
               as="span"
               onClick={handleClear}
@@ -122,14 +100,13 @@ export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
             </Box>
           </>
         ) : (
-          <Text fontSize="sm" color="gray.400" flex={1}>Select teacher…</Text>
+          <Text fontSize="sm" color="gray.400" flex={1}>Select grade…</Text>
         )}
         <Box color="gray.400" display="flex" alignItems="center" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>
           <FiChevronDown size={14} />
         </Box>
       </Box>
 
-      {/* ── Dropdown ──────────────────────────────────────────────────────── */}
       {open && (
         <Box
           position="absolute"
@@ -144,10 +121,9 @@ export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
           zIndex={1500}
           display="flex"
           flexDirection="column"
-          maxH="260px"
+          maxH="220px"
           overflow="hidden"
         >
-          {/* Search bar */}
           <Box px={2} py={2} borderBottom="1px solid" borderColor="gray.100">
             <Box position="relative" display="flex" alignItems="center">
               <Box position="absolute" left={2} color="gray.400" pointerEvents="none">
@@ -157,7 +133,7 @@ export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
                 ref={searchRef}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search by name, subject or ID…"
+                placeholder="Search grade…"
                 style={{
                   width: '100%',
                   paddingLeft: '28px',
@@ -174,48 +150,38 @@ export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
             </Box>
           </Box>
 
-          {/* List */}
           <Box overflowY="auto" flex={1}>
             {filtered.length === 0 ? (
               <Box py={6} textAlign="center">
-                <Text fontSize="sm" color="gray.400">No teachers found</Text>
+                <Text fontSize="sm" color="gray.400">No grades found</Text>
               </Box>
             ) : (
-              filtered.map(t => {
-                const isSelected = t.id === value
-                const color = avatarColor(t.name)
+              filtered.map(g => {
+                const isSelected = g.id === value
                 return (
                   <Box
-                    key={t.id}
+                    key={g.id}
                     px={3}
                     py={2}
                     cursor="pointer"
-                    bg={isSelected ? 'blue.50' : 'white'}
-                    _hover={{ bg: isSelected ? 'blue.50' : 'gray.50' }}
-                    onClick={() => handleSelect(t.id)}
+                    bg={isSelected ? 'purple.50' : 'white'}
+                    _hover={{ bg: isSelected ? 'purple.50' : 'gray.50' }}
+                    onClick={() => handleSelect(g.id)}
                     display="flex"
                     alignItems="center"
                     gap={3}
                     borderBottom="1px solid"
                     borderColor="gray.50"
                   >
-                    <AvatarRoot size="sm" colorPalette={color}>
-                      <AvatarFallback fontSize="11px">{initials(t.name)}</AvatarFallback>
-                    </AvatarRoot>
-                    <Box flex={1} minW={0}>
-                      <HStack gap={2} align="center">
-                        <Text fontSize="sm" fontWeight={isSelected ? 'semibold' : 'medium'} lineClamp={1}>
-                          {t.name}
-                        </Text>
-                        {isSelected && (
-                          <Box w={2} h={2} borderRadius="full" bg="blue.500" flexShrink={0} />
-                        )}
-                      </HStack>
-                      <HStack gap={2} mt="1px">
-                        <Badge colorPalette="teal" variant="subtle" size="sm">{t.subject}</Badge>
-                        <Text fontSize="xs" color="gray.400">{t.teacher_id}</Text>
-                      </HStack>
-                    </Box>
+                    <Badge colorPalette="purple" variant={isSelected ? 'solid' : 'subtle'} fontSize="xs" minW="28px" textAlign="center">
+                      {g.level}
+                    </Badge>
+                    <Text fontSize="sm" fontWeight={isSelected ? 'semibold' : 'normal'} flex={1}>
+                      {g.label}
+                    </Text>
+                    {isSelected && (
+                      <Box w={2} h={2} borderRadius="full" bg="purple.500" flexShrink={0} />
+                    )}
                   </Box>
                 )
               })

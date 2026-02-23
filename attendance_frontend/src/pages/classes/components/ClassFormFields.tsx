@@ -11,11 +11,11 @@ export interface StudyProgramOption {
 }
 
 export interface ClassFormState {
-  name:            string
-  gradeId:         number
-  teacherId:       number
-  description:     string
-  studyProgramId:  number
+  name:           string
+  gradeId:        number
+  teacherId:      number
+  description:    string
+  studyProgramId: number
 }
 
 export interface ClassFormErrors {
@@ -35,15 +35,15 @@ export function classFormErrors(f: ClassFormState): ClassFormErrors {
 }
 
 interface Props {
-  form:                ClassFormState
-  errors:              ClassFormErrors
-  onChange:            (field: 'name' | 'description') => React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
-  onGradeChange:       (id: number) => void
-  onTeacherChange:     (id: number) => void
+  form:                 ClassFormState
+  errors:               ClassFormErrors
+  onChange:             (field: 'name' | 'description') => React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
+  onGradeChange:        (id: number) => void
+  onTeacherChange:      (id: number) => void
   onStudyProgramChange: (id: number) => void
-  grades:              GradeOption[]
-  teachers:            TeacherOption[]
-  studyPrograms:       StudyProgramOption[]
+  grades:               GradeOption[]
+  teachers:             TeacherOption[]
+  studyPrograms:        StudyProgramOption[]
 }
 
 export function ClassFormFields({ form, errors, onChange, onGradeChange, onTeacherChange, onStudyProgramChange, grades, teachers, studyPrograms }: Props) {
@@ -57,23 +57,13 @@ export function ClassFormFields({ form, errors, onChange, onGradeChange, onTeach
 
       <Field.Root invalid={!!errors.gradeId} required>
         <Field.Label>Grade <Field.RequiredIndicator /></Field.Label>
-        <GradeSelector
-          grades={grades}
-          value={form.gradeId}
-          onChange={onGradeChange}
-          invalid={!!errors.gradeId}
-        />
+        <GradeSelector grades={grades} value={form.gradeId} onChange={onGradeChange} invalid={!!errors.gradeId} />
         {errors.gradeId && <Field.ErrorText>{errors.gradeId}</Field.ErrorText>}
       </Field.Root>
 
       <Field.Root invalid={!!errors.teacherId} required>
         <Field.Label>Teacher <Field.RequiredIndicator /></Field.Label>
-        <TeacherSelector
-          teachers={teachers}
-          value={form.teacherId}
-          onChange={onTeacherChange}
-          invalid={!!errors.teacherId}
-        />
+        <TeacherSelector teachers={teachers} value={form.teacherId} onChange={onTeacherChange} invalid={!!errors.teacherId} />
         {errors.teacherId && <Field.ErrorText>{errors.teacherId}</Field.ErrorText>}
       </Field.Root>
 

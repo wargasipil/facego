@@ -1,4 +1,6 @@
 services:
+
+  # ── Database ────────────────────────────────────────────────────────────────
   db:
     image: pgvector/pgvector:pg17
     container_name: facego_db
@@ -11,4 +13,40 @@ services:
       - "5432:5432"
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U facego"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
+  # ── Backend (Go / ConnectRPC) ────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: facego_backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads:/var/facego/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    # Run migrations before starting the server:
+    #   docker compose run --rm backend facego-server automigrate
+
+  # ── Frontend (React / Nginx) ─────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./attendance_frontend
+      dockerfile: Dockerfile
+    container_name: facego_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  uploads:

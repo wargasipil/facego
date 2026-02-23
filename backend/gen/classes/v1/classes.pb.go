@@ -711,6 +711,9 @@ func (*DeleteClassResponse) Descriptor() ([]byte, []int) {
 type ListClassesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	GradeIdFilter int64                  `protobuf:"varint,1,opt,name=grade_id_filter,json=gradeIdFilter,proto3" json:"grade_id_filter,omitempty"`
+	Search        string                 `protobuf:"bytes,2,opt,name=search,proto3" json:"search,omitempty"`
+	Page          int32                  `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -752,9 +755,31 @@ func (x *ListClassesRequest) GetGradeIdFilter() int64 {
 	return 0
 }
 
+func (x *ListClassesRequest) GetSearch() string {
+	if x != nil {
+		return x.Search
+	}
+	return ""
+}
+
+func (x *ListClassesRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListClassesRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
 type ListClassesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Classes       []*Class               `protobuf:"bytes,1,rep,name=classes,proto3" json:"classes,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -796,9 +821,19 @@ func (x *ListClassesResponse) GetClasses() []*Class {
 	return nil
 }
 
+func (x *ListClassesResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 type ListClassStudentsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // class ID
+	Search        string                 `protobuf:"bytes,2,opt,name=search,proto3" json:"search,omitempty"`
+	Page          int32                  `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -840,9 +875,31 @@ func (x *ListClassStudentsRequest) GetId() int64 {
 	return 0
 }
 
+func (x *ListClassStudentsRequest) GetSearch() string {
+	if x != nil {
+		return x.Search
+	}
+	return ""
+}
+
+func (x *ListClassStudentsRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListClassStudentsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
 type ListClassStudentsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Students      []*v1.User             `protobuf:"bytes,1,rep,name=students,proto3" json:"students,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -882,6 +939,13 @@ func (x *ListClassStudentsResponse) GetStudents() []*v1.User {
 		return x.Students
 	}
 	return nil
+}
+
+func (x *ListClassStudentsResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
 }
 
 type ClassSchedule struct {
@@ -1634,15 +1698,25 @@ const file_classes_v1_classes_proto_rawDesc = "" +
 	"\x05class\x18\x01 \x01(\v2\x11.classes.v1.ClassR\x05class\"-\n" +
 	"\x12DeleteClassRequest\x12\x17\n" +
 	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x15\n" +
-	"\x13DeleteClassResponse\"E\n" +
+	"\x13DeleteClassResponse\"\xad\x01\n" +
 	"\x12ListClassesRequest\x12/\n" +
-	"\x0fgrade_id_filter\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\rgradeIdFilter\"B\n" +
+	"\x0fgrade_id_filter\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\rgradeIdFilter\x12 \n" +
+	"\x06search\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\x06search\x12\x1b\n" +
+	"\x04page\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x04page\x12'\n" +
+	"\tpage_size\x18\x04 \x01(\x05B\n" +
+	"\xbaH\a\x1a\x05\x18\xc8\x01(\x00R\bpageSize\"X\n" +
 	"\x13ListClassesResponse\x12+\n" +
-	"\aclasses\x18\x01 \x03(\v2\x11.classes.v1.ClassR\aclasses\"3\n" +
+	"\aclasses\x18\x01 \x03(\v2\x11.classes.v1.ClassR\aclasses\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\x9b\x01\n" +
 	"\x18ListClassStudentsRequest\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"G\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\x12 \n" +
+	"\x06search\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\x06search\x12\x1b\n" +
+	"\x04page\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x04page\x12'\n" +
+	"\tpage_size\x18\x04 \x01(\x05B\n" +
+	"\xbaH\a\x1a\x05\x18\xc8\x01(\x00R\bpageSize\"]\n" +
 	"\x19ListClassStudentsResponse\x12*\n" +
-	"\bstudents\x18\x01 \x03(\v2\x0e.users.v1.UserR\bstudents\"\xc2\x01\n" +
+	"\bstudents\x18\x01 \x03(\v2\x0e.users.v1.UserR\bstudents\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xc2\x01\n" +
 	"\rClassSchedule\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bclass_id\x18\x02 \x01(\x03R\aclassId\x12\x1e\n" +

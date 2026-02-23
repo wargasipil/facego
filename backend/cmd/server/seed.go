@@ -2,17 +2,23 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	"connectrpc.com/connect"
 	"github.com/urfave/cli/v3"
 	authv1 "github.com/wargasipil/facego/gen/auth/v1"
+	classesv1 "github.com/wargasipil/facego/gen/classes/v1"
 	usersv1 "github.com/wargasipil/facego/gen/users/v1"
+	db_models "github.com/wargasipil/facego/internal/db_models"
 	"github.com/wargasipil/facego/internal/services/auth_service"
+	"github.com/wargasipil/facego/internal/services/class_service"
 	"github.com/wargasipil/facego/internal/services/user_service"
+	"gorm.io/gorm"
 )
 
-// seedAccounts lists staff accounts to ensure exist.
+// ── Accounts ─────────────────────────────────────────────────────────────────
+
 var seedAccounts = []struct {
 	username    string
 	displayName string
@@ -25,7 +31,69 @@ var seedAccounts = []struct {
 	{"operator01", "Sari Dewi", "operator123", authv1.Role_ROLE_OPERATOR},
 }
 
-// seedStudents lists 100 sample students to ensure exist.
+// ── Grades ────────────────────────────────────────────────────────────────────
+
+var seedGrades = []struct {
+	level string
+	label string
+}{
+	{"X", "Grade X"},
+	{"XI", "Grade XI"},
+	{"XII", "Grade XII"},
+}
+
+// ── Teachers ──────────────────────────────────────────────────────────────────
+
+var seedTeachers = []struct {
+	teacherID string
+	name      string
+	subject   string
+	email     string
+	phone     string
+}{
+	{"TCH001", "Budi Santoso", "Matematika", "budi.santoso@school.sch.id", "+62 811 0001 0001"},
+	{"TCH002", "Siti Rahayu", "Bahasa Indonesia", "siti.rahayu@school.sch.id", "+62 811 0001 0002"},
+	{"TCH003", "Ahmad Fauzi", "IPA", "ahmad.fauzi@school.sch.id", "+62 811 0001 0003"},
+	{"TCH004", "Dewi Lestari", "Bahasa Inggris", "dewi.lestari@school.sch.id", "+62 811 0001 0004"},
+	{"TCH005", "Hendra Gunawan", "IPS", "hendra.gunawan@school.sch.id", "+62 811 0001 0005"},
+}
+
+// ── Classes ───────────────────────────────────────────────────────────────────
+// 50 classes: 17 for Grade X, 17 for Grade XI, 16 for Grade XII.
+
+var seedClasses = func() []struct {
+	name  string
+	level string // references seedGrades level
+} {
+	entries := []struct {
+		name  string
+		level string
+	}{}
+	type gradeSpec struct {
+		level string
+		count int
+	}
+	grades := []gradeSpec{
+		{"X", 17},
+		{"XI", 17},
+		{"XII", 16},
+	}
+	for _, g := range grades {
+		for i := 1; i <= g.count; i++ {
+			entries = append(entries, struct {
+				name  string
+				level string
+			}{
+				name:  fmt.Sprintf("%s-%d", g.level, i),
+				level: g.level,
+			})
+		}
+	}
+	return entries
+}()
+
+// ── Students ──────────────────────────────────────────────────────────────────
+
 var seedStudents = []struct {
 	studentID   string
 	name        string
@@ -136,6 +204,8 @@ var seedStudents = []struct {
 	{"STU100", "Raka Daniswara", "raka.daniswara@student.sch.id", "Purnomo Daniswara", "+62 812 1111 0100", "purnomo.daniswara@gmail.com"},
 }
 
+// ── Seed function ─────────────────────────────────────────────────────────────
+
 func seed(ctx context.Context, cmd *cli.Command) error {
 	cfg, db, err := loadDB(cmd)
 	if err != nil {
@@ -147,8 +217,9 @@ func seed(ctx context.Context, cmd *cli.Command) error {
 		jwtSecret = "change-me-in-production"
 	}
 
-	authSvc := auth_service.New(db, jwtSecret)
-	userSvc := user_service.New(db, cfg.Storage.UploadsDir)
+	authSvc  := auth_service.New(db, jwtSecret)
+	userSvc  := user_service.New(db, cfg.Storage.UploadsDir)
+	classSvc := class_service.New(db)
 
 	// ── Accounts ──────────────────────────────────────────────────────────────
 	slog.Info("seeding accounts...")
@@ -164,6 +235,52 @@ func seed(ctx context.Context, cmd *cli.Command) error {
 			continue
 		}
 		slog.Info("account created", "username", a.username, "role", a.role)
+	}
+
+	// ── Grades ────────────────────────────────────────────────────────────────
+	slog.Info("seeding grades...")
+	gradeIDs := map[string]int64{} // level → db ID
+	for _, g := range seedGrades {
+		gradeIDs[g.level] = ensureGrade(db, g.level, g.label)
+	}
+	slog.Info("grades ready", "count", len(gradeIDs))
+
+	// ── Teachers ──────────────────────────────────────────────────────────────
+	slog.Info("seeding teachers...")
+	teacherIDs := []int64{} // ordered, for round-robin assignment to classes
+	for _, t := range seedTeachers {
+		id := ensureTeacher(db, t.teacherID, t.name, t.subject, t.email, t.phone)
+		if id > 0 {
+			teacherIDs = append(teacherIDs, id)
+		}
+	}
+	slog.Info("teachers ready", "count", len(teacherIDs))
+
+	// ── Classes ───────────────────────────────────────────────────────────────
+	if len(teacherIDs) == 0 {
+		slog.Warn("no teachers available, skipping class seed")
+	} else {
+		slog.Info("seeding classes...", "total", len(seedClasses))
+		created, skipped := 0, 0
+		for i, c := range seedClasses {
+			gradeID, ok := gradeIDs[c.level]
+			if !ok {
+				skipped++
+				continue
+			}
+			teacherID := teacherIDs[i%len(teacherIDs)]
+			_, err := classSvc.CreateClass(ctx, connect.NewRequest(&classesv1.CreateClassRequest{
+				Name:      c.name,
+				GradeId:   gradeID,
+				TeacherId: teacherID,
+			}))
+			if err != nil {
+				skipped++
+				continue
+			}
+			created++
+		}
+		slog.Info("classes seeded", "created", created, "skipped", skipped)
 	}
 
 	// ── Students ──────────────────────────────────────────────────────────────
@@ -188,4 +305,36 @@ func seed(ctx context.Context, cmd *cli.Command) error {
 
 	slog.Info("seed completed")
 	return nil
+}
+
+// ensureGrade returns the DB ID of a grade with the given level, creating it if absent.
+func ensureGrade(db *gorm.DB, level, label string) int64 {
+	var rec db_models.Grade
+	if err := db.Where("level = ?", level).First(&rec).Error; err == nil {
+		slog.Info("grade already exists", "level", level, "id", rec.ID)
+		return int64(rec.ID)
+	}
+	rec = db_models.Grade{Level: level, Label: label}
+	if err := db.Create(&rec).Error; err != nil {
+		slog.Warn("grade create error", "level", level, "err", err)
+		return 0
+	}
+	slog.Info("grade created", "level", level, "id", rec.ID)
+	return int64(rec.ID)
+}
+
+// ensureTeacher returns the DB ID of a teacher with the given teacherID, creating it if absent.
+func ensureTeacher(db *gorm.DB, teacherID, name, subject, email, phone string) int64 {
+	var rec db_models.Teacher
+	if err := db.Where("teacher_id = ?", teacherID).First(&rec).Error; err == nil {
+		slog.Info("teacher already exists", "teacher_id", teacherID, "id", rec.ID)
+		return int64(rec.ID)
+	}
+	rec = db_models.Teacher{TeacherID: teacherID, Name: name, Subject: subject, Email: email, Phone: phone}
+	if err := db.Create(&rec).Error; err != nil {
+		slog.Warn("teacher create error", "teacher_id", teacherID, "err", err)
+		return 0
+	}
+	slog.Info("teacher created", "teacher_id", teacherID, "id", rec.ID)
+	return int64(rec.ID)
 }

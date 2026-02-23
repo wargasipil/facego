@@ -25,9 +25,9 @@ import {
 } from 'react-icons/fi'
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { userService, dataUrlToBytes } from '../services/user_service'
-import { studyProgramService } from '../services/study_program_service'
-import { gradeService } from '../services/grade_service'
+import { userService, dataUrlToBytes } from '../../services/user_service'
+import { studyProgramService } from '../../services/study_program_service'
+import { gradeService } from '../../services/grade_service'
 
 interface StudyProgramOption { id: number; name: string; code: string }
 interface GradeOption { id: number; label: string; level: string }
