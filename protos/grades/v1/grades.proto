@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package grades.v1;
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+service GradeService {
+  rpc CreateGrade(CreateGradeRequest) returns (CreateGradeResponse);
+  rpc GetGrade(GetGradeRequest)       returns (GetGradeResponse);
+  rpc UpdateGrade(UpdateGradeRequest) returns (UpdateGradeResponse);
+  rpc DeleteGrade(DeleteGradeRequest) returns (DeleteGradeResponse);
+  rpc ListGrades(ListGradesRequest)   returns (ListGradesResponse);
+}
+
+message Grade {
+  int64  id          = 1;
+  string level       = 2; // e.g. "10", "11", "12"
+  string label       = 3; // e.g. "Grade 10"
+  string description = 4;
+  int32  class_count   = 5;
+  int32  student_count = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message CreateGradeRequest {
+  string level       = 1 [(buf.validate.field).string = {min_len: 1, max_len: 10}];
+  string label       = 2 [(buf.validate.field).string = {min_len: 1, max_len: 64}];
+  string description = 3 [(buf.validate.field).string.max_len = 500];
+}
+message CreateGradeResponse { Grade grade = 1; }
+
+message GetGradeRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message GetGradeResponse { Grade grade = 1; }
+
+message UpdateGradeRequest {
+  int64  id          = 1 [(buf.validate.field).int64.gt = 0];
+  string level       = 2 [(buf.validate.field).string = {min_len: 1, max_len: 10}];
+  string label       = 3 [(buf.validate.field).string = {min_len: 1, max_len: 64}];
+  string description = 4 [(buf.validate.field).string.max_len = 500];
+}
+message UpdateGradeResponse { Grade grade = 1; }
+
+message DeleteGradeRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message DeleteGradeResponse {}
+
+message ListGradesRequest  {}
+message ListGradesResponse { repeated Grade grades = 1; }

@@ -1,0 +1,21 @@
+server:
+  host: "0.0.0.0"
+  port: "8080"
+
+database:
+  host: "localhost"
+  port: "5432"
+  username: "your_db_user"
+  password: "your_db_password"
+  database: "your_db_name"
+  ssl_mode: "disable"
+
+log:
+  level: "info"
+
+storage:
+  uploads_dir: "uploads"
+
+auth:
+  jwt_secret: "replace-with-a-long-random-secret"
+  admin_seed_password: "change-me-on-first-run"

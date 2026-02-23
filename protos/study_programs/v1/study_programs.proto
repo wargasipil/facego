@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package study_programs.v1;
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+service StudyProgramService {
+  rpc CreateStudyProgram(CreateStudyProgramRequest) returns (CreateStudyProgramResponse);
+  rpc GetStudyProgram(GetStudyProgramRequest)       returns (GetStudyProgramResponse);
+  rpc UpdateStudyProgram(UpdateStudyProgramRequest) returns (UpdateStudyProgramResponse);
+  rpc DeleteStudyProgram(DeleteStudyProgramRequest) returns (DeleteStudyProgramResponse);
+  rpc ListStudyPrograms(ListStudyProgramsRequest)   returns (ListStudyProgramsResponse);
+}
+
+message StudyProgram {
+  int64  id            = 1;
+  string name          = 2;
+  string code          = 3;
+  string description   = 4;
+  int32  class_count   = 5;
+  int32  student_count = 6;
+  google.protobuf.Timestamp created_at = 7;
+}
+
+message CreateStudyProgramRequest {
+  string name        = 1 [(buf.validate.field).string = {min_len: 1, max_len: 64}];
+  string code        = 2 [(buf.validate.field).string.max_len = 16];
+  string description = 3 [(buf.validate.field).string.max_len = 500];
+}
+message CreateStudyProgramResponse { StudyProgram study_program = 1; }
+
+message GetStudyProgramRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message GetStudyProgramResponse { StudyProgram study_program = 1; }
+
+message UpdateStudyProgramRequest {
+  int64  id          = 1 [(buf.validate.field).int64.gt = 0];
+  string name        = 2 [(buf.validate.field).string = {min_len: 1, max_len: 64}];
+  string code        = 3 [(buf.validate.field).string.max_len = 16];
+  string description = 4 [(buf.validate.field).string.max_len = 500];
+}
+message UpdateStudyProgramResponse { StudyProgram study_program = 1; }
+
+message DeleteStudyProgramRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message DeleteStudyProgramResponse {}
+
+message ListStudyProgramsRequest  {}
+message ListStudyProgramsResponse { repeated StudyProgram study_programs = 1; }

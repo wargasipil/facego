@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package classes.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "users/v1/users.proto";
+
+service ClassService {
+  rpc CreateClass(CreateClassRequest) returns (CreateClassResponse);
+  rpc GetClass(GetClassRequest) returns (GetClassResponse);
+  rpc UpdateClass(UpdateClassRequest) returns (UpdateClassResponse);
+  rpc DeleteClass(DeleteClassRequest) returns (DeleteClassResponse);
+  rpc ListClasses(ListClassesRequest) returns (ListClassesResponse);
+  // List all students enrolled in a specific class
+  rpc ListClassStudents(ListClassStudentsRequest) returns (ListClassStudentsResponse);
+  // Schedule management
+  rpc ListSchedules(ListSchedulesRequest)   returns (ListSchedulesResponse);
+  rpc CreateSchedule(CreateScheduleRequest) returns (CreateScheduleResponse);
+  rpc UpdateSchedule(UpdateScheduleRequest) returns (UpdateScheduleResponse);
+  rpc DeleteSchedule(DeleteScheduleRequest) returns (DeleteScheduleResponse);
+  // Enrollment management
+  rpc EnrollStudent(EnrollStudentRequest)     returns (EnrollStudentResponse);
+  rpc UnenrollStudent(UnenrollStudentRequest) returns (UnenrollStudentResponse);
+}
+
+message Grade {
+  int64 id = 1;
+  string level = 2; // e.g. "10", "11", "12"
+  string label = 3; // e.g. "Grade 10"
+}
+
+message Teacher {
+  int64 id = 1;
+  string name = 2;
+  string teacher_id = 3;
+  string subject = 4;
+  string email = 5;
+  string phone = 6;
+}
+
+message Class {
+  int64 id = 1;
+  string name = 2; // e.g. "10-A"
+  Grade grade = 3;
+  Teacher teacher = 4;
+  int32 student_count = 5;
+  string description = 6;
+  google.protobuf.Timestamp created_at = 7;
+  int64 grade_id = 8; // FK → grades.id
+  int64 teacher_id = 9; // FK → teachers.id (DB primary key)
+  int64  study_program_id   = 10; // FK → study_programs.id (0 if none)
+  string study_program_name = 11; // display-only, populated from JOIN
+}
+
+message CreateClassRequest {
+  string name = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 32
+  }];
+  int64 grade_id = 2 [(buf.validate.field).int64.gt = 0];
+  int64 teacher_id = 3 [(buf.validate.field).int64.gt = 0];
+  string description = 4 [(buf.validate.field).string.max_len = 500];
+  int64 study_program_id = 5 [(buf.validate.field).int64.gte = 0];
+}
+message CreateClassResponse {
+  Class class = 1;
+}
+
+message GetClassRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message GetClassResponse {
+  Class class = 1;
+}
+
+message UpdateClassRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+  string name = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 32
+  }];
+  int64 grade_id = 3 [(buf.validate.field).int64.gt = 0];
+  int64 teacher_id = 4 [(buf.validate.field).int64.gt = 0];
+  string description = 5 [(buf.validate.field).string.max_len = 500];
+  int64 study_program_id = 6 [(buf.validate.field).int64.gte = 0];
+}
+message UpdateClassResponse {
+  Class class = 1;
+}
+
+message DeleteClassRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message DeleteClassResponse {}
+
+message ListClassesRequest {
+  int64 grade_id_filter = 1 [(buf.validate.field).int64.gte = 0];
+}
+message ListClassesResponse {
+  repeated Class classes = 1;
+}
+
+message ListClassStudentsRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0]; // class ID
+}
+message ListClassStudentsResponse {
+  repeated users.v1.User students = 1;
+}
+
+// ── Schedule ────────────────────────────────────────────────────────────────
+
+message ClassSchedule {
+  int64  id          = 1;
+  int64  class_id    = 2;
+  int32  day_of_week = 3; // 1=Mon … 7=Sun
+  string start_time  = 4; // "HH:MM"
+  string end_time    = 5; // "HH:MM"
+  string subject     = 6;
+  string room        = 7;
+}
+
+message ListSchedulesRequest {
+  int64 class_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message ListSchedulesResponse {
+  repeated ClassSchedule schedules = 1;
+}
+
+message CreateScheduleRequest {
+  int64  class_id    = 1 [(buf.validate.field).int64.gt = 0];
+  int32  day_of_week = 2 [(buf.validate.field).int32 = {gte: 1, lte: 7}];
+  string start_time  = 3 [(buf.validate.field).string.min_len = 1];
+  string end_time    = 4 [(buf.validate.field).string.min_len = 1];
+  string subject     = 5 [(buf.validate.field).string.max_len = 128];
+  string room        = 6 [(buf.validate.field).string.max_len = 64];
+}
+message CreateScheduleResponse {
+  ClassSchedule schedule = 1;
+}
+
+message UpdateScheduleRequest {
+  int64  id          = 1 [(buf.validate.field).int64.gt = 0];
+  int32  day_of_week = 2 [(buf.validate.field).int32 = {gte: 1, lte: 7}];
+  string start_time  = 3 [(buf.validate.field).string.min_len = 1];
+  string end_time    = 4 [(buf.validate.field).string.min_len = 1];
+  string subject     = 5 [(buf.validate.field).string.max_len = 128];
+  string room        = 6 [(buf.validate.field).string.max_len = 64];
+}
+message UpdateScheduleResponse {
+  ClassSchedule schedule = 1;
+}
+
+message DeleteScheduleRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message DeleteScheduleResponse {}
+
+// ── Enrollment ───────────────────────────────────────────────────────────────
+
+message EnrollStudentRequest {
+  int64 class_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 user_id  = 2 [(buf.validate.field).int64.gt = 0];
+}
+message EnrollStudentResponse {}
+
+message UnenrollStudentRequest {
+  int64 class_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 user_id  = 2 [(buf.validate.field).int64.gt = 0];
+}
+message UnenrollStudentResponse {}

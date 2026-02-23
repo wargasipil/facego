@@ -1,0 +1,43 @@
+# ─────────────────────────────────────────────────────────────────
+# Face Detection App — Configuration
+# ─────────────────────────────────────────────────────────────────
+
+# ── Model ─────────────────────────────────────────────────────────
+model:
+  # Name of the InsightFace model pack to use.
+  # Built-in options: buffalo_l  buffalo_m  buffalo_s  buffalo_sc  antelopev2
+  name: buffalo_l
+
+  # Directory where InsightFace model packs are stored (or will be downloaded).
+  # Leave blank ("") to use the default InsightFace cache (~/.insightface/models).
+  # Example: /home/user/models/insightface
+  root: "./models"
+
+  # Detection input size (width, height). Larger = more accurate but slower.
+  det_size: [640, 640]
+
+  # Execution provider for ONNX Runtime.
+  # Options: CPUExecutionProvider  CUDAExecutionProvider  CoreMLExecutionProvider
+  provider: CPUExecutionProvider
+
+# ── Recognition ───────────────────────────────────────────────────
+recognition:
+  # Cosine distance threshold for face matching.
+  # Lower = stricter (fewer false positives). Range: 0.0 – 1.0
+  cosine_threshold: 0.40
+
+  # Number of embedding samples captured during registration.
+  capture_samples: 8
+
+# ── Camera ────────────────────────────────────────────────────────
+camera:
+  # Camera device index (0 = default webcam, 1 = second camera, etc.)
+  device_index: 0
+
+  # Target detection loop interval in seconds (~1/fps).
+  detection_interval: 0.03
+
+# ── Storage ───────────────────────────────────────────────────────
+storage:
+  # Path to the registered faces database file.
+  faces_db: registered_faces.pkl

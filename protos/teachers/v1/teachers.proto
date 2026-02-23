@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package teachers.v1;
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+service TeacherService {
+  rpc CreateTeacher(CreateTeacherRequest) returns (CreateTeacherResponse);
+  rpc GetTeacher(GetTeacherRequest)       returns (GetTeacherResponse);
+  rpc UpdateTeacher(UpdateTeacherRequest) returns (UpdateTeacherResponse);
+  rpc DeleteTeacher(DeleteTeacherRequest) returns (DeleteTeacherResponse);
+  rpc ListTeachers(ListTeachersRequest)   returns (ListTeachersResponse);
+}
+
+message Teacher {
+  int64  id          = 1;
+  string name        = 2;
+  string teacher_id  = 3;
+  string subject     = 4;
+  string email       = 5;
+  string phone       = 6;
+  int32  class_count = 7; // derived: count of classes assigned to this teacher
+  google.protobuf.Timestamp created_at = 8;
+}
+
+message CreateTeacherRequest {
+  string name       = 1 [(buf.validate.field).string = {min_len: 1, max_len: 128}];
+  string teacher_id = 2 [(buf.validate.field).string = {min_len: 1, max_len: 32}];
+  string subject    = 3 [(buf.validate.field).string.max_len = 64];
+  string email      = 4 [(buf.validate.field).string.max_len = 128];
+  string phone      = 5 [(buf.validate.field).string.max_len = 32];
+}
+message CreateTeacherResponse { Teacher teacher = 1; }
+
+message GetTeacherRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message GetTeacherResponse { Teacher teacher = 1; }
+
+message UpdateTeacherRequest {
+  int64  id         = 1 [(buf.validate.field).int64.gt = 0];
+  string name       = 2 [(buf.validate.field).string = {min_len: 1, max_len: 128}];
+  string teacher_id = 3 [(buf.validate.field).string = {min_len: 1, max_len: 32}];
+  string subject    = 4 [(buf.validate.field).string.max_len = 64];
+  string email      = 5 [(buf.validate.field).string.max_len = 128];
+  string phone      = 6 [(buf.validate.field).string.max_len = 32];
+}
+message UpdateTeacherResponse { Teacher teacher = 1; }
+
+message DeleteTeacherRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message DeleteTeacherResponse {}
+
+message ListTeachersRequest {
+  string search = 1 [(buf.validate.field).string.max_len = 128];
+}
+message ListTeachersResponse { repeated Teacher teachers = 1; }

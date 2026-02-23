@@ -1,0 +1,14 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: facego_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: facego
+      POSTGRES_PASSWORD: facego_secret
+      POSTGRES_DB: facego
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+

@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package auth.v1;
+
+import "buf/validate/validate.proto";
+
+service AuthService {
+  rpc Login(LoginRequest)                   returns (LoginResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+
+  // Account management (admin only)
+  rpc ListAccounts(ListAccountsRequest)     returns (ListAccountsResponse);
+  rpc CreateAccount(CreateAccountRequest)   returns (CreateAccountResponse);
+  rpc UpdateAccount(UpdateAccountRequest)   returns (UpdateAccountResponse);
+  rpc DeleteAccount(DeleteAccountRequest)   returns (DeleteAccountResponse);
+}
+
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  ROLE_ADMIN       = 1;
+  ROLE_TEACHER     = 2;
+  ROLE_OPERATOR    = 3;
+  ROLE_STUDENT     = 4;
+}
+
+message Account {
+  int64  id           = 1;
+  string username     = 2;
+  string display_name = 3;
+  Role   role         = 4;
+}
+
+// ── Login ────────────────────────────────────────────────────────────────────
+
+message LoginRequest {
+  string username = 1 [(buf.validate.field).string.min_len = 1];
+  string password = 2 [(buf.validate.field).string.min_len = 1];
+}
+message LoginResponse {
+  string  token   = 1;
+  Account account = 2;
+}
+
+// ── ChangePassword ────────────────────────────────────────────────────────────
+
+message ChangePasswordRequest {
+  string current_password = 1 [(buf.validate.field).string.min_len = 1];
+  string new_password     = 2 [(buf.validate.field).string.min_len = 6];
+}
+message ChangePasswordResponse {}
+
+// ── ListAccounts ──────────────────────────────────────────────────────────────
+
+message ListAccountsRequest {}
+message ListAccountsResponse { repeated Account accounts = 1; }
+
+// ── CreateAccount ─────────────────────────────────────────────────────────────
+
+message CreateAccountRequest {
+  string username     = 1 [(buf.validate.field).string = {min_len: 1, max_len: 64}];
+  string display_name = 2 [(buf.validate.field).string = {min_len: 1, max_len: 128}];
+  string password     = 3 [(buf.validate.field).string.min_len = 6];
+  Role   role         = 4 [(buf.validate.field).enum.defined_only = true];
+}
+message CreateAccountResponse { Account account = 1; }
+
+// ── UpdateAccount ─────────────────────────────────────────────────────────────
+
+message UpdateAccountRequest {
+  int64  id           = 1 [(buf.validate.field).int64.gt = 0];
+  string display_name = 2 [(buf.validate.field).string = {min_len: 1, max_len: 128}];
+  Role   role         = 3 [(buf.validate.field).enum.defined_only = true];
+  string new_password = 4; // optional; empty means no change
+}
+message UpdateAccountResponse { Account account = 1; }
+
+// ── DeleteAccount ─────────────────────────────────────────────────────────────
+
+message DeleteAccountRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message DeleteAccountResponse {}

@@ -1,0 +1,6 @@
+{
+    "gopls": {
+        "buildFlags": ["-tags=wireinject"]
+    },
+    "editor.tabSize": 2,
+}

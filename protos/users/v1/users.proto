@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package users.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+service UserService {
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+}
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  string student_id = 3;
+  string class_name = 4; // display-only, populated from JOIN
+  string email = 5;
+  string photo_url = 6;
+  google.protobuf.Timestamp registered_at = 7;
+  string parent_name = 8;
+  string parent_phone = 9;
+  string parent_email = 10;
+  int64 study_program_id = 11; // FK → study_programs.id (0 if none)
+  string study_program_name = 12; // display-only, populated from JOIN
+  int64 grade_id = 13; // FK → grades.id (0 if none)
+  string grade_label = 14; // display-only, populated from JOIN
+}
+
+// face_image is the raw JPEG/PNG captured from the webcam.
+message RegisterUserRequest {
+  string name = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 128
+  }];
+  string student_id = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 32
+  }];
+  string email = 3 [(buf.validate.field).string.max_len = 128];
+  bytes face_image = 5; // optional at registration time
+  string parent_name = 6 [(buf.validate.field).string.max_len = 128];
+  string parent_phone = 7 [(buf.validate.field).string.max_len = 32];
+  string parent_email = 8 [(buf.validate.field).string.max_len = 128];
+  int64 study_program_id = 9 [(buf.validate.field).int64.gte = 0];
+  int64 grade_id = 10 [(buf.validate.field).int64.gte = 0];
+}
+message RegisterUserResponse {
+  User user = 1;
+}
+
+message GetUserRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message GetUserResponse {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+  string name = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 128
+  }];
+  string student_id = 3 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 32
+  }];
+  string email = 5 [(buf.validate.field).string.max_len = 128];
+  string parent_name = 6 [(buf.validate.field).string.max_len = 128];
+  string parent_phone = 7 [(buf.validate.field).string.max_len = 32];
+  string parent_email = 8 [(buf.validate.field).string.max_len = 128];
+  int64 study_program_id = 9 [(buf.validate.field).int64.gte = 0];
+  int64 grade_id = 10 [(buf.validate.field).int64.gte = 0];
+}
+message UpdateUserResponse {
+  User user = 1;
+}
+
+message DeleteUserRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message DeleteUserResponse {}
+
+message ListUserFilter {
+  string search = 1 [(buf.validate.field).string.max_len = 128]; // search by name or student_id
+  int64 class_id = 2;
+}
+
+message ListUsersRequest {
+  ListUserFilter filter = 1 [(buf.validate.field).required = true];
+
+  int32 page = 3 [(buf.validate.field).int32.gte = 0]; // 1-based; 0 or omitted = page 1
+  int32 page_size = 4 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 200
+  }]; // 0 or omitted = default (10)
+}
+message ListUsersResponse {
+  repeated User users = 1;
+  int32 total = 2; // total matching rows (ignoring pagination)
+}

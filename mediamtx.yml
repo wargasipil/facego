@@ -1,0 +1,5 @@
+paths:
+  cam:
+    # Replace "Integrated Camera" with your actual device name
+    # runOnInit: ffmpeg -f dshow -i video="USB2.0 HD UVC WebCam" -c:v libx264 -preset ultrafast -tune zerolatency -f rtsp rtsp://localhost:8554/cam
+    runOnInitRestart: yes
