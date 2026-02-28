@@ -27,3 +27,4 @@ build/
 outputs/
 data/
 pgdata/
+clickhouse_data/

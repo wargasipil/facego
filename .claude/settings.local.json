@@ -11,7 +11,8 @@
       "Bash(npx tsc:*)",
       "Bash(echo:*)",
       "Bash(buf generate:*)",
-      "Bash(d:/research/facego/docker-compose.yml:*)"
+      "Bash(d:/research/facego/docker-compose.yml:*)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }

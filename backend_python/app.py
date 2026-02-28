@@ -1,44 +1,53 @@
 """
-Face Detection App — Textual TUI + InsightFace + OpenCV Preview Window
-=======================================================================
-Install:
-    pip install textual opencv-python insightface onnxruntime numpy pyyaml
-
+Face Detection App — Textual TUI + InsightFace + OpenCV
+========================================================
 Run:
-    python face_detection_app.py
+    python app.py
 
 Face DB schema (per record):
     {
         "<person_id>": {
-            "person_id":  str,   # unique alphanumeric ID, e.g. "EMP001"
-            "name":       str,   # display name, e.g. "Alice Smith"
+            "person_id":  str,
+            "name":       str,
             "embeddings": list[np.ndarray],
             "created_at": str,   # ISO timestamp
-        },
-        ...
+        }, ...
     }
 """
 
-import re
+# ══════════════════════════════════════════════════════════════════════════════
+# Imports
+# ══════════════════════════════════════════════════════════════════════════════
+
 import csv
-import cv2
-import pickle
+import importlib.util
 import os
+import pickle
+import re
 import threading
 import time
-from dataclasses import dataclass, field
+import uuid
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Callable
 
+import cv2
 import numpy as np
-# from insightface.app import FaceAnalysis
 
-# ── Optional deps ──────────────────────────────────────────────────────────────
+# ── Optional dependencies ─────────────────────────────────────────────────────
 try:
     import yaml
     YAML_AVAILABLE = True
 except ImportError:
     YAML_AVAILABLE = False
+
+try:
+    import clickhouse_connect
+    CLICKHOUSE_AVAILABLE = True
+except ImportError:
+    clickhouse_connect   = None   # type: ignore
+    CLICKHOUSE_AVAILABLE = False
 
 try:
     from insightface.app import FaceAnalysis
@@ -48,27 +57,45 @@ except ImportError:
 
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal, Vertical, ScrollableContainer
-from textual.widgets import (
-    Button, Footer, Header, Label, Log,
-    Input, ProgressBar, Select, DataTable,
-)
-from textual.screen import ModalScreen
-from textual import on, work
-from textual.reactive import reactive
 from textual.message import Message
+from textual.reactive import reactive
+from textual.screen import ModalScreen
+from textual.widgets import Button, DataTable, Footer, Header, Input, Label, Log, ProgressBar, Select
+from textual import on, work
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Config
 # ══════════════════════════════════════════════════════════════════════════════
+
 CONFIG_PATH = Path(__file__).parent / "config.yaml"
 
 DEFAULT_CONFIG: dict = {
-    "model":       {"name": "buffalo_l", "root": "", "det_size": [640, 640],
-                    "provider": "CPUExecutionProvider"},
-    "recognition": {"cosine_threshold": 0.40, "capture_samples": 8},
-    "camera":      {"device_index": 0, "detection_interval": 0.03},
-    "storage":     {"faces_db": "registered_faces.pkl"},
+    "model": {
+        "name":     "buffalo_l",
+        "root":     "",
+        "det_size": [640, 640],
+        "provider": "CPUExecutionProvider",
+    },
+    "recognition": {
+        "cosine_threshold": 0.40,
+        "capture_samples":  8,
+    },
+    "camera": {
+        "device_index":      0,
+        "detection_interval": 0.03,
+    },
+    "storage": {
+        "faces_db": "registered_faces.pkl",
+    },
+    "clickhouse": {
+        "host":           "localhost",
+        "port":           8123,
+        "database":       "facego",
+        "username":       "facego",
+        "password":       "facego_secret",
+        "flush_interval": 30,
+    },
 }
 
 
@@ -98,21 +125,183 @@ def save_config(cfg: dict):
 
 CFG = load_config()
 
-def model_name()       -> str:   return CFG["model"]["name"]
-def model_root()       -> str:   return CFG["model"]["root"]
-def model_det_size()   -> tuple: return tuple(CFG["model"]["det_size"])
-def model_provider()   -> str:   return CFG["model"]["provider"]
-def cosine_threshold() -> float: return float(CFG["recognition"]["cosine_threshold"])
-def capture_samples()  -> int:   return int(CFG["recognition"]["capture_samples"])
-def camera_index()     -> int:   return int(CFG["camera"]["device_index"])
-def detect_interval()  -> float: return float(CFG["camera"]["detection_interval"])
-def faces_db_path()    -> str:   return CFG["storage"]["faces_db"]
+# ── Config accessors ─────────────────────────────────────────────────────────
+def model_name()        -> str:   return CFG["model"]["name"]
+def model_root()        -> str:   return CFG["model"]["root"]
+def model_det_size()    -> tuple: return tuple(CFG["model"]["det_size"])
+def model_provider()    -> str:   return CFG["model"]["provider"]
+def cosine_threshold()  -> float: return float(CFG["recognition"]["cosine_threshold"])
+def capture_samples()   -> int:   return int(CFG["recognition"]["capture_samples"])
+def camera_index()      -> int:   return int(CFG["camera"]["device_index"])
+def detect_interval()   -> float: return float(CFG["camera"]["detection_interval"])
+def faces_db_path()     -> str:   return CFG["storage"]["faces_db"]
+def ch_host()           -> str:   return CFG["clickhouse"]["host"]
+def ch_port()           -> int:   return int(CFG["clickhouse"]["port"])
+def ch_database()       -> str:   return CFG["clickhouse"]["database"]
+def ch_username()       -> str:   return CFG["clickhouse"]["username"]
+def ch_password()       -> str:   return CFG["clickhouse"]["password"]
+def ch_flush_interval() -> int:   return int(CFG["clickhouse"]["flush_interval"])
 
 PREVIEW_WINDOW = "InsightFace — Camera Preview"
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Detection Session Log
+# ClickHouse — Migration Runner
+# ══════════════════════════════════════════════════════════════════════════════
+
+_VERSIONS_DIR = Path(__file__).parent / "alembic" / "versions"
+
+_CREATE_SCHEMA_MIGRATIONS = """
+    CREATE TABLE IF NOT EXISTS schema_migrations
+    (
+        revision   String,
+        applied_at DateTime DEFAULT now()
+    )
+    ENGINE = ReplacingMergeTree(applied_at)
+    ORDER BY revision
+"""
+
+
+def _load_migrations() -> list[dict]:
+    """Load migration modules from alembic/versions/ and return them in chain order."""
+    raw: dict[str, object] = {}
+    for path in sorted(_VERSIONS_DIR.glob("*.py")):
+        if path.stem.startswith("__"):
+            continue
+        spec   = importlib.util.spec_from_file_location(path.stem, path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        rev = getattr(module, "revision", None)
+        if rev:
+            raw[rev] = module
+
+    # Walk the linked list: down_revision=None → first, then chain by revision
+    by_down = {getattr(m, "down_revision", None): m for m in raw.values()}
+    ordered, module = [], by_down.get(None)
+    while module:
+        rev = getattr(module, "revision")
+        ordered.append({"revision": rev, "module": module})
+        module = by_down.get(rev)
+    return ordered
+
+
+class MigrationRunner:
+    """Applies Alembic-style migration files against a ClickHouse connection."""
+
+    def __init__(self, client):
+        self._client = client
+        self._client.command(_CREATE_SCHEMA_MIGRATIONS)
+
+    def _applied(self) -> set[str]:
+        result = self._client.query("SELECT DISTINCT revision FROM schema_migrations")
+        return {row[0] for row in result.result_rows}
+
+    def _execute(self, sql: str):
+        self._client.command(sql)
+
+    def upgrade(self, target: str = "head") -> list[str]:
+        """Apply pending migrations up to target ('head' or a revision string)."""
+        applied    = self._applied()
+        migrations = _load_migrations()
+        pending    = [m for m in migrations if m["revision"] not in applied]
+
+        if target != "head":
+            cutoff = next((i for i, m in enumerate(migrations)
+                           if m["revision"] == target), None)
+            if cutoff is None:
+                raise ValueError(f"Unknown revision: {target!r}")
+            pending = [m for m in pending if migrations.index(m) <= cutoff]
+
+        ran = []
+        for m in pending:
+            m["module"].upgrade(self._execute)
+            self._client.insert("schema_migrations", [[m["revision"]]],
+                                column_names=["revision"])
+            ran.append(m["revision"])
+        return ran
+
+    def downgrade(self, target: str) -> list[str]:
+        """Rollback migrations. target: revision string or '-N' (e.g. '-1')."""
+        applied          = self._applied()
+        migrations       = _load_migrations()
+        applied_in_order = [m for m in migrations if m["revision"] in applied]
+
+        if target.startswith("-"):
+            to_rollback = applied_in_order[int(target):]
+        else:
+            cutoff = next((i for i, m in enumerate(applied_in_order)
+                           if m["revision"] == target), None)
+            if cutoff is None:
+                raise ValueError(f"Revision {target!r} not in applied list.")
+            to_rollback = applied_in_order[cutoff + 1:]
+
+        ran = []
+        for m in reversed(to_rollback):
+            m["module"].downgrade(self._execute)
+            self._client.command(
+                f"ALTER TABLE schema_migrations DELETE WHERE revision = '{m['revision']}'"
+            )
+            ran.append(m["revision"])
+        return ran
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ClickHouse — Logger
+# ══════════════════════════════════════════════════════════════════════════════
+
+_CH_COLUMNS = ["session_id", "person_id", "name",
+               "first_seen_at", "last_seen_at", "detection_count"]
+_DT_FMT     = "%Y-%m-%d %H:%M:%S"
+
+
+class ClickHouseLogger:
+    """Opens a ClickHouse connection, runs migrations, and bulk-inserts detection rows."""
+
+    def __init__(self, host: str, port: int, database: str,
+                 username: str, password: str):
+        self.session_id = str(uuid.uuid4())
+        self._host      = host
+        self._port      = port
+        self._database  = database
+        self._username  = username
+        self._password  = password
+        self._client    = None
+
+    def connect(self):
+        """Open connection and apply any pending migrations."""
+        self._client = clickhouse_connect.get_client(
+            host=self._host, port=self._port,
+            database=self._database,
+            username=self._username, password=self._password,
+        )
+        MigrationRunner(self._client).upgrade("head")
+
+    def bulk_insert(self, entries: list) -> int:
+        """Bulk-insert a snapshot of DetectionEntry objects. Returns row count."""
+        if not self._client or not entries:
+            return 0
+        rows = [
+            [
+                self.session_id,
+                e.person_id,
+                e.name,
+                datetime.strptime(e.first_seen_at, _DT_FMT),
+                datetime.strptime(e.last_seen_at,  _DT_FMT),
+                e.detection_count,
+            ]
+            for e in entries
+        ]
+        self._client.insert("detection_log", rows, column_names=_CH_COLUMNS)
+        return len(rows)
+
+    def close(self):
+        if self._client:
+            self._client.close()
+            self._client = None
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Detection Entry — in-memory session log
 # ══════════════════════════════════════════════════════════════════════════════
 
 @dataclass
@@ -122,15 +311,15 @@ class DetectionEntry:
     name:            str
     first_seen_at:   str   # "YYYY-MM-DD HH:MM:SS"
     last_seen_at:    str   # updated every time the person re-enters the frame
-    detection_count: int = 1   # total number of separate appearances
+    detection_count: int = 1
 
 
 def now_ts() -> str:
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.now().strftime(_DT_FMT)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# DB schema helpers
+# Face Database — pickle file storage
 # ══════════════════════════════════════════════════════════════════════════════
 
 def make_record(person_id: str, name: str, embeddings: list) -> dict:
@@ -156,17 +345,18 @@ def save_faces_db(db: dict):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Validation helpers
+# Validation
 # ══════════════════════════════════════════════════════════════════════════════
-ID_PATTERN = re.compile(r"^[A-Za-z0-9_\-]{1,32}$")
+
+_ID_PATTERN = re.compile(r"^[A-Za-z0-9_\-]{1,32}$")
 
 
 def validate_person_id(pid: str, db: dict, exclude_pid: str = "") -> str | None:
-    """Return an error string or None if valid."""
+    """Return an error string, or None if valid."""
     pid = pid.strip()
     if not pid:
         return "Person ID cannot be empty."
-    if not ID_PATTERN.match(pid):
+    if not _ID_PATTERN.match(pid):
         return "Person ID: only letters, digits, _ and - allowed (max 32 chars)."
     if pid in db and pid != exclude_pid:
         return f"Person ID '{pid}' is already registered."
@@ -179,14 +369,13 @@ def validate_name(name: str) -> str | None:
         return "Name cannot be empty."
     if len(name) > 64:
         return "Name is too long (max 64 characters)."
-    if name.strip("") == "":
-        return "Name cannot be blank spaces only."
     return None
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Face matching / drawing helpers
+# Face Matching & Drawing
 # ══════════════════════════════════════════════════════════════════════════════
+
 def cosine_distance(a: np.ndarray, b: np.ndarray) -> float:
     a = a / (np.linalg.norm(a) + 1e-6)
     b = b / (np.linalg.norm(b) + 1e-6)
@@ -221,8 +410,9 @@ def draw_face_box(frame: np.ndarray, bbox, display_name: str, dist: float = 0.0)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Shared InsightFace model
+# InsightFace Model — lazy singleton with thread safety
 # ══════════════════════════════════════════════════════════════════════════════
+
 _face_app   = None
 _model_lock = threading.Lock()
 
@@ -247,28 +437,16 @@ def reset_face_app():
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Shared modal CSS helpers
-# ══════════════════════════════════════════════════════════════════════════════
-_FIELD_ROW_CSS = """
-    .field-row   { height: 3; margin-bottom: 0; }
-    .field-label { color: #8b949e; width: 18; content-align: left middle; }
-    .field-error { color: #f85149; height: 1; margin-left: 19; }
-    Input        { width: 1fr; }
-"""
-
-
-# ══════════════════════════════════════════════════════════════════════════════
 # Modal: Confirm Delete
 # ══════════════════════════════════════════════════════════════════════════════
+
 class ConfirmDeleteScreen(ModalScreen):
 
     CSS = """
     ConfirmDeleteScreen { align: center middle; }
     #confirm-box {
         width: 54; height: auto;
-        border: thick $error;
-        background: #161b22;
-        padding: 2 4;
+        border: thick $error; background: #161b22; padding: 2 4;
     }
     #confirm-title { text-style: bold; color: #f85149; text-align: center; margin-bottom: 1; }
     #confirm-msg   { text-align: center; color: #c9d1d9; margin-bottom: 1; height: auto; }
@@ -296,24 +474,23 @@ class ConfirmDeleteScreen(ModalScreen):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Modal: View face details  (Read)
+# Modal: View Face Details
 # ══════════════════════════════════════════════════════════════════════════════
+
 class ViewFaceScreen(ModalScreen):
 
     CSS = """
     ViewFaceScreen { align: center middle; }
     #view-box {
         width: 62; height: auto;
-        border: thick $accent;
-        background: #161b22;
-        padding: 2 4;
+        border: thick $accent; background: #161b22; padding: 2 4;
     }
-    #view-title   { text-style: bold; color: #58a6ff; text-align: center; margin-bottom: 1; }
-    .detail-row   { height: 2; }
-    .detail-key   { color: #8b949e; width: 22; content-align: left middle; }
-    .detail-val   { color: #c9d1d9; width: 1fr; content-align: left middle; }
-    .detail-id    { color: #e3b341; width: 1fr; content-align: left middle; }
-    #close-btn    { width: 100%; margin-top: 1; }
+    #view-title  { text-style: bold; color: #58a6ff; text-align: center; margin-bottom: 1; }
+    .detail-row  { height: 2; }
+    .detail-key  { color: #8b949e; width: 22; content-align: left middle; }
+    .detail-val  { color: #c9d1d9; width: 1fr; content-align: left middle; }
+    .detail-id   { color: #e3b341; width: 1fr; content-align: left middle; }
+    #close-btn   { width: 100%; margin-top: 1; }
     """
 
     def __init__(self, pid: str, db: dict):
@@ -332,27 +509,18 @@ class ViewFaceScreen(ModalScreen):
 
         with Container(id="view-box"):
             yield Label(f"👤  {name}", id="view-title")
-            with Horizontal(classes="detail-row"):
-                yield Label("Person ID",         classes="detail-key")
-                yield Label(pid,                 classes="detail-id")
-            with Horizontal(classes="detail-row"):
-                yield Label("Name",              classes="detail-key")
-                yield Label(name,                classes="detail-val")
-            with Horizontal(classes="detail-row"):
-                yield Label("Samples stored",    classes="detail-key")
-                yield Label(str(len(embs)),      classes="detail-val")
-            with Horizontal(classes="detail-row"):
-                yield Label("Embedding dim",     classes="detail-key")
-                yield Label(str(dim),            classes="detail-val")
-            with Horizontal(classes="detail-row"):
-                yield Label("Avg ‖embedding‖",   classes="detail-key")
-                yield Label(f"{avg_norm:.4f}",   classes="detail-val")
-            with Horizontal(classes="detail-row"):
-                yield Label("Created at",        classes="detail-key")
-                yield Label(created,             classes="detail-val")
-            with Horizontal(classes="detail-row"):
-                yield Label("DB file",           classes="detail-key")
-                yield Label(faces_db_path(),     classes="detail-val")
+            for key, val, cls in [
+                ("Person ID",       pid,                    "detail-id"),
+                ("Name",            name,                   "detail-val"),
+                ("Samples stored",  str(len(embs)),         "detail-val"),
+                ("Embedding dim",   str(dim),               "detail-val"),
+                ("Avg embedding",   f"{avg_norm:.4f}",      "detail-val"),
+                ("Created at",      created,                "detail-val"),
+                ("DB file",         faces_db_path(),        "detail-val"),
+            ]:
+                with Horizontal(classes="detail-row"):
+                    yield Label(key, classes="detail-key")
+                    yield Label(val, classes=cls)
             yield Button("Close", variant="primary", id="close-btn")
 
     @on(Button.Pressed, "#close-btn")
@@ -360,17 +528,16 @@ class ViewFaceScreen(ModalScreen):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Modal: Edit face record  (Update — person_id + name)
+# Modal: Edit Face Record  (person_id + name)
 # ══════════════════════════════════════════════════════════════════════════════
+
 class EditFaceScreen(ModalScreen):
 
     CSS = """
     EditFaceScreen { align: center middle; }
     #edit-box {
         width: 66; height: auto;
-        border: thick $accent;
-        background: #161b22;
-        padding: 2 4;
+        border: thick $accent; background: #161b22; padding: 2 4;
     }
     #edit-title  { text-style: bold; color: #58a6ff; text-align: center; margin-bottom: 1; }
     .field-row   { height: 3; margin-bottom: 0; }
@@ -397,19 +564,16 @@ class EditFaceScreen(ModalScreen):
         record = self._db.get(self._pid, {})
         with Container(id="edit-box"):
             yield Label(f"✏  Edit  —  {record.get('name', self._pid)}", id="edit-title")
-
             with Horizontal(classes="field-row"):
                 yield Label("Person ID *", classes="field-label")
                 yield Input(value=record.get("person_id", self._pid),
                             id="inp-pid", placeholder="e.g. EMP001")
             yield Label("", id="err-pid", classes="field-error")
-
             with Horizontal(classes="field-row"):
-                yield Label("Name *",      classes="field-label")
+                yield Label("Name *", classes="field-label")
                 yield Input(value=record.get("name", ""),
                             id="inp-name", placeholder="e.g. Alice Smith")
             yield Label("", id="err-name", classes="field-error")
-
             with Horizontal(id="btn-row"):
                 yield Button("Save",   variant="primary", id="btn-save")
                 yield Button("Cancel", variant="error",   id="btn-cancel")
@@ -421,31 +585,26 @@ class EditFaceScreen(ModalScreen):
     def save(self):
         new_pid  = self.query_one("#inp-pid",  Input).value.strip()
         new_name = self.query_one("#inp-name", Input).value.strip()
-
         err_pid  = validate_person_id(new_pid, self._db, exclude_pid=self._pid)
         err_name = validate_name(new_name)
-
         self.query_one("#err-pid",  Label).update(f"  ⚠ {err_pid}"  if err_pid  else "")
         self.query_one("#err-name", Label).update(f"  ⚠ {err_name}" if err_name else "")
-
         if err_pid or err_name:
             return
-
         self.dismiss(self.Updated(self._pid, new_pid, new_name))
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Modal: Add more samples  (Update — embeddings only)
+# Modal: Add Samples  (add more embeddings to an existing face)
 # ══════════════════════════════════════════════════════════════════════════════
+
 class AddSamplesScreen(ModalScreen):
 
     CSS = """
     AddSamplesScreen { align: center middle; }
     #add-box {
         width: 64; height: auto;
-        border: thick $accent;
-        background: #161b22;
-        padding: 2 4;
+        border: thick $accent; background: #161b22; padding: 2 4;
     }
     #add-title    { text-style: bold; color: #58a6ff; text-align: center; margin-bottom: 1; }
     #status-label { text-align: center; color: #8b949e; margin: 1 0; height: 2; }
@@ -510,7 +669,8 @@ class AddSamplesScreen(ModalScreen):
         while len(collected) < samples and attempts < samples * 8:
             ret, frame = cap.read()
             attempts += 1
-            if not ret: continue
+            if not ret:
+                continue
             display = frame.copy()
             faces   = fa.get(frame)
             if faces:
@@ -550,17 +710,16 @@ class AddSamplesScreen(ModalScreen):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Modal: Register Face  (Create)
+# Modal: Register Face  (new person)
 # ══════════════════════════════════════════════════════════════════════════════
+
 class RegisterScreen(ModalScreen):
 
     CSS = """
     RegisterScreen { align: center middle; }
     #register-box {
         width: 68; height: auto;
-        border: thick $accent;
-        background: #161b22;
-        padding: 2 4;
+        border: thick $accent; background: #161b22; padding: 2 4;
     }
     #register-title { text-style: bold; color: #58a6ff; text-align: center; margin-bottom: 1; }
     .field-row      { height: 3; margin-bottom: 0; }
@@ -583,24 +742,20 @@ class RegisterScreen(ModalScreen):
     def compose(self) -> ComposeResult:
         with Container(id="register-box"):
             yield Label("📷  Register New Face", id="register-title")
-
             with Horizontal(classes="field-row"):
-                yield Label("Person ID *",  classes="field-label")
+                yield Label("Person ID *", classes="field-label")
                 yield Input(placeholder="e.g. EMP001  (letters, digits, _ -)", id="inp-pid")
             yield Label("Unique ID — letters, digits, underscore, hyphen. Max 32 chars.",
                         id="hint-pid", classes="field-hint")
             yield Label("", id="err-pid", classes="field-error")
-
             with Horizontal(classes="field-row"):
-                yield Label("Name *",       classes="field-label")
+                yield Label("Name *", classes="field-label")
                 yield Input(placeholder="e.g. Alice Smith", id="inp-name")
             yield Label("Display name shown in detection overlay. Max 64 chars.",
                         id="hint-name", classes="field-hint")
             yield Label("", id="err-name", classes="field-error")
-
             yield Label("", id="status-label")
             yield ProgressBar(total=capture_samples(), id="progress", show_eta=False)
-
             with Horizontal(id="btn-row"):
                 yield Button("Capture", variant="primary", id="btn-capture")
                 yield Button("Cancel",  variant="error",   id="btn-cancel")
@@ -616,10 +771,8 @@ class RegisterScreen(ModalScreen):
 
         err_pid  = validate_person_id(pid, db)
         err_name = validate_name(name)
-
         self.query_one("#err-pid",  Label).update(f"  ⚠ {err_pid}"  if err_pid  else "")
         self.query_one("#err-name", Label).update(f"  ⚠ {err_name}" if err_name else "")
-
         if err_pid or err_name:
             return
 
@@ -657,7 +810,8 @@ class RegisterScreen(ModalScreen):
         while len(collected) < samples and attempts < samples * 8:
             ret, frame = cap.read()
             attempts += 1
-            if not ret: continue
+            if not ret:
+                continue
             display = frame.copy()
             faces   = fa.get(frame)
             if faces:
@@ -698,46 +852,30 @@ class RegisterScreen(ModalScreen):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Modal: Face Manager  (full CRUD DataTable)
+# Modal: Face Manager  (CRUD DataTable)
 # ══════════════════════════════════════════════════════════════════════════════
+
 class FaceManagerScreen(ModalScreen):
 
     CSS = """
     FaceManagerScreen { align: center middle; }
-
     #manager-box {
         width: 100; height: 44;
-        border: thick $accent;
-        background: #0d1117;
-        padding: 1 2;
+        border: thick $accent; background: #0d1117; padding: 1 2;
     }
     #manager-title {
         text-style: bold; color: #58a6ff; text-align: center;
-        border-bottom: solid #30363d;
-        padding-bottom: 1; margin-bottom: 1;
+        border-bottom: solid #30363d; padding-bottom: 1; margin-bottom: 1;
     }
     #table-area {
-        height: 1fr;
-        border: round #30363d;
-        background: #0d1117;
-        margin-bottom: 1;
+        height: 1fr; border: round #30363d; background: #0d1117; margin-bottom: 1;
     }
     DataTable { height: 1fr; background: #0d1117; }
-
-    #btn-row-top, #btn-row-bot {
-        height: 3;
-        margin-bottom: 1;
-    }
-    #btn-row-top Button, #btn-row-bot Button {
-        margin: 0 1;
-        width: 1fr;
-    }
+    #btn-row-top, #btn-row-bot { height: 3; margin-bottom: 1; }
+    #btn-row-top Button, #btn-row-bot Button { margin: 0 1; width: 1fr; }
     #status-bar {
-        height: 2;
-        color: #8b949e;
-        text-align: center;
-        border-top: solid #30363d;
-        padding-top: 1;
+        height: 2; color: #8b949e; text-align: center;
+        border-top: solid #30363d; padding-top: 1;
     }
     """
 
@@ -772,11 +910,10 @@ class FaceManagerScreen(ModalScreen):
             self.query_one("#status-bar", Label).update("No faces registered yet.")
             return
         for pid in sorted(db.keys()):
-            record  = db[pid]
-            name    = record.get("name", "—")
-            embs    = record.get("embeddings", [])
-            created = record.get("created_at", "—")
-            table.add_row(pid, name, str(len(embs)), created, key=pid)
+            rec = db[pid]
+            table.add_row(pid, rec.get("name", "—"),
+                          str(len(rec.get("embeddings", []))),
+                          rec.get("created_at", "—"), key=pid)
         self.query_one("#status-bar", Label).update(
             f"{len(db)} face(s) registered.  Select a row and choose an action.")
 
@@ -784,8 +921,7 @@ class FaceManagerScreen(ModalScreen):
         table = self.query_one("#face-table", DataTable)
         if table.cursor_row < 0:
             return None
-        row = table.get_row_at(table.cursor_row)
-        return str(row[0])   # Person ID is column 0
+        return str(table.get_row_at(table.cursor_row)[0])
 
     def _status(self, msg: str):
         self.query_one("#status-bar", Label).update(msg)
@@ -814,7 +950,7 @@ class FaceManagerScreen(ModalScreen):
             self._status("⚠ Select a row first."); return
         self.app.push_screen(ViewFaceScreen(pid, load_faces_db()))
 
-    # ── Update: Edit (person_id + name) ─────────────────────────────
+    # ── Update: edit name / ID ───────────────────────────────────────
     @on(Button.Pressed, "#btn-edit")
     def on_edit(self):
         pid = self._selected_pid()
@@ -831,13 +967,11 @@ class FaceManagerScreen(ModalScreen):
             db2[result.new_pid] = record
             save_faces_db(db2)
             self._build_table()
-            self._status(
-                f"✅ Updated  [{result.old_pid}→{result.new_pid}]  {result.new_name}.")
+            self._status(f"✅ Updated  [{result.old_pid}→{result.new_pid}]  {result.new_name}.")
             self.post_message(self.DBChanged())
-
         self.app.push_screen(EditFaceScreen(pid, db), handle)
 
-    # ── Update: Add Samples ──────────────────────────────────────────
+    # ── Update: add more samples ─────────────────────────────────────
     @on(Button.Pressed, "#btn-add-samples")
     def on_add_samples(self):
         pid = self._selected_pid()
@@ -852,10 +986,8 @@ class FaceManagerScreen(ModalScreen):
             db2[result.pid]["embeddings"].extend(result.embeddings)
             save_faces_db(db2)
             self._build_table()
-            self._status(
-                f"✅ Added {len(result.embeddings)} samples to [{result.pid}].")
+            self._status(f"✅ Added {len(result.embeddings)} samples to [{result.pid}].")
             self.post_message(self.DBChanged())
-
         self.app.push_screen(AddSamplesScreen(pid, name), handle)
 
     # ── Delete: single ───────────────────────────────────────────────
@@ -864,8 +996,7 @@ class FaceManagerScreen(ModalScreen):
         pid = self._selected_pid()
         if not pid:
             self._status("⚠ Select a row first."); return
-        db   = load_faces_db()
-        name = db[pid].get("name", pid)
+        name = load_faces_db()[pid].get("name", pid)
 
         def handle(confirmed: bool):
             if not confirmed: return
@@ -875,7 +1006,6 @@ class FaceManagerScreen(ModalScreen):
             self._build_table()
             self._status(f"🗑 Deleted  [{pid}]  {name}.")
             self.post_message(self.DBChanged())
-
         self.app.push_screen(
             ConfirmDeleteScreen(f"Delete record for:\n[{pid}]  {name}?"), handle)
 
@@ -889,42 +1019,33 @@ class FaceManagerScreen(ModalScreen):
             self._build_table()
             self._status("💣 All face records deleted.")
             self.post_message(self.DBChanged())
-
         self.app.push_screen(
             ConfirmDeleteScreen("Delete ALL registered faces?\nThis cannot be undone."), handle)
 
-    # ── Close ────────────────────────────────────────────────────────
     @on(Button.Pressed, "#btn-close")
     def on_close(self): self.dismiss(None)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Modal: Detection Log  (view + export CSV)
+# Modal: Detection Log  (view session log + CSV export)
 # ══════════════════════════════════════════════════════════════════════════════
+
 class DetectionLogScreen(ModalScreen):
-    """Shows the current session's detection log and allows CSV export."""
 
     CSS = """
     DetectionLogScreen { align: center middle; }
-
     #log-box {
         width: 100; height: 40;
-        border: thick $accent;
-        background: #0d1117;
-        padding: 1 2;
+        border: thick $accent; background: #0d1117; padding: 1 2;
     }
     #log-screen-title {
         text-style: bold; color: #58a6ff; text-align: center;
-        border-bottom: solid #30363d;
-        padding-bottom: 1; margin-bottom: 1;
+        border-bottom: solid #30363d; padding-bottom: 1; margin-bottom: 1;
     }
     #log-table-area {
-        height: 1fr;
-        border: round #30363d;
-        background: #0d1117;
-        margin-bottom: 1;
+        height: 1fr; border: round #30363d; background: #0d1117; margin-bottom: 1;
     }
-    DataTable { height: 1fr; background: #0d1117; }
+    DataTable   { height: 1fr; background: #0d1117; }
     #log-summary {
         height: 2; color: #8b949e; text-align: center;
         border-top: solid #30363d; padding-top: 1;
@@ -934,9 +1055,9 @@ class DetectionLogScreen(ModalScreen):
     #export-status { height: 2; color: #3fb950; text-align: center; }
     """
 
-    def __init__(self, session_log: dict[str, "DetectionEntry"]):
+    def __init__(self, session_log: dict[str, DetectionEntry]):
         super().__init__()
-        self._session_log = session_log   # pid -> DetectionEntry
+        self._session_log = session_log
 
     def compose(self) -> ComposeResult:
         with Container(id="log-box"):
@@ -944,9 +1065,9 @@ class DetectionLogScreen(ModalScreen):
             with Container(id="log-table-area"):
                 yield DataTable(id="log-table", cursor_type="row", zebra_stripes=True)
             with Horizontal(id="log-btn-row"):
-                yield Button("💾  Export CSV",   variant="success", id="btn-export")
-                yield Button("🗑  Clear Log",    variant="warning", id="btn-clear-log")
-                yield Button("✖   Close",        variant="default", id="btn-log-close")
+                yield Button("💾  Export CSV", variant="success", id="btn-export")
+                yield Button("🗑  Clear Log",  variant="warning", id="btn-clear-log")
+                yield Button("✖   Close",      variant="default", id="btn-log-close")
             yield Label("", id="export-status")
             yield Label("", id="log-summary")
 
@@ -956,23 +1077,16 @@ class DetectionLogScreen(ModalScreen):
     def _build_table(self):
         table = self.query_one("#log-table", DataTable)
         table.clear(columns=True)
-        table.add_columns(
-            "Person ID", "Name", "First Detected At",
-            "Last Detected At", "Appearances"
-        )
+        table.add_columns("Person ID", "Name",
+                          "First Detected At", "Last Detected At", "Appearances")
         entries = self._session_log
         if not entries:
             self.query_one("#log-summary", Label).update("No detections in this session yet.")
             return
         for entry in sorted(entries.values(), key=lambda e: e.first_seen_at):
-            table.add_row(
-                entry.person_id,
-                entry.name,
-                entry.first_seen_at,
-                entry.last_seen_at,
-                str(entry.detection_count),
-                key=entry.person_id,
-            )
+            table.add_row(entry.person_id, entry.name,
+                          entry.first_seen_at, entry.last_seen_at,
+                          str(entry.detection_count), key=entry.person_id)
         self.query_one("#log-summary", Label).update(
             f"{len(entries)} unique face(s) detected this session.")
 
@@ -981,27 +1095,15 @@ class DetectionLogScreen(ModalScreen):
         if not self._session_log:
             self.query_one("#export-status", Label).update("⚠ Nothing to export.")
             return
-
-        ts       = datetime.now().strftime("%Y%m%d_%H%M%S")
-        out_path = Path(f"detection_log_{ts}.csv")
-
+        out_path = Path(f"detection_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
         with open(out_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow([
-                "person_id", "name",
-                "first_detected_at", "last_detected_at", "appearance_count"
-            ])
-            for entry in sorted(
-                self._session_log.values(), key=lambda e: e.first_seen_at
-            ):
-                writer.writerow([
-                    entry.person_id,
-                    entry.name,
-                    entry.first_seen_at,
-                    entry.last_seen_at,
-                    entry.detection_count,
-                ])
-
+            writer.writerow(["person_id", "name",
+                             "first_detected_at", "last_detected_at", "appearance_count"])
+            for entry in sorted(self._session_log.values(), key=lambda e: e.first_seen_at):
+                writer.writerow([entry.person_id, entry.name,
+                                 entry.first_seen_at, entry.last_seen_at,
+                                 entry.detection_count])
         self.query_one("#export-status", Label).update(
             f"✅ Exported  {len(self._session_log)} rows  →  {out_path.resolve()}")
 
@@ -1018,27 +1120,25 @@ class DetectionLogScreen(ModalScreen):
 # ══════════════════════════════════════════════════════════════════════════════
 # Modal: Settings
 # ══════════════════════════════════════════════════════════════════════════════
+
 class SettingsScreen(ModalScreen):
 
     CSS = """
     SettingsScreen { align: center middle; }
     #settings-box {
         width: 72; height: auto;
-        border: thick $accent;
-        background: #161b22;
-        padding: 2 4;
+        border: thick $accent; background: #161b22; padding: 2 4;
     }
     #settings-title {
-        text-style: bold; color: #58a6ff;
-        text-align: center; margin-bottom: 1;
+        text-style: bold; color: #58a6ff; text-align: center; margin-bottom: 1;
         border-bottom: solid #30363d; padding-bottom: 1;
     }
     .field-row   { height: 3; margin-bottom: 0; }
     .field-label { color: #8b949e; width: 24; content-align: left middle; }
     Input  { width: 1fr; }
     Select { width: 1fr; }
-    #hint  { color: #484f58; text-align: center; margin-top: 1;
-             border-top: solid #30363d; padding-top: 1; height: auto; }
+    #hint    { color: #484f58; text-align: center; margin-top: 1;
+               border-top: solid #30363d; padding-top: 1; height: auto; }
     #btn-row { margin-top: 1; height: auto; }
     Button   { margin: 0 1; }
     """
@@ -1050,43 +1150,31 @@ class SettingsScreen(ModalScreen):
     ]
 
     def compose(self) -> ComposeResult:
+        w, h = model_det_size()
         with Container(id="settings-box"):
             yield Label("⚙  Settings", id="settings-title")
+            for label, value, inp_id, placeholder in [
+                ("Model name",       model_name(),       "inp-model-name", "buffalo_l / buffalo_s / antelopev2"),
+                ("Model root path",  model_root(),       "inp-model-root", "Leave blank for default (~/.insightface/models)"),
+            ]:
+                with Horizontal(classes="field-row"):
+                    yield Label(label, classes="field-label")
+                    yield Input(value=value, id=inp_id, placeholder=placeholder)
             with Horizontal(classes="field-row"):
-                yield Label("Model name",       classes="field-label")
-                yield Input(value=model_name(), id="inp-model-name",
-                            placeholder="buffalo_l / buffalo_s / antelopev2")
-            with Horizontal(classes="field-row"):
-                yield Label("Model root path",  classes="field-label")
-                yield Input(value=model_root(), id="inp-model-root",
-                            placeholder="Leave blank for default (~/.insightface/models)")
-            with Horizontal(classes="field-row"):
-                yield Label("ONNX provider",    classes="field-label")
+                yield Label("ONNX provider", classes="field-label")
                 yield Select(options=self.PROVIDERS, value=model_provider(), id="sel-provider")
-            with Horizontal(classes="field-row"):
-                yield Label("Det size (W H)",   classes="field-label")
-                w, h = model_det_size()
-                yield Input(value=f"{w} {h}",   id="inp-det-size", placeholder="640 640")
-            with Horizontal(classes="field-row"):
-                yield Label("Cosine threshold", classes="field-label")
-                yield Input(value=str(CFG["recognition"]["cosine_threshold"]),
-                            id="inp-threshold", placeholder="0.40")
-            with Horizontal(classes="field-row"):
-                yield Label("Capture samples",  classes="field-label")
-                yield Input(value=str(capture_samples()),
-                            id="inp-samples", placeholder="8")
-            with Horizontal(classes="field-row"):
-                yield Label("Camera index",     classes="field-label")
-                yield Input(value=str(camera_index()),
-                            id="inp-cam-idx", placeholder="0")
-            with Horizontal(classes="field-row"):
-                yield Label("Faces DB path",    classes="field-label")
-                yield Input(value=faces_db_path(),
-                            id="inp-db-path", placeholder="registered_faces.pkl")
-            yield Label(
-                "Changes saved to config.yaml and applied immediately.\n"
-                "Model reloads on next detection/registration start.",
-                id="hint")
+            for label, value, inp_id, placeholder in [
+                ("Det size (W H)",   f"{w} {h}",                                    "inp-det-size",  "640 640"),
+                ("Cosine threshold", str(CFG["recognition"]["cosine_threshold"]),   "inp-threshold", "0.40"),
+                ("Capture samples",  str(capture_samples()),                        "inp-samples",   "8"),
+                ("Camera index",     str(camera_index()),                           "inp-cam-idx",   "0"),
+                ("Faces DB path",    faces_db_path(),                               "inp-db-path",   "registered_faces.pkl"),
+            ]:
+                with Horizontal(classes="field-row"):
+                    yield Label(label, classes="field-label")
+                    yield Input(value=value, id=inp_id, placeholder=placeholder)
+            yield Label("Changes saved to config.yaml and applied immediately.\n"
+                        "Model reloads on next detection/registration start.", id="hint")
             with Horizontal(id="btn-row"):
                 yield Button("Save",   variant="primary", id="btn-save")
                 yield Button("Cancel", variant="error",   id="btn-cancel")
@@ -1140,6 +1228,7 @@ class SettingsScreen(ModalScreen):
 # ══════════════════════════════════════════════════════════════════════════════
 # Main Application
 # ══════════════════════════════════════════════════════════════════════════════
+
 class FaceDetectionApp(App):
 
     TITLE     = "InsightFace Detection System"
@@ -1154,18 +1243,15 @@ class FaceDetectionApp(App):
 
     #sidebar {
         width: 38; height: 1fr;
-        border: round #30363d;
-        background: #161b22;
-        padding: 1 2;
+        border: round #30363d; background: #161b22; padding: 1 2;
     }
     #panel-title {
         text-style: bold; color: #58a6ff; text-align: center;
-        border-bottom: solid #30363d;
-        padding-bottom: 1; margin-bottom: 1;
+        border-bottom: solid #30363d; padding-bottom: 1; margin-bottom: 1;
     }
     #status-box {
-        height: 8; border: round #30363d;
-        background: #0d1117; padding: 1; margin-bottom: 1;
+        height: 8; border: round #30363d; background: #0d1117;
+        padding: 1; margin-bottom: 1;
     }
     #detection-status { text-align: center; text-style: bold; color: #8b949e; }
     #registered-count { text-align: center; color: #e3b341; }
@@ -1176,42 +1262,41 @@ class FaceDetectionApp(App):
 
     #list-title {
         color: #8b949e; text-style: italic;
-        margin-top: 1; padding-top: 1;
-        border-top: solid #30363d;
+        margin-top: 1; padding-top: 1; border-top: solid #30363d;
     }
     #people-scroll {
         height: 1fr; border: round #21262d;
         background: #0d1117; padding: 0 1;
     }
-    .person-entry    { color: #c9d1d9; }
-    .person-entry-id { color: #e3b341; }
+    .person-entry { color: #c9d1d9; }
 
     #log-panel {
         width: 1fr; height: 1fr;
-        border: round #30363d;
-        background: #0d1117;
+        border: round #30363d; background: #0d1117;
         margin-left: 2; padding: 1;
     }
     #log-title {
         text-style: bold; color: #58a6ff;
-        border-bottom: solid #30363d;
-        padding-bottom: 1; margin-bottom: 1;
+        border-bottom: solid #30363d; padding-bottom: 1; margin-bottom: 1;
     }
     #event-log {
-        height: 1fr;
-        background: #0d1117; color: #c9d1d9;
-        scrollbar-color: #30363d;
+        height: 1fr; background: #0d1117;
+        color: #c9d1d9; scrollbar-color: #30363d;
     }
     """
 
     is_detecting: reactive[bool] = reactive(False)
-    face_db: reactive[dict]      = reactive({})
+    face_db:      reactive[dict] = reactive({}, always_update=True)
+
+    # ── Lifecycle ────────────────────────────────────────────────────
 
     def on_mount(self):
-        self.face_db      = load_faces_db()
-        self._stop_event  = threading.Event()
-        self._session_log: dict[str, DetectionEntry] = {}   # pid -> DetectionEntry
-        self._log_lock    = threading.Lock()
+        self.face_db       = load_faces_db()
+        self._stop_event   = threading.Event()
+        self._log_lock     = threading.Lock()
+        self._session_log: dict[str, DetectionEntry] = {}
+        self._ch_logger:   ClickHouseLogger | None   = None
+
         self._refresh_summary()
         self._update_model_info()
         self._log(f"ℹ  App ready.  Model: {model_name()}  |  Provider: {model_provider()}")
@@ -1219,10 +1304,16 @@ class FaceDetectionApp(App):
             self._log("⚠  pyyaml missing — settings won't persist.  pip install pyyaml")
         if not INSIGHTFACE_AVAILABLE:
             self._log("❌  InsightFace missing.  pip install insightface onnxruntime")
+        self._start_clickhouse()
 
     def on_unmount(self):
         self._stop_event.set()
+        self._flush_to_clickhouse()   # final flush before exit
+        if self._ch_logger:
+            self._ch_logger.close()
         cv2.destroyAllWindows()
+
+    # ── Layout ───────────────────────────────────────────────────────
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -1243,14 +1334,13 @@ class FaceDetectionApp(App):
                 yield Label("  Registered People", id="list-title")
                 with ScrollableContainer(id="people-scroll"):
                     yield Label("(none)", classes="person-entry")
-
             with Vertical(id="log-panel"):
                 yield Label("📜  Event Log", id="log-title")
                 yield Log(id="event-log", highlight=True)
-
         yield Footer()
 
-    # ── button handlers ──────────────────────────────────────────────
+    # ── Button handlers ──────────────────────────────────────────────
+
     @on(Button.Pressed, "#btn-register")
     def on_register(self):
         if not INSIGHTFACE_AVAILABLE:
@@ -1268,7 +1358,6 @@ class FaceDetectionApp(App):
             save_faces_db(db)
             self.face_db = db
             self._refresh_summary()
-
         self.push_screen(RegisterScreen(), handle)
 
     @on(Button.Pressed, "#btn-manager")
@@ -1315,26 +1404,23 @@ class FaceDetectionApp(App):
         def handle(saved: bool):
             if saved:
                 self._update_model_info()
-                self._log(
-                    f"✅ Settings saved — model: {model_name()}  "
-                    f"root: '{model_root() or 'default'}'  "
-                    f"provider: {model_provider()}  threshold: {cosine_threshold()}")
-
+                self._log(f"✅ Settings saved — model: {model_name()}  "
+                          f"root: '{model_root() or 'default'}'  "
+                          f"provider: {model_provider()}  threshold: {cosine_threshold()}")
         self.push_screen(SettingsScreen(), handle)
 
-    # ── ui helpers ───────────────────────────────────────────────────
+    # ── UI helpers ───────────────────────────────────────────────────
+
     def _set_ui(self, detecting: bool):
         s = self.query_one("#detection-status", Label)
         s.update("● DETECTING" if detecting else "● IDLE")
         s.styles.color = "#3fb950" if detecting else "#8b949e"
         if not detecting:
             self.query_one("#fps-label", Label).update("")
-        # These are disabled while detecting
         for bid in ("#btn-detect", "#btn-register", "#btn-manager", "#btn-settings"):
             self.query_one(bid, Button).disabled = detecting
-        # Detection Log is always accessible (even during detection)
         self.query_one("#btn-det-log", Button).disabled = False
-        self.query_one("#btn-stop", Button).display = detecting
+        self.query_one("#btn-stop",    Button).display  = detecting
 
     def _update_model_info(self):
         root = model_root() or "~/.insightface"
@@ -1352,17 +1438,60 @@ class FaceDetectionApp(App):
             scroll.mount(Label("(none)", classes="person-entry"))
         else:
             for pid in sorted(self.face_db.keys()):
-                record = self.face_db[pid]
-                name   = record.get("name", "—")
-                n      = len(record.get("embeddings", []))
-                scroll.mount(Label(
-                    f"  [{pid}]  {name}  ({n} samples)", classes="person-entry"))
+                rec = self.face_db[pid]
+                n   = len(rec.get("embeddings", []))
+                scroll.mount(Label(f"  [{pid}]  {rec.get('name', '—')}  ({n} samples)",
+                                   classes="person-entry"))
 
     def _log(self, msg: str):
         ts = datetime.now().strftime("%H:%M:%S")
         self.query_one("#event-log", Log).write_line(f"[{ts}]  {msg}")
 
+    # ── ClickHouse helpers ───────────────────────────────────────────
+
+    def _start_clickhouse(self):
+        if not CLICKHOUSE_AVAILABLE:
+            self._log("⚠  clickhouse-connect not found — CH logging disabled.")
+            return
+        try:
+            self._ch_logger = ClickHouseLogger(
+                host=ch_host(), port=ch_port(), database=ch_database(),
+                username=ch_username(), password=ch_password(),
+            )
+            self._ch_logger.connect()
+            self._log(f"✅ ClickHouse connected  session={self._ch_logger.session_id[:8]}…  "
+                      f"flush every {ch_flush_interval()}s")
+            threading.Thread(target=self._flush_loop, daemon=True, name="ch-flush").start()
+        except Exception as e:
+            self._log(f"⚠  ClickHouse unavailable: {e}")
+            self._ch_logger = None
+
+    def _flush_loop(self):
+        """Background thread: bulk-inserts session log into ClickHouse periodically."""
+        while not self._stop_event.wait(ch_flush_interval()):
+            self._flush_to_clickhouse()
+
+    def _flush_to_clickhouse(self):
+        if not self._ch_logger:
+            return
+        with self._log_lock:
+            snapshot = list(self._session_log.values())
+        if not snapshot:
+            return
+        try:
+            n = self._ch_logger.bulk_insert(snapshot)
+            try:
+                self.call_from_thread(self._log, f"💾 ClickHouse: flushed {n} row(s).")
+            except Exception:
+                pass   # app may be shutting down
+        except Exception as e:
+            try:
+                self.call_from_thread(self._log, f"⚠  ClickHouse flush error: {e}")
+            except Exception:
+                pass
+
     # ── Detection loop ───────────────────────────────────────────────
+
     def _detection_loop(self):
         self.call_from_thread(self._log, "⏳ Loading InsightFace model…")
         try:
@@ -1384,17 +1513,18 @@ class FaceDetectionApp(App):
         cv2.namedWindow(PREVIEW_WINDOW, cv2.WINDOW_NORMAL)
         cv2.resizeWindow(PREVIEW_WINDOW, 800, 600)
 
-        last_identities: set[str] = set()   # set of person_ids seen last frame
-        frame_times: list[float]  = []
+        last_ids:    set[str]    = set()
+        frame_times: list[float] = []
 
         while not self._stop_event.is_set():
             t0 = time.perf_counter()
             ret, frame = cap.read()
-            if not ret: time.sleep(0.05); continue
+            if not ret:
+                time.sleep(0.05); continue
 
-            faces            = fa.get(frame)
-            current_ids: set[str] = set()
-            display          = frame.copy()
+            faces       = fa.get(frame)
+            current_ids = set()
+            display     = frame.copy()
 
             for face in faces:
                 if face.embedding is None: continue
@@ -1414,48 +1544,37 @@ class FaceDetectionApp(App):
             if (cv2.waitKey(1) & 0xFF) == ord('q'):
                 self._stop_event.set(); break
 
-            # ── session log + event log ─────────────────────────────
-            ts = now_ts()
-            appeared   = current_ids - last_identities
-            disappeared= last_identities - current_ids
+            # Update session log for appeared / disappeared faces
+            ts         = now_ts()
+            appeared   = current_ids - last_ids
+            disappeared = last_ids - current_ids
 
             for pid in appeared:
-                name = self.face_db.get(pid, {}).get("name", "Unknown") if pid != "unknown" else "Unknown"
+                name = (self.face_db.get(pid, {}).get("name", "Unknown")
+                        if pid != "unknown" else "Unknown")
                 with self._log_lock:
                     if pid in self._session_log:
-                        self._session_log[pid].last_seen_at   = ts
+                        self._session_log[pid].last_seen_at    = ts
                         self._session_log[pid].detection_count += 1
                     else:
                         self._session_log[pid] = DetectionEntry(
-                            person_id      = pid,
-                            name           = name,
-                            first_seen_at  = ts,
-                            last_seen_at   = ts,
-                            detection_count= 1,
-                        )
-                if pid == "unknown":
-                    self.call_from_thread(self._log, "👤 Unknown face detected")
-                else:
-                    self.call_from_thread(self._log, f"🟢 Recognized: {name}  [{pid}]")
+                            person_id=pid, name=name,
+                            first_seen_at=ts, last_seen_at=ts)
+                msg = "👤 Unknown face detected" if pid == "unknown" else f"🟢 Recognized: {name}  [{pid}]"
+                self.call_from_thread(self._log, msg)
 
             for pid in disappeared:
-                # update last_seen when leaving frame
-                ts_now = now_ts()
                 with self._log_lock:
                     if pid in self._session_log:
-                        self._session_log[pid].last_seen_at = ts_now
-                if pid == "unknown":
-                    self.call_from_thread(self._log, "👋 Unknown face left the frame.")
-                else:
-                    name = self.face_db.get(pid, {}).get("name", pid)
-                    self.call_from_thread(self._log, f"👋 {name} [{pid}] left the frame.")
+                        self._session_log[pid].last_seen_at = now_ts()
+                name = self.face_db.get(pid, {}).get("name", pid)
+                msg = "👋 Unknown face left the frame." if pid == "unknown" else f"👋 {name} [{pid}] left the frame."
+                self.call_from_thread(self._log, msg)
 
-            last_identities = current_ids
-
+            last_ids = current_ids
             self.call_from_thread(
                 self.query_one("#fps-label", Label).update,
                 f"FPS: {fps:.1f}  |  Faces: {len(faces)}")
-
             time.sleep(max(0.0, detect_interval() - elapsed))
 
         cap.release()

@@ -1,4 +1,4 @@
-import { Box, Input, Text, HStack, Badge, AvatarRoot, AvatarFallback } from '@chakra-ui/react'
+import { Box, Text, HStack, Badge, AvatarRoot, AvatarFallback } from '@chakra-ui/react'
 import { FiChevronDown, FiSearch, FiX } from 'react-icons/fi'
 import { useState, useEffect, useRef } from 'react'
 
@@ -217,3 +217,4 @@ export function TeacherSelector({ teachers, value, onChange, invalid }: Props) {
     </Box>
   )
 }
+

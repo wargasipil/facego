@@ -6,7 +6,6 @@ import {
   Text,
   Flex,
   HStack,
-  VStack,
   Badge,
   TableRoot,
   TableHeader,

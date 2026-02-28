@@ -2,7 +2,25 @@
   "permissions": {
     "allow": [
       "Bash(uv add:*)",
-      "Bash(uv run pyinstaller:*)"
+      "Bash(uv run pyinstaller:*)",
+      "Read(//d/research/facego/**)",
+      "Bash(printf '\\\\r\\\\n# \\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80 ClickHouse \\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\xe2\\\\x94\\\\x80\\\\nclickhouse:\\\\r\\\\n  host:     localhost\\\\r\\\\n  port:     8123\\\\r\\\\n  database: facego\\\\r\\\\n  username: facego\\\\r\\\\n  password: facego_secret\\\\r\\\\n  # How often \\(seconds\\) to bulk-insert the session log into ClickHouse.\\\\r\\\\n  flush_interval: 30\\\\r\\\\n')",
+      "Bash(uv run python -c \"import clickhouse_connect; print\\(clickhouse_connect.__version__\\)\")",
+      "Bash(uv run python -c \"from clickhouse_connect.__version__ import __version__; print\\(__version__\\)\")",
+      "Bash(uv pip show clickhouse-connect)",
+      "Bash(curl -s \"http://facego:facego_secret@localhost:8123/?query=SELECT+version\\(\\)\")",
+      "Bash(curl -s \"http://facego:facego_secret@localhost:8123/?database=facego&query=SHOW+TABLES\")",
+      "Bash(uv run python -c \"import inspect, clickhouse_connect; print\\(inspect.signature\\(clickhouse_connect.get_client\\)\\)\")",
+      "Bash(uv run python -c \":*)",
+      "Bash(docker compose up -d --pull always clickhouse)",
+      "Bash(docker compose stop clickhouse)",
+      "Bash(docker compose rm -f clickhouse)",
+      "Bash(docker volume rm facego_clickhouse_data)",
+      "Bash(docker compose up -d clickhouse)",
+      "Bash(uv run python ch_migrate.py upgrade head)"
+    ],
+    "additionalDirectories": [
+      "d:\\research\\facego"
     ]
   }
 }

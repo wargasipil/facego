@@ -285,7 +285,7 @@ export default function RolePage() {
                             pr="40px"
                           />
                           <Box
-                            as="button" type="button"
+                            as="button"
                             position="absolute" right={3} top="50%" transform="translateY(-50%)"
                             color="gray.400" _hover={{ color: 'gray.600' }}
                             onClick={() => setShowAddPwd(v => !v)}
@@ -456,7 +456,7 @@ export default function RolePage() {
                         pr="40px"
                       />
                       <Box
-                        as="button" type="button"
+                        as="button"
                         position="absolute" right={3} top="50%" transform="translateY(-50%)"
                         color="gray.400" _hover={{ color: 'gray.600' }}
                         onClick={() => setShowEditPwd(v => !v)}

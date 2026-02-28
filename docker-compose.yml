@@ -19,11 +19,30 @@ services:
       timeout: 5s
       retries: 10
 
+  # ── ClickHouse ───────────────────────────────────────────────────────────────
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.12
+    container_name: facego_clickhouse
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_DB:       facego
+      CLICKHOUSE_USER:     facego
+      CLICKHOUSE_PASSWORD: facego_secret
+    ports:
+      - "8123:8123"   # HTTP interface
+      - "9000:9000"   # Native TCP interface
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD-SHELL", "clickhouse-client --user facego --password facego_secret --query 'SELECT 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   # ── Backend (Go / ConnectRPC) ────────────────────────────────────────────────
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: kampretcode/attendance_backend_go:latest
+    pull_policy: always
     container_name: facego_backend
     restart: unless-stopped
     ports:
@@ -38,9 +57,8 @@ services:
 
   # ── Frontend (React / Nginx) ─────────────────────────────────────────────────
   frontend:
-    build:
-      context: ./attendance_frontend
-      dockerfile: Dockerfile
+    image: kampretcode/attendance_frontend:latest
+    pull_policy: always
     container_name: facego_frontend
     restart: unless-stopped
     ports:
@@ -50,3 +68,4 @@ services:
 
 volumes:
   uploads:
+  clickhouse_data:

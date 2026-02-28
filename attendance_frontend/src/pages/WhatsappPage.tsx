@@ -142,7 +142,7 @@ export default function WhatsappPage() {
     try {
       await whatsappService.saveConfig({
         config: {
-          ...config,
+          enabled:               config?.enabled ?? true,
           lateMessageTemplate:   lateTmpl,
           absentMessageTemplate: absentTmpl,
         },

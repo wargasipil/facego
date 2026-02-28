@@ -24,14 +24,14 @@ import {
 } from 'react-icons/fi'
 import { NavLink, useLocation, Outlet, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { useAuth, type Role } from '../context/AuthContext'
+import { useAuth, type RoleStr } from '../context/AuthContext'
 
 interface NavItem {
   label: string
   path: string
   icon: React.ReactNode
   badge?: string
-  allowedRoles?: Role[]
+  allowedRoles?: RoleStr[]
 }
 
 interface NavGroup {
@@ -76,10 +76,11 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ]
 
-const ROLE_COLOR: Record<Role, string> = {
+const ROLE_COLOR: Record<RoleStr, string> = {
   admin:    'purple',
   teacher:  'blue',
   operator: 'green',
+  student:  'teal',
 }
 
 const SIDEBAR_W           = '220px'
@@ -340,3 +341,4 @@ function SidebarLink({ item, collapsed }: { item: NavItem; collapsed: boolean })
     </NavLink>
   )
 }
+

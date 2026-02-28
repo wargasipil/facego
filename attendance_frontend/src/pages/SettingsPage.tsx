@@ -107,7 +107,6 @@ function PasswordSection() {
             />
             <Box
               as="button"
-              type="button"
               position="absolute"
               right={3}
               top="50%"
@@ -133,7 +132,6 @@ function PasswordSection() {
             />
             <Box
               as="button"
-              type="button"
               position="absolute"
               right={3}
               top="50%"

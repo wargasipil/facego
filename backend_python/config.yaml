@@ -41,3 +41,12 @@ camera:
 storage:
   # Path to the registered faces database file.
   faces_db: registered_faces.pkl
+# ── ClickHouse ──────────────────────────────────────────────────
+clickhouse:
+  host:     localhost
+  port:     8123
+  database: facego
+  username: facego
+  password: facego_secret
+  # How often (seconds) to bulk-insert the session log into ClickHouse.
+  flush_interval: 30

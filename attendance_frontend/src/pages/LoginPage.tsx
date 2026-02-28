@@ -142,7 +142,6 @@ export default function LoginPage() {
               <GridItem key={opt.value}>
                 <Box
                   as="button"
-                  type="button"
                   w="full"
                   p={3}
                   borderRadius="lg"
@@ -232,7 +231,6 @@ export default function LoginPage() {
                   />
                   <Box
                     as="button"
-                    type="button"
                     position="absolute"
                     right={3}
                     top="50%"
