@@ -9,6 +9,8 @@ import (
 	"connectrpc.com/grpcreflect"
 	"github.com/rs/cors"
 	"github.com/urfave/cli/v3"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	attendancev1connect "github.com/wargasipil/facego/gen/attendance/v1/attendancev1connect"
 	authv1connect "github.com/wargasipil/facego/gen/auth/v1/authv1connect"
 	classesv1connect "github.com/wargasipil/facego/gen/classes/v1/classesv1connect"
@@ -95,8 +97,13 @@ func run(ctx context.Context, cmd *cli.Command) error {
 	mux.Handle(grpcreflect.NewHandlerV1(reflector))
 	mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 
+	// Background: convert unprocessed DetectionLog rows → Attendance records.
+	attendanceSvc.StartProcessor(ctx)
+
 	addr := cfg.Server.Addr()
 	slog.Info("starting FaceGo server", "addr", addr)
 
-	return http.ListenAndServe(addr, cors.AllowAll().Handler(mux))
+	// h2c enables gRPC (plaintext HTTP/2) alongside Connect and gRPC-Web
+	handler := h2c.NewHandler(cors.AllowAll().Handler(mux), &http2.Server{})
+	return http.ListenAndServe(addr, handler)
 }

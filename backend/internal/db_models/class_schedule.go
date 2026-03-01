@@ -1,5 +1,7 @@
 package db_models
 
+import "time"
+
 // ClassSchedule holds one weekly time slot for a class.
 type ClassSchedule struct {
 	ID        uint   `gorm:"primaryKey;column:id;autoIncrement"`
@@ -13,3 +15,9 @@ type ClassSchedule struct {
 }
 
 func (ClassSchedule) TableName() string { return "class_schedules" }
+
+type ClassScheduleList []*ClassSchedule
+
+func (c ClassScheduleList) GetSchedule(t time.Time) {
+
+}

@@ -18,6 +18,8 @@ service AttendanceService {
   rpc CreateAttendance(CreateAttendanceRequest)         returns (CreateAttendanceResponse);
   // Delete an attendance record.
   rpc DeleteAttendance(DeleteAttendanceRequest)         returns (DeleteAttendanceResponse);
+  // Push a raw face-detection event from the Python client; backend handles dedup + storage.
+  rpc AttendancePushLog(AttendancePushLogRequest)       returns (AttendancePushLogResponse);
 }
 
 enum AttendanceStatus {
@@ -38,6 +40,7 @@ message AttendanceRecord {
   string           student_id = 8;
   string           notes      = 9;
   google.protobuf.Timestamp last_seen = 10; // last seen time for this student today
+  int64            class_schedule_id = 11;  // 0 = not linked to a specific schedule slot
 }
 
 message AttendanceSummary {
@@ -84,6 +87,8 @@ message CreateAttendanceRequest {
   AttendanceStatus          status        = 2 [(buf.validate.field).enum.defined_only = true];
   string                    notes         = 3;
   google.protobuf.Timestamp check_in_time = 4; // optional, defaults to now
+  int64                     class_id          = 5 [(buf.validate.field).int64.gte = 0]; // 0 = unspecified
+  int64                     class_schedule_id = 6 [(buf.validate.field).int64.gte = 0]; // 0 = unspecified
 }
 message CreateAttendanceResponse { AttendanceRecord record = 1; }
 
@@ -92,3 +97,19 @@ message DeleteAttendanceRequest {
   int64 id = 1 [(buf.validate.field).int64.gt = 0];
 }
 message DeleteAttendanceResponse {}
+
+// AttendancePushLog ───────────────────────────────────────────────────────────
+// Raw face-detection event pushed from the Python client.
+// Backend stores to ClickHouse detection_log and (if user_id > 0) deduplicates
+// and upserts an Attendance row in PostgreSQL.
+message AttendancePushLogRequest {
+  string                    session_id   = 1; // UUID for this detection session
+  int64                     user_id      = 2; // 0 = face not linked to a backend user
+  string                    student_id   = 3; // face DB person_id key
+  string                    student_name = 4;
+  int64                     class_id          = 5;
+  string                    class_name        = 6;
+  google.protobuf.Timestamp seen_at           = 7; // exact Python detection timestamp
+  int64                     class_schedule_id = 8; // 0 = not linked to a specific schedule slot
+}
+message AttendancePushLogResponse {}

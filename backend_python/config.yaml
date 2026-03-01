@@ -41,6 +41,14 @@ camera:
 storage:
   # Path to the registered faces database file.
   faces_db: registered_faces.pkl
+# ── Backend (Go FaceGo API) ───────────────────────────────────
+backend:
+  # Base URL of the Go backend ConnectRPC server.
+  url:      http://localhost:8080
+  # Credentials used to obtain a JWT token for API calls.
+  username: admin
+  password: admin123
+
 # ── ClickHouse ──────────────────────────────────────────────────
 clickhouse:
   host:     localhost

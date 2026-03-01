@@ -12,7 +12,21 @@
       "Bash(echo:*)",
       "Bash(buf generate:*)",
       "Bash(d:/research/facego/docker-compose.yml:*)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(buf --version)",
+      "Bash(uv add grpcio protobuf)",
+      "Bash(uv run python -c \":*)",
+      "Bash(uv add \"protobuf>=7.34.0\")",
+      "Bash(pip install \"protobuf>=7.34.0\" --target .venv/Lib/site-packages)",
+      "Bash(.venv/Scripts/python.exe -c \":*)",
+      "Bash(.venv/Scripts/python.exe -m pip install \"protobuf>=7.34.0\")",
+      "Bash(uv pip install \"protobuf>=7.34.0\")",
+      "Bash(tasklist /fi \"imagename eq python.exe\")",
+      "Bash(tasklist /fi \"imagename eq pythonw.exe\")",
+      "Bash(tasklist)",
+      "Bash(python -c \"import ast, sys; [print\\(f.name, ''OK''\\) for f in [open\\(''config.py''\\), open\\(''ch_logger.py''\\), open\\(''face_engine.py''\\), open\\(''backend_client.py''\\)] if ast.parse\\(f.read\\(\\)\\)]\")",
+      "Bash(python -c \":*)",
+      "Bash(ls d:/research/facego/backend_python/*.py d:/research/facego/backend_python/screens/*.py)"
     ]
   }
 }

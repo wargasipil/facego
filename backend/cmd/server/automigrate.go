@@ -28,6 +28,7 @@ func automigrate(ctx context.Context, cmd *cli.Command) error {
 		&db_models.Teacher{},
 		&db_models.Account{},
 		&db_models.Attendance{},
+		&db_models.DetectionLog{},
 		&db_models.WhatsappMessage{},
 		&db_models.WhatsappConfig{},
 		&db_models.ClassSchedule{},
@@ -37,11 +38,20 @@ func automigrate(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	// Migrate existing class assignments from users.class_id → class_enrollments.
+	// Wrapped in a DO block so it is a no-op if the column was already dropped.
 	db.Exec(`
-		INSERT INTO class_enrollments (class_id, user_id)
-		SELECT class_id, id FROM users
-		WHERE class_id IS NOT NULL
-		ON CONFLICT DO NOTHING
+		DO $$
+		BEGIN
+			IF EXISTS (
+				SELECT 1 FROM information_schema.columns
+				WHERE table_name = 'users' AND column_name = 'class_id'
+			) THEN
+				INSERT INTO class_enrollments (class_id, user_id)
+				SELECT class_id, id FROM users
+				WHERE class_id IS NOT NULL
+				ON CONFLICT DO NOTHING;
+			END IF;
+		END $$;
 	`)
 
 	// Drop the now-redundant users.class_id column (idempotent).

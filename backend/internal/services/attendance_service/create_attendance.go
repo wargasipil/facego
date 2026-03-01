@@ -25,6 +25,12 @@ func (s *Service) CreateAttendance(
 		CheckInTime: checkIn,
 		Notes:       req.Msg.Notes,
 	}
+	if req.Msg.ClassId > 0 {
+		model.ClassID = &req.Msg.ClassId
+	}
+	if req.Msg.ClassScheduleId > 0 {
+		model.ClassScheduleID = &req.Msg.ClassScheduleId
+	}
 	if err := s.db.WithContext(ctx).Create(&model).Error; err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

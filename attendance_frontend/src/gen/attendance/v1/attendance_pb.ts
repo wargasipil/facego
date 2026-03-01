@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file attendance/v1/attendance.proto.
  */
 export const file_attendance_v1_attendance: GenFile = /*@__PURE__*/
-  fileDesc("Ch5hdHRlbmRhbmNlL3YxL2F0dGVuZGFuY2UucHJvdG8SDWF0dGVuZGFuY2UudjEilgIKEEF0dGVuZGFuY2VSZWNvcmQSCgoCaWQYASABKAMSDwoHdXNlcl9pZBgCIAEoAxIMCgRuYW1lGAMgASgJEi8KBnN0YXR1cxgEIAEoDjIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN0YXR1cxIRCglwaG90b191cmwYBSABKAkSLQoJdGltZXN0YW1wGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgpjbGFzc19uYW1lGAcgASgJEhIKCnN0dWRlbnRfaWQYCCABKAkSDQoFbm90ZXMYCSABKAkSLQoJbGFzdF9zZWVuGAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJRChFBdHRlbmRhbmNlU3VtbWFyeRINCgV0b3RhbBgBIAEoBRIPCgdwcmVzZW50GAIgASgFEg4KBmFic2VudBgDIAEoBRIMCgRsYXRlGAQgASgFIi0KF1JlY29yZEF0dGVuZGFuY2VSZXF1ZXN0EhIKCmZhY2VfaW1hZ2UYASABKAwiXAoYUmVjb3JkQXR0ZW5kYW5jZVJlc3BvbnNlEi8KBnJlY29yZBgBIAEoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZBIPCgdtYXRjaGVkGAIgASgIIlsKGUdldERhaWx5QXR0ZW5kYW5jZVJlcXVlc3QSKAoEZGF0ZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFAoMY2xhc3NfZmlsdGVyGAIgASgJIoEBChpHZXREYWlseUF0dGVuZGFuY2VSZXNwb25zZRIwCgdyZWNvcmRzGAEgAygLMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUmVjb3JkEjEKB3N1bW1hcnkYAiABKAsyIC5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VTdW1tYXJ5InoKFUxpc3RBdHRlbmRhbmNlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgDEigKBGZyb20YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKAnRvGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJKChZMaXN0QXR0ZW5kYW5jZVJlc3BvbnNlEjAKB3JlY29yZHMYASADKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQiGAoWV2F0Y2hBdHRlbmRhbmNlUmVxdWVzdCJKChdXYXRjaEF0dGVuZGFuY2VSZXNwb25zZRIvCgZyZWNvcmQYASABKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQisAEKF0NyZWF0ZUF0dGVuZGFuY2VSZXF1ZXN0EhgKB3VzZXJfaWQYASABKANCB7pIBCICIAASOQoGc3RhdHVzGAIgASgOMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlU3RhdHVzQgi6SAWCAQIQARINCgVub3RlcxgDIAEoCRIxCg1jaGVja19pbl90aW1lGAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJLChhDcmVhdGVBdHRlbmRhbmNlUmVzcG9uc2USLwoGcmVjb3JkGAEgASgLMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUmVjb3JkIi4KF0RlbGV0ZUF0dGVuZGFuY2VSZXF1ZXN0EhMKAmlkGAEgASgDQge6SAQiAiAAIhoKGERlbGV0ZUF0dGVuZGFuY2VSZXNwb25zZSqOAQoQQXR0ZW5kYW5jZVN0YXR1cxIhCh1BVFRFTkRBTkNFX1NUQVRVU19VTlNQRUNJRklFRBAAEh0KGUFUVEVOREFOQ0VfU1RBVFVTX1BSRVNFTlQQARIcChhBVFRFTkRBTkNFX1NUQVRVU19BQlNFTlQQAhIaChZBVFRFTkRBTkNFX1NUQVRVU19MQVRFEAMy8AQKEUF0dGVuZGFuY2VTZXJ2aWNlEmMKEFJlY29yZEF0dGVuZGFuY2USJi5hdHRlbmRhbmNlLnYxLlJlY29yZEF0dGVuZGFuY2VSZXF1ZXN0GicuYXR0ZW5kYW5jZS52MS5SZWNvcmRBdHRlbmRhbmNlUmVzcG9uc2USaQoSR2V0RGFpbHlBdHRlbmRhbmNlEiguYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VSZXF1ZXN0GikuYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VSZXNwb25zZRJdCg5MaXN0QXR0ZW5kYW5jZRIkLmF0dGVuZGFuY2UudjEuTGlzdEF0dGVuZGFuY2VSZXF1ZXN0GiUuYXR0ZW5kYW5jZS52MS5MaXN0QXR0ZW5kYW5jZVJlc3BvbnNlEmIKD1dhdGNoQXR0ZW5kYW5jZRIlLmF0dGVuZGFuY2UudjEuV2F0Y2hBdHRlbmRhbmNlUmVxdWVzdBomLmF0dGVuZGFuY2UudjEuV2F0Y2hBdHRlbmRhbmNlUmVzcG9uc2UwARJjChBDcmVhdGVBdHRlbmRhbmNlEiYuYXR0ZW5kYW5jZS52MS5DcmVhdGVBdHRlbmRhbmNlUmVxdWVzdBonLmF0dGVuZGFuY2UudjEuQ3JlYXRlQXR0ZW5kYW5jZVJlc3BvbnNlEmMKEERlbGV0ZUF0dGVuZGFuY2USJi5hdHRlbmRhbmNlLnYxLkRlbGV0ZUF0dGVuZGFuY2VSZXF1ZXN0GicuYXR0ZW5kYW5jZS52MS5EZWxldGVBdHRlbmRhbmNlUmVzcG9uc2VCtgEKEWNvbS5hdHRlbmRhbmNlLnYxQg9BdHRlbmRhbmNlUHJvdG9QAVo7Z2l0aHViLmNvbS93YXJnYXNpcGlsL2ZhY2Vnby9nZW4vYXR0ZW5kYW5jZS92MTthdHRlbmRhbmNldjGiAgNBWFiqAg1BdHRlbmRhbmNlLlYxygINQXR0ZW5kYW5jZVxWMeICGUF0dGVuZGFuY2VcVjFcR1BCTWV0YWRhdGHqAg5BdHRlbmRhbmNlOjpWMWIGcHJvdG8z", [file_google_protobuf_timestamp, file_buf_validate_validate]);
+  fileDesc("Ch5hdHRlbmRhbmNlL3YxL2F0dGVuZGFuY2UucHJvdG8SDWF0dGVuZGFuY2UudjEisQIKEEF0dGVuZGFuY2VSZWNvcmQSCgoCaWQYASABKAMSDwoHdXNlcl9pZBgCIAEoAxIMCgRuYW1lGAMgASgJEi8KBnN0YXR1cxgEIAEoDjIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN0YXR1cxIRCglwaG90b191cmwYBSABKAkSLQoJdGltZXN0YW1wGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgpjbGFzc19uYW1lGAcgASgJEhIKCnN0dWRlbnRfaWQYCCABKAkSDQoFbm90ZXMYCSABKAkSLQoJbGFzdF9zZWVuGAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIZChFjbGFzc19zY2hlZHVsZV9pZBgLIAEoAyJRChFBdHRlbmRhbmNlU3VtbWFyeRINCgV0b3RhbBgBIAEoBRIPCgdwcmVzZW50GAIgASgFEg4KBmFic2VudBgDIAEoBRIMCgRsYXRlGAQgASgFIi0KF1JlY29yZEF0dGVuZGFuY2VSZXF1ZXN0EhIKCmZhY2VfaW1hZ2UYASABKAwiXAoYUmVjb3JkQXR0ZW5kYW5jZVJlc3BvbnNlEi8KBnJlY29yZBgBIAEoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZBIPCgdtYXRjaGVkGAIgASgIIlsKGUdldERhaWx5QXR0ZW5kYW5jZVJlcXVlc3QSKAoEZGF0ZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASFAoMY2xhc3NfZmlsdGVyGAIgASgJIoEBChpHZXREYWlseUF0dGVuZGFuY2VSZXNwb25zZRIwCgdyZWNvcmRzGAEgAygLMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUmVjb3JkEjEKB3N1bW1hcnkYAiABKAsyIC5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VTdW1tYXJ5InoKFUxpc3RBdHRlbmRhbmNlUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgDEigKBGZyb20YAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiYKAnRvGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJKChZMaXN0QXR0ZW5kYW5jZVJlc3BvbnNlEjAKB3JlY29yZHMYASADKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQiGAoWV2F0Y2hBdHRlbmRhbmNlUmVxdWVzdCJKChdXYXRjaEF0dGVuZGFuY2VSZXNwb25zZRIvCgZyZWNvcmQYASABKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQi7wEKF0NyZWF0ZUF0dGVuZGFuY2VSZXF1ZXN0EhgKB3VzZXJfaWQYASABKANCB7pIBCICIAASOQoGc3RhdHVzGAIgASgOMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlU3RhdHVzQgi6SAWCAQIQARINCgVub3RlcxgDIAEoCRIxCg1jaGVja19pbl90aW1lGAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIZCghjbGFzc19pZBgFIAEoA0IHukgEIgIoABIiChFjbGFzc19zY2hlZHVsZV9pZBgGIAEoA0IHukgEIgIoACJLChhDcmVhdGVBdHRlbmRhbmNlUmVzcG9uc2USLwoGcmVjb3JkGAEgASgLMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUmVjb3JkIi4KF0RlbGV0ZUF0dGVuZGFuY2VSZXF1ZXN0EhMKAmlkGAEgASgDQge6SAQiAiAAIhoKGERlbGV0ZUF0dGVuZGFuY2VSZXNwb25zZSLXAQoYQXR0ZW5kYW5jZVB1c2hMb2dSZXF1ZXN0EhIKCnNlc3Npb25faWQYASABKAkSDwoHdXNlcl9pZBgCIAEoAxISCgpzdHVkZW50X2lkGAMgASgJEhQKDHN0dWRlbnRfbmFtZRgEIAEoCRIQCghjbGFzc19pZBgFIAEoAxISCgpjbGFzc19uYW1lGAYgASgJEisKB3NlZW5fYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhkKEWNsYXNzX3NjaGVkdWxlX2lkGAggASgDIhsKGUF0dGVuZGFuY2VQdXNoTG9nUmVzcG9uc2UqjgEKEEF0dGVuZGFuY2VTdGF0dXMSIQodQVRURU5EQU5DRV9TVEFUVVNfVU5TUEVDSUZJRUQQABIdChlBVFRFTkRBTkNFX1NUQVRVU19QUkVTRU5UEAESHAoYQVRURU5EQU5DRV9TVEFUVVNfQUJTRU5UEAISGgoWQVRURU5EQU5DRV9TVEFUVVNfTEFURRADMtgFChFBdHRlbmRhbmNlU2VydmljZRJjChBSZWNvcmRBdHRlbmRhbmNlEiYuYXR0ZW5kYW5jZS52MS5SZWNvcmRBdHRlbmRhbmNlUmVxdWVzdBonLmF0dGVuZGFuY2UudjEuUmVjb3JkQXR0ZW5kYW5jZVJlc3BvbnNlEmkKEkdldERhaWx5QXR0ZW5kYW5jZRIoLmF0dGVuZGFuY2UudjEuR2V0RGFpbHlBdHRlbmRhbmNlUmVxdWVzdBopLmF0dGVuZGFuY2UudjEuR2V0RGFpbHlBdHRlbmRhbmNlUmVzcG9uc2USXQoOTGlzdEF0dGVuZGFuY2USJC5hdHRlbmRhbmNlLnYxLkxpc3RBdHRlbmRhbmNlUmVxdWVzdBolLmF0dGVuZGFuY2UudjEuTGlzdEF0dGVuZGFuY2VSZXNwb25zZRJiCg9XYXRjaEF0dGVuZGFuY2USJS5hdHRlbmRhbmNlLnYxLldhdGNoQXR0ZW5kYW5jZVJlcXVlc3QaJi5hdHRlbmRhbmNlLnYxLldhdGNoQXR0ZW5kYW5jZVJlc3BvbnNlMAESYwoQQ3JlYXRlQXR0ZW5kYW5jZRImLmF0dGVuZGFuY2UudjEuQ3JlYXRlQXR0ZW5kYW5jZVJlcXVlc3QaJy5hdHRlbmRhbmNlLnYxLkNyZWF0ZUF0dGVuZGFuY2VSZXNwb25zZRJjChBEZWxldGVBdHRlbmRhbmNlEiYuYXR0ZW5kYW5jZS52MS5EZWxldGVBdHRlbmRhbmNlUmVxdWVzdBonLmF0dGVuZGFuY2UudjEuRGVsZXRlQXR0ZW5kYW5jZVJlc3BvbnNlEmYKEUF0dGVuZGFuY2VQdXNoTG9nEicuYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUHVzaExvZ1JlcXVlc3QaKC5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VQdXNoTG9nUmVzcG9uc2VCtgEKEWNvbS5hdHRlbmRhbmNlLnYxQg9BdHRlbmRhbmNlUHJvdG9QAVo7Z2l0aHViLmNvbS93YXJnYXNpcGlsL2ZhY2Vnby9nZW4vYXR0ZW5kYW5jZS92MTthdHRlbmRhbmNldjGiAgNBWFiqAg1BdHRlbmRhbmNlLlYxygINQXR0ZW5kYW5jZVxWMeICGUF0dGVuZGFuY2VcVjFcR1BCTWV0YWRhdGHqAg5BdHRlbmRhbmNlOjpWMWIGcHJvdG8z", [file_google_protobuf_timestamp, file_buf_validate_validate]);
 
 /**
  * @generated from message attendance.v1.AttendanceRecord
@@ -72,6 +72,13 @@ export type AttendanceRecord = Message<"attendance.v1.AttendanceRecord"> & {
    * @generated from field: google.protobuf.Timestamp last_seen = 10;
    */
   lastSeen?: Timestamp;
+
+  /**
+   * 0 = not linked to a specific schedule slot
+   *
+   * @generated from field: int64 class_schedule_id = 11;
+   */
+  classScheduleId: bigint;
 };
 
 /**
@@ -319,6 +326,20 @@ export type CreateAttendanceRequest = Message<"attendance.v1.CreateAttendanceReq
    * @generated from field: google.protobuf.Timestamp check_in_time = 4;
    */
   checkInTime?: Timestamp;
+
+  /**
+   * 0 = unspecified
+   *
+   * @generated from field: int64 class_id = 5;
+   */
+  classId: bigint;
+
+  /**
+   * 0 = unspecified
+   *
+   * @generated from field: int64 class_schedule_id = 6;
+   */
+  classScheduleId: bigint;
 };
 
 /**
@@ -376,6 +397,86 @@ export type DeleteAttendanceResponse = Message<"attendance.v1.DeleteAttendanceRe
  */
 export const DeleteAttendanceResponseSchema: GenMessage<DeleteAttendanceResponse> = /*@__PURE__*/
   messageDesc(file_attendance_v1_attendance, 13);
+
+/**
+ * AttendancePushLog ───────────────────────────────────────────────────────────
+ * Raw face-detection event pushed from the Python client.
+ * Backend stores to ClickHouse detection_log and (if user_id > 0) deduplicates
+ * and upserts an Attendance row in PostgreSQL.
+ *
+ * @generated from message attendance.v1.AttendancePushLogRequest
+ */
+export type AttendancePushLogRequest = Message<"attendance.v1.AttendancePushLogRequest"> & {
+  /**
+   * UUID for this detection session
+   *
+   * @generated from field: string session_id = 1;
+   */
+  sessionId: string;
+
+  /**
+   * 0 = face not linked to a backend user
+   *
+   * @generated from field: int64 user_id = 2;
+   */
+  userId: bigint;
+
+  /**
+   * face DB person_id key
+   *
+   * @generated from field: string student_id = 3;
+   */
+  studentId: string;
+
+  /**
+   * @generated from field: string student_name = 4;
+   */
+  studentName: string;
+
+  /**
+   * @generated from field: int64 class_id = 5;
+   */
+  classId: bigint;
+
+  /**
+   * @generated from field: string class_name = 6;
+   */
+  className: string;
+
+  /**
+   * exact Python detection timestamp
+   *
+   * @generated from field: google.protobuf.Timestamp seen_at = 7;
+   */
+  seenAt?: Timestamp;
+
+  /**
+   * 0 = not linked to a specific schedule slot
+   *
+   * @generated from field: int64 class_schedule_id = 8;
+   */
+  classScheduleId: bigint;
+};
+
+/**
+ * Describes the message attendance.v1.AttendancePushLogRequest.
+ * Use `create(AttendancePushLogRequestSchema)` to create a new message.
+ */
+export const AttendancePushLogRequestSchema: GenMessage<AttendancePushLogRequest> = /*@__PURE__*/
+  messageDesc(file_attendance_v1_attendance, 14);
+
+/**
+ * @generated from message attendance.v1.AttendancePushLogResponse
+ */
+export type AttendancePushLogResponse = Message<"attendance.v1.AttendancePushLogResponse"> & {
+};
+
+/**
+ * Describes the message attendance.v1.AttendancePushLogResponse.
+ * Use `create(AttendancePushLogResponseSchema)` to create a new message.
+ */
+export const AttendancePushLogResponseSchema: GenMessage<AttendancePushLogResponse> = /*@__PURE__*/
+  messageDesc(file_attendance_v1_attendance, 15);
 
 /**
  * @generated from enum attendance.v1.AttendanceStatus
@@ -471,6 +572,16 @@ export const AttendanceService: GenService<{
     methodKind: "unary";
     input: typeof DeleteAttendanceRequestSchema;
     output: typeof DeleteAttendanceResponseSchema;
+  },
+  /**
+   * Push a raw face-detection event from the Python client; backend handles dedup + storage.
+   *
+   * @generated from rpc attendance.v1.AttendanceService.AttendancePushLog
+   */
+  attendancePushLog: {
+    methodKind: "unary";
+    input: typeof AttendancePushLogRequestSchema;
+    output: typeof AttendancePushLogResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_attendance_v1_attendance, 0);
