@@ -2,52 +2,50 @@ syntax = "proto3";
 
 package attendance.v1;
 
-import "google/protobuf/timestamp.proto";
 import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
 
 service AttendanceService {
   // Submit a webcam frame; backend performs face recognition and records attendance.
-  rpc RecordAttendance(RecordAttendanceRequest)         returns (RecordAttendanceResponse);
+  rpc RecordAttendance(RecordAttendanceRequest) returns (RecordAttendanceResponse);
   // Fetch all records for a given date (+ optional class filter).
-  rpc GetDailyAttendance(GetDailyAttendanceRequest)     returns (GetDailyAttendanceResponse);
+  rpc GetDailyAttendance(GetDailyAttendanceRequest) returns (GetDailyAttendanceResponse);
   // Fetch historical records for a student or date range.
-  rpc ListAttendance(ListAttendanceRequest)             returns (ListAttendanceResponse);
+  rpc ListAttendance(ListAttendanceRequest) returns (ListAttendanceResponse);
   // Server-streaming: push a new AttendanceRecord every time a face is recognised.
-  rpc WatchAttendance(WatchAttendanceRequest)           returns (stream WatchAttendanceResponse);
+  rpc WatchAttendance(WatchAttendanceRequest) returns (stream WatchAttendanceResponse);
   // Manually create an attendance record (operator/teacher).
-  rpc CreateAttendance(CreateAttendanceRequest)         returns (CreateAttendanceResponse);
+  rpc CreateAttendance(CreateAttendanceRequest) returns (CreateAttendanceResponse);
   // Delete an attendance record.
-  rpc DeleteAttendance(DeleteAttendanceRequest)         returns (DeleteAttendanceResponse);
+  rpc DeleteAttendance(DeleteAttendanceRequest) returns (DeleteAttendanceResponse);
   // Push a raw face-detection event from the Python client; backend handles dedup + storage.
-  rpc AttendancePushLog(AttendancePushLogRequest)       returns (AttendancePushLogResponse);
+  rpc AttendancePushLog(AttendancePushLogRequest) returns (AttendancePushLogResponse);
 }
 
 enum AttendanceStatus {
   ATTENDANCE_STATUS_UNSPECIFIED = 0;
-  ATTENDANCE_STATUS_PRESENT     = 1;
-  ATTENDANCE_STATUS_ABSENT      = 2;
-  ATTENDANCE_STATUS_LATE        = 3;
+  ATTENDANCE_STATUS_PRESENT = 1;
+  ATTENDANCE_STATUS_ABSENT = 2;
 }
 
 message AttendanceRecord {
-  int64            id         = 1;
-  int64            user_id    = 2;
-  string           name       = 3;
-  AttendanceStatus status     = 4;
-  string           photo_url  = 5;
+  int64 id = 1;
+  int64 user_id = 2;
+  string name = 3;
+  AttendanceStatus status = 4;
+  string photo_url = 5;
   google.protobuf.Timestamp timestamp = 6; // first seen (check-in time)
-  string           class_name = 7;
-  string           student_id = 8;
-  string           notes      = 9;
+  string class_name = 7;
+  string student_id = 8;
+  string notes = 9;
   google.protobuf.Timestamp last_seen = 10; // last seen time for this student today
-  int64            class_schedule_id = 11;  // 0 = not linked to a specific schedule slot
+  int64 class_schedule_id = 11; // 0 = not linked to a specific schedule slot
 }
 
 message AttendanceSummary {
-  int32 total   = 1;
+  int32 total = 1;
   int32 present = 2;
-  int32 absent  = 3;
-  int32 late    = 4;
+  int32 absent = 3;
 }
 
 // RecordAttendance ────────────────────────────────────────────────────────────
@@ -55,42 +53,48 @@ message RecordAttendanceRequest {
   bytes face_image = 1; // raw JPEG/PNG frame from webcam
 }
 message RecordAttendanceResponse {
-  AttendanceRecord record  = 1;
-  bool             matched = 2; // false if no registered face was recognised
+  AttendanceRecord record = 1;
+  bool matched = 2; // false if no registered face was recognised
 }
 
 // GetDailyAttendance ──────────────────────────────────────────────────────────
 message GetDailyAttendanceRequest {
-  google.protobuf.Timestamp date         = 1; // only the date portion is used
-  string                    class_filter = 2; // optional
+  google.protobuf.Timestamp date = 1; // only the date portion is used
+  string class_filter = 2; // optional
 }
 message GetDailyAttendanceResponse {
   repeated AttendanceRecord records = 1;
-  AttendanceSummary         summary = 2;
+  AttendanceSummary summary = 2;
 }
 
 // ListAttendance ──────────────────────────────────────────────────────────────
 message ListAttendanceRequest {
-  int64                     user_id = 1; // optional; filter by student
-  google.protobuf.Timestamp from    = 2; // optional
-  google.protobuf.Timestamp to      = 3; // optional
+  int64 user_id = 1; // optional; filter by student
+  google.protobuf.Timestamp from = 2; // optional
+  google.protobuf.Timestamp to = 3; // optional
 }
-message ListAttendanceResponse { repeated AttendanceRecord records = 1; }
+message ListAttendanceResponse {
+  repeated AttendanceRecord records = 1;
+}
 
 // WatchAttendance ─────────────────────────────────────────────────────────────
-message WatchAttendanceRequest  {}
-message WatchAttendanceResponse { AttendanceRecord record = 1; }
+message WatchAttendanceRequest {}
+message WatchAttendanceResponse {
+  AttendanceRecord record = 1;
+}
 
 // CreateAttendance ────────────────────────────────────────────────────────────
 message CreateAttendanceRequest {
-  int64                     user_id       = 1 [(buf.validate.field).int64.gt = 0];
-  AttendanceStatus          status        = 2 [(buf.validate.field).enum.defined_only = true];
-  string                    notes         = 3;
+  int64 user_id = 1 [(buf.validate.field).int64.gt = 0];
+  AttendanceStatus status = 2 [(buf.validate.field).enum.defined_only = true];
+  string notes = 3;
   google.protobuf.Timestamp check_in_time = 4; // optional, defaults to now
-  int64                     class_id          = 5 [(buf.validate.field).int64.gte = 0]; // 0 = unspecified
-  int64                     class_schedule_id = 6 [(buf.validate.field).int64.gte = 0]; // 0 = unspecified
+  int64 class_id = 5 [(buf.validate.field).int64.gte = 0]; // 0 = unspecified
+  int64 class_schedule_id = 6 [(buf.validate.field).int64.gte = 0]; // 0 = unspecified
 }
-message CreateAttendanceResponse { AttendanceRecord record = 1; }
+message CreateAttendanceResponse {
+  AttendanceRecord record = 1;
+}
 
 // DeleteAttendance ────────────────────────────────────────────────────────────
 message DeleteAttendanceRequest {
@@ -103,13 +107,12 @@ message DeleteAttendanceResponse {}
 // Backend stores to ClickHouse detection_log and (if user_id > 0) deduplicates
 // and upserts an Attendance row in PostgreSQL.
 message AttendancePushLogRequest {
-  string                    session_id   = 1; // UUID for this detection session
-  int64                     user_id      = 2; // 0 = face not linked to a backend user
-  string                    student_id   = 3; // face DB person_id key
-  string                    student_name = 4;
-  int64                     class_id          = 5;
-  string                    class_name        = 6;
-  google.protobuf.Timestamp seen_at           = 7; // exact Python detection timestamp
-  int64                     class_schedule_id = 8; // 0 = not linked to a specific schedule slot
+  string session_id = 1 [(buf.validate.field).string.min_len = 1]; // UUID for this detection session
+  int64 user_id = 2 [(buf.validate.field).int64.gt = 0];
+  string student_id = 3 [(buf.validate.field).string.min_len = 1]; // face DB person_id key
+  string student_name = 4;
+  int64 class_id = 5 [(buf.validate.field).int64.gt = 0];
+  string class_name = 6;
+  google.protobuf.Timestamp seen_at = 7 [(buf.validate.field).required = true]; // exact Python detection timestamp
 }
 message AttendancePushLogResponse {}

@@ -10,31 +10,20 @@ import (
 
 // attendanceRow is used to scan join results (attendances + users).
 type attendanceRow struct {
-	ID              int64     `gorm:"column:id"`
-	UserID          int64     `gorm:"column:user_id"`
-	Name            string    `gorm:"column:name"`
-	StudentID       string    `gorm:"column:student_id"`
-	ClassName       string    `gorm:"column:class_name"`
-	PhotoURL        string    `gorm:"column:photo_url"`
-	Status          string    `gorm:"column:status"`
-	CheckInTime     time.Time `gorm:"column:check_in_time"`
-	LastSeen        time.Time `gorm:"column:last_seen"`
-	Notes           string    `gorm:"column:notes"`
-	ClassScheduleID int64     `gorm:"column:class_schedule_id"`
+	ID              int64                        `gorm:"column:id"`
+	UserID          int64                        `gorm:"column:user_id"`
+	Name            string                       `gorm:"column:name"`
+	StudentID       string                       `gorm:"column:student_id"`
+	ClassName       string                       `gorm:"column:class_name"`
+	PhotoURL        string                       `gorm:"column:photo_url"`
+	Status          attendancev1.AttendanceStatus `gorm:"column:status"`
+	CheckInTime     time.Time                    `gorm:"column:check_in_time"`
+	LastSeen        time.Time                    `gorm:"column:last_seen"`
+	Notes           string                       `gorm:"column:notes"`
+	ClassScheduleID int64                        `gorm:"column:class_schedule_id"`
 }
 
 func (r attendanceRow) toProto() *attendancev1.AttendanceRecord {
-	var status attendancev1.AttendanceStatus
-	switch r.Status {
-	case "present":
-		status = attendancev1.AttendanceStatus_ATTENDANCE_STATUS_PRESENT
-	case "absent":
-		status = attendancev1.AttendanceStatus_ATTENDANCE_STATUS_ABSENT
-	case "late":
-		status = attendancev1.AttendanceStatus_ATTENDANCE_STATUS_LATE
-	default:
-		status = attendancev1.AttendanceStatus_ATTENDANCE_STATUS_UNSPECIFIED
-	}
 	rec := &attendancev1.AttendanceRecord{
 		Id:              r.ID,
 		UserId:          r.UserID,
@@ -42,7 +31,7 @@ func (r attendanceRow) toProto() *attendancev1.AttendanceRecord {
 		StudentId:       r.StudentID,
 		ClassName:       r.ClassName,
 		PhotoUrl:        r.PhotoURL,
-		Status:          status,
+		Status:          r.Status,
 		Timestamp:       timestamppb.New(r.CheckInTime),
 		Notes:           r.Notes,
 		ClassScheduleId: r.ClassScheduleID,
@@ -51,19 +40,6 @@ func (r attendanceRow) toProto() *attendancev1.AttendanceRecord {
 		rec.LastSeen = timestamppb.New(r.LastSeen)
 	}
 	return rec
-}
-
-func statusStr(s attendancev1.AttendanceStatus) string {
-	switch s {
-	case attendancev1.AttendanceStatus_ATTENDANCE_STATUS_PRESENT:
-		return "present"
-	case attendancev1.AttendanceStatus_ATTENDANCE_STATUS_ABSENT:
-		return "absent"
-	case attendancev1.AttendanceStatus_ATTENDANCE_STATUS_LATE:
-		return "late"
-	default:
-		return "present"
-	}
 }
 
 // attendanceJoinSQL is used for single-record lookups (create, list).

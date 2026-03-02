@@ -5,7 +5,7 @@ ClickHouse — migration runner and detection logger.
 import importlib.util
 import uuid
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -129,7 +129,7 @@ class DetectionEntry:
 
 
 def now_ts() -> str:
-    return datetime.now().strftime(_DT_FMT)
+    return datetime.now(tz=timezone.utc).strftime(_DT_FMT)
 
 
 # ── ClickHouse logger ─────────────────────────────────────────────────────────

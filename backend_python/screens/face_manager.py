@@ -7,6 +7,7 @@ from textual.screen import ModalScreen
 from textual.widgets import Button, DataTable, Label
 from textual import on
 
+from backend_client import GRPC_AVAILABLE, get_backend_client
 from config import faces_db_path
 from face_engine import load_faces_db, make_record, save_faces_db
 from screens.add_samples import AddSamplesScreen
@@ -65,20 +66,20 @@ class FaceManagerScreen(ModalScreen):
     def _build_table(self):
         table = self.query_one("#face-table", DataTable)
         table.clear(columns=True)
-        table.add_columns("Person ID", "Name", "Samples", "Created At")
+        table.add_columns("User ID", "Name", "Samples", "Created At")
         db = load_faces_db()
         if not db:
             self.query_one("#status-bar", Label).update("No faces registered yet.")
             return
-        for pid in sorted(db.keys()):
-            rec = db[pid]
-            table.add_row(pid, rec.get("name", "—"),
+        for uid in sorted(db.keys()):
+            rec = db[uid]
+            table.add_row(uid, rec.get("name", "—"),
                           str(len(rec.get("embeddings", []))),
-                          rec.get("created_at", "—"), key=pid)
+                          rec.get("created_at", "—"), key=uid)
         self.query_one("#status-bar", Label).update(
             f"{len(db)} face(s) registered.  Select a row and choose an action.")
 
-    def _selected_pid(self) -> str | None:
+    def _selected_uid(self) -> str | None:
         table = self.query_one("#face-table", DataTable)
         if table.cursor_row < 0:
             return None
@@ -92,94 +93,120 @@ class FaceManagerScreen(ModalScreen):
     def on_create(self):
         def handle(result):
             if not isinstance(result, RegisterScreen.Registered): return
+            if not result.user_id:
+                self._status("⚠ No backend user_id — face not saved.")
+                return
+            uid_str = str(result.user_id)
             db = load_faces_db()
-            if result.pid in db:
-                db[result.pid]["embeddings"].extend(result.embeddings)
-                if result.user_id:
-                    db[result.pid]["user_id"] = result.user_id
+            if uid_str in db:
+                db[uid_str]["embeddings"].extend(result.embeddings)
             else:
-                db[result.pid] = make_record(result.pid, result.name,
-                                             result.embeddings, result.user_id)
-            save_faces_db(db)
+                db[uid_str] = make_record(uid_str, result.name,
+                                          result.embeddings, uid_str)
+            if GRPC_AVAILABLE:
+                try:
+                    get_backend_client().upsert_face_embeddings(
+                        int(result.user_id), db[uid_str]["embeddings"])
+                except Exception as e:
+                    self._status(f"⚠ Face save RPC failed: {e}")
+                    return
             self._build_table()
-            self._status(f"✅ Registered  [{result.pid}]  {result.name}.")
+            self._status(f"✅ Registered  [{uid_str}]  {result.name}.")
             self.post_message(self.DBChanged())
         self.app.push_screen(RegisterScreen(), handle)
 
     # ── Read ─────────────────────────────────────────────────────────
     @on(Button.Pressed, "#btn-read")
     def on_read(self):
-        pid = self._selected_pid()
-        if not pid:
+        uid = self._selected_uid()
+        if not uid:
             self._status("⚠ Select a row first."); return
-        self.app.push_screen(ViewFaceScreen(pid, load_faces_db()))
+        self.app.push_screen(ViewFaceScreen(uid, load_faces_db()))
 
     # ── Update: edit name / ID ───────────────────────────────────────
     @on(Button.Pressed, "#btn-edit")
     def on_edit(self):
-        pid = self._selected_pid()
-        if not pid:
+        uid = self._selected_uid()
+        if not uid:
             self._status("⚠ Select a row first."); return
         db = load_faces_db()
 
         def handle(result):
             if not isinstance(result, EditFaceScreen.Updated): return
             db2 = load_faces_db()
-            record = db2.pop(result.old_pid)
+            record = db2.pop(result.old_pid, None)
+            if record is None:
+                self._status("⚠ Record not found."); return
             record["person_id"] = result.new_pid
             record["name"]      = result.new_name
             db2[result.new_pid] = record
-            save_faces_db(db2)
             self._build_table()
             self._status(f"✅ Updated  [{result.old_pid}→{result.new_pid}]  {result.new_name}.")
             self.post_message(self.DBChanged())
-        self.app.push_screen(EditFaceScreen(pid, db), handle)
+        self.app.push_screen(EditFaceScreen(uid, db), handle)
 
     # ── Update: add more samples ─────────────────────────────────────
     @on(Button.Pressed, "#btn-add-samples")
     def on_add_samples(self):
-        pid = self._selected_pid()
-        if not pid:
+        uid = self._selected_uid()
+        if not uid:
             self._status("⚠ Select a row first."); return
         db   = load_faces_db()
-        name = db[pid].get("name", pid)
+        name = db[uid].get("name", uid)
 
         def handle(result):
             if not isinstance(result, AddSamplesScreen.SamplesAdded): return
             db2 = load_faces_db()
-            db2[result.pid]["embeddings"].extend(result.embeddings)
-            save_faces_db(db2)
+            db2[uid]["embeddings"].extend(result.embeddings)
+            if GRPC_AVAILABLE:
+                try:
+                    get_backend_client().upsert_face_embeddings(
+                        int(uid), db2[uid]["embeddings"])
+                except Exception as e:
+                    self._status(f"⚠ Face save RPC failed: {e}")
+                    return
             self._build_table()
-            self._status(f"✅ Added {len(result.embeddings)} samples to [{result.pid}].")
+            self._status(f"✅ Added {len(result.embeddings)} samples to [{uid}].")
             self.post_message(self.DBChanged())
-        self.app.push_screen(AddSamplesScreen(pid, name), handle)
+        self.app.push_screen(AddSamplesScreen(uid, name), handle)
 
     # ── Delete: single ───────────────────────────────────────────────
     @on(Button.Pressed, "#btn-delete")
     def on_delete(self):
-        pid = self._selected_pid()
-        if not pid:
+        uid = self._selected_uid()
+        if not uid:
             self._status("⚠ Select a row first."); return
-        name = load_faces_db()[pid].get("name", pid)
+        name = load_faces_db()[uid].get("name", uid)
 
         def handle(confirmed: bool):
             if not confirmed: return
-            db2 = load_faces_db()
-            db2.pop(pid, None)
-            save_faces_db(db2)
+            if GRPC_AVAILABLE:
+                try:
+                    get_backend_client().delete_face_embeddings(int(uid))
+                except Exception as e:
+                    self._status(f"⚠ Delete RPC failed: {e}")
+                    return
             self._build_table()
-            self._status(f"🗑 Deleted  [{pid}]  {name}.")
+            self._status(f"🗑 Deleted  [{uid}]  {name}.")
             self.post_message(self.DBChanged())
         self.app.push_screen(
-            ConfirmDeleteScreen(f"Delete record for:\n[{pid}]  {name}?"), handle)
+            ConfirmDeleteScreen(f"Delete record for:\n[{uid}]  {name}?"), handle)
 
     # ── Delete: all ──────────────────────────────────────────────────
     @on(Button.Pressed, "#btn-delete-all")
     def on_delete_all(self):
         def handle(confirmed: bool):
             if not confirmed: return
+            if GRPC_AVAILABLE:
+                try:
+                    get_backend_client().delete_all_face_embeddings()
+                except Exception as e:
+                    self._status(f"⚠ Delete-all RPC failed: {e}")
+                    return
+            # Remove local pickle if it still exists from before migration
             path = faces_db_path()
-            if os.path.exists(path): os.remove(path)
+            if os.path.exists(path):
+                os.remove(path)
             self._build_table()
             self._status("💣 All face records deleted.")
             self.post_message(self.DBChanged())

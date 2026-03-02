@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package faces.v1;
+
+import "buf/validate/validate.proto";
+
+service FaceEmbeddingService {
+  rpc UpsertFaceEmbeddings(UpsertFaceEmbeddingsRequest)       returns (UpsertFaceEmbeddingsResponse);
+  rpc ListFaceEmbeddings(ListFaceEmbeddingsRequest)           returns (ListFaceEmbeddingsResponse);
+  rpc DeleteFaceEmbeddings(DeleteFaceEmbeddingsRequest)       returns (DeleteFaceEmbeddingsResponse);
+  rpc DeleteAllFaceEmbeddings(DeleteAllFaceEmbeddingsRequest) returns (DeleteAllFaceEmbeddingsResponse);
+}
+
+// FaceRecord holds all face embeddings for a single registered student.
+// student_id is the backend user ID (FK → users.id) used as the unique key.
+message FaceRecord {
+  int64  student_id      = 1 [(buf.validate.field).int64.gt = 0];
+  bytes  embeddings      = 2 [(buf.validate.field).bytes.min_len = 1];
+  int32  embedding_count = 3 [(buf.validate.field).int32.gt = 0];
+}
+
+// UpsertFaceEmbeddings — create or replace the face record for a student.
+message UpsertFaceEmbeddingsRequest {
+  FaceRecord record = 1 [(buf.validate.field).required = true];
+}
+message UpsertFaceEmbeddingsResponse {}
+
+// ListFaceEmbeddings — return every registered face (used on Python startup).
+message ListFaceEmbeddingsRequest {}
+message ListFaceEmbeddingsResponse {
+  repeated FaceRecord records = 1;
+}
+
+// DeleteFaceEmbeddings — remove a single student's face record by student_id (backend user ID).
+message DeleteFaceEmbeddingsRequest {
+  int64 student_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+message DeleteFaceEmbeddingsResponse {}
+
+// DeleteAllFaceEmbeddings — remove every face record (dangerous).
+message DeleteAllFaceEmbeddingsRequest {}
+message DeleteAllFaceEmbeddingsResponse {}

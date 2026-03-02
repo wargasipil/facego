@@ -14,6 +14,7 @@ import (
 	attendancev1connect "github.com/wargasipil/facego/gen/attendance/v1/attendancev1connect"
 	authv1connect "github.com/wargasipil/facego/gen/auth/v1/authv1connect"
 	classesv1connect "github.com/wargasipil/facego/gen/classes/v1/classesv1connect"
+	facesv1connect "github.com/wargasipil/facego/gen/faces/v1/facesv1connect"
 	"github.com/wargasipil/facego/gen/grades/v1/gradesv1connect"
 	studyprogramsv1connect "github.com/wargasipil/facego/gen/study_programs/v1/study_programsv1connect"
 	teachersv1connect "github.com/wargasipil/facego/gen/teachers/v1/teachersv1connect"
@@ -23,6 +24,7 @@ import (
 	"github.com/wargasipil/facego/internal/services/attendance_service"
 	"github.com/wargasipil/facego/internal/services/auth_service"
 	"github.com/wargasipil/facego/internal/services/class_service"
+	face_embedding_service "github.com/wargasipil/facego/internal/services/face_embedding_service"
 	"github.com/wargasipil/facego/internal/services/grade_service"
 	"github.com/wargasipil/facego/internal/services/study_program_service"
 	"github.com/wargasipil/facego/internal/services/teacher_service"
@@ -49,6 +51,7 @@ func run(ctx context.Context, cmd *cli.Command) error {
 	userSvc          := user_service.New(db, cfg.Storage.UploadsDir)
 	teacherSvc       := teacher_service.New(db)
 	attendanceSvc    := attendance_service.New(db)
+	faceSvc          := face_embedding_service.New(db)
 	whatsappSvc, err := whatsapp_service.New(db)
 	if err != nil {
 		return err
@@ -75,6 +78,7 @@ func run(ctx context.Context, cmd *cli.Command) error {
 	mux.Handle(teachersv1connect.NewTeacherServiceHandler(teacherSvc, authOpts))
 	mux.Handle(attendancev1connect.NewAttendanceServiceHandler(attendanceSvc, authOpts))
 	mux.Handle(whatsappv1connect.NewWhatsappServiceHandler(whatsappSvc, authOpts))
+	mux.Handle(facesv1connect.NewFaceEmbeddingServiceHandler(faceSvc, authOpts))
 
 	_ = validateOpt // kept for reference if needed
 
@@ -93,6 +97,7 @@ func run(ctx context.Context, cmd *cli.Command) error {
 		teachersv1connect.TeacherServiceName,
 		attendancev1connect.AttendanceServiceName,
 		whatsappv1connect.WhatsappServiceName,
+		facesv1connect.FaceEmbeddingServiceName,
 	)
 	mux.Handle(grpcreflect.NewHandlerV1(reflector))
 	mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))

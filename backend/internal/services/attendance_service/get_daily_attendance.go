@@ -55,12 +55,10 @@ func (s *Service) GetDailyAttendance(
 			seen[r.UserID] = true
 			summary.Total++
 			switch r.Status {
-			case "present":
+			case attendancev1.AttendanceStatus_ATTENDANCE_STATUS_PRESENT:
 				summary.Present++
-			case "absent":
+			case attendancev1.AttendanceStatus_ATTENDANCE_STATUS_ABSENT:
 				summary.Absent++
-			case "late":
-				summary.Late++
 			}
 		}
 	}

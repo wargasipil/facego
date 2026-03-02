@@ -35,16 +35,47 @@ def make_record(person_id: str, name: str, embeddings: list, user_id: str = "") 
 
 
 def load_faces_db() -> dict:
-    path = faces_db_path()
-    if os.path.exists(path):
-        with open(path, "rb") as f:
-            return pickle.load(f)
-    return {}
+    """Load face DB from the backend via gRPC.
+
+    Returns a dict keyed by str(backend_user_id):
+        {
+            "person_id":  str,
+            "user_id":    str,
+            "name":       str,
+            "embeddings": list[np.ndarray],
+            "created_at": str,
+        }
+    Falls back to empty dict when gRPC is unavailable or the call fails.
+    """
+    from backend_client import GRPC_AVAILABLE, get_backend_client
+    if not GRPC_AVAILABLE:
+        return {}
+    try:
+        client    = get_backend_client()
+        records   = client.list_face_embeddings()   # [{student_id: int, embeddings: [...]}]
+        all_users = client.list_users(page_size=200)
+        user_map  = {u["id"]: u for u in all_users}  # str(id) → user dict
+        db = {}
+        for r in records:
+            uid_str = str(r["student_id"])
+            u       = user_map.get(uid_str, {})
+            db[uid_str] = {
+                "person_id":  uid_str,
+                "user_id":    uid_str,
+                "name":       u.get("name", "Unknown"),
+                "embeddings": r["embeddings"],
+                "created_at": "",
+            }
+        return db
+    except Exception as e:
+        import logging
+        logging.warning("load_faces_db: backend RPC failed: %s", e)
+        return {}
 
 
 def save_faces_db(db: dict):
-    with open(faces_db_path(), "wb") as f:
-        pickle.dump(db, f)
+    """No-op — face embeddings are now saved via per-operation RPC calls."""
+    pass
 
 
 # ── Validation ────────────────────────────────────────────────────────────────

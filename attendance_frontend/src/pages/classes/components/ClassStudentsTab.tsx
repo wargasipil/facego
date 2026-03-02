@@ -142,7 +142,7 @@ export function ClassStudentsTab({ classId, className, onTotalChange }: Props) {
     try {
       const [allR, enrolledR] = await Promise.all([
         userService.listUsers({ filter: {}, pageSize: 200 }),
-        classService.listClassStudents({ id: classId, pageSize: 1000 }),
+        classService.listClassStudents({ id: classId, pageSize: 20 }),
       ])
       setAllStudents(allR.users)
       setEnrolledIds(new Set(enrolledR.students.map(s => String(s.id))))

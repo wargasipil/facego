@@ -121,10 +121,10 @@ class FaceDetectionApp(App):
         self.face_db       = load_faces_db()
         self._stop_event   = threading.Event()
         self._log_lock     = threading.Lock()
-        self._session_log:        list[DetectionEntry] = []
-        self._session_id:         str                  = ""
-        self._session_class_id:   int                  = 0
-        self._session_class_name: str                  = ""
+        self._session_log:              list[DetectionEntry] = []
+        self._session_id:               str                  = ""
+        self._session_class_id:         int                  = 0
+        self._session_class_name:       str                  = ""
 
         self._refresh_summary()
         self._update_model_info()
@@ -173,17 +173,24 @@ class FaceDetectionApp(App):
 
         def handle(result):
             if not isinstance(result, RegisterScreen.Registered): return
+            if not result.user_id:
+                self._log("⚠ No backend user_id — face not saved.")
+                return
+            uid_str = str(result.user_id)
             db = load_faces_db()
-            if result.pid in db:
-                db[result.pid]["embeddings"].extend(result.embeddings)
-                if result.user_id:
-                    db[result.pid]["user_id"] = result.user_id
-                self._log(f"🔄 Updated [{result.pid}] {result.name} (+{len(result.embeddings)} samples)")
+            if uid_str in db:
+                db[uid_str]["embeddings"].extend(result.embeddings)
+                self._log(f"🔄 Updated [{uid_str}] {result.name} (+{len(result.embeddings)} samples)")
             else:
-                db[result.pid] = make_record(result.pid, result.name,
-                                             result.embeddings, result.user_id)
-                self._log(f"✅ Registered [{result.pid}] {result.name} ({len(result.embeddings)} samples)")
-            save_faces_db(db)
+                db[uid_str] = make_record(uid_str, result.name,
+                                          result.embeddings, uid_str)
+                self._log(f"✅ Registered [{uid_str}] {result.name} ({len(result.embeddings)} samples)")
+            if GRPC_AVAILABLE:
+                try:
+                    get_backend_client().upsert_face_embeddings(
+                        int(result.user_id), db[uid_str]["embeddings"])
+                except Exception as e:
+                    self._log(f"⚠ Face save RPC failed: {e}")
             self.face_db = db
             self._refresh_summary()
         self.push_screen(RegisterScreen(), handle)
@@ -210,8 +217,8 @@ class FaceDetectionApp(App):
         def handle(result: dict | None):
             if not result:
                 return  # user cancelled
-            self._session_class_id   = result["class_id"]
-            self._session_class_name = result["class_name"]
+            self._session_class_id           = result["class_id"]
+            self._session_class_name         = result["class_name"]
             with self._log_lock:
                 self._session_log = []
                 self._session_id  = str(uuid.uuid4())
@@ -299,7 +306,7 @@ class FaceDetectionApp(App):
             dt = datetime.strptime(seen_at, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
             ts.FromDatetime(dt)
         except Exception:
-            pass  # leave ts as zero; backend will use server time
+            pass
         try:
             get_backend_client().push_log(
                 session_id   = self._session_id,
@@ -390,13 +397,15 @@ class FaceDetectionApp(App):
                        else f"🟢 Recognized: {name}  [{pid}]")
                 self.call_from_thread(self._log, msg)
                 # Push every appearance event to the backend; backend handles dedup.
+                # Only push when face is linked to a backend user (user_id > 0).
                 if pid != "unknown" and GRPC_AVAILABLE:
                     uid_str = record.get("user_id", "")
-                    threading.Thread(
-                        target=self._push_log,
-                        args=(pid, name, int(uid_str) if uid_str else 0, ts),
-                        daemon=True,
-                    ).start()
+                    if uid_str:
+                        threading.Thread(
+                            target=self._push_log,
+                            args=(pid, name, int(uid_str), ts),
+                            daemon=True,
+                        ).start()
 
             for pid in disappeared:
                 name = self.face_db.get(pid, {}).get("name", pid)

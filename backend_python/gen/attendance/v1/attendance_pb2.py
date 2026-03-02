@@ -22,11 +22,11 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 from buf.validate import validate_pb2 as buf_dot_validate_dot_validate__pb2
+from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1e\x61ttendance/v1/attendance.proto\x12\rattendance.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1b\x62uf/validate/validate.proto\"\x98\x03\n\x10\x41ttendanceRecord\x12\x0e\n\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n\x07user_id\x18\x02 \x01(\x03R\x06userId\x12\x12\n\x04name\x18\x03 \x01(\tR\x04name\x12\x37\n\x06status\x18\x04 \x01(\x0e\x32\x1f.attendance.v1.AttendanceStatusR\x06status\x12\x1b\n\tphoto_url\x18\x05 \x01(\tR\x08photoUrl\x12\x38\n\ttimestamp\x18\x06 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\ttimestamp\x12\x1d\n\nclass_name\x18\x07 \x01(\tR\tclassName\x12\x1d\n\nstudent_id\x18\x08 \x01(\tR\tstudentId\x12\x14\n\x05notes\x18\t \x01(\tR\x05notes\x12\x37\n\tlast_seen\x18\n \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x08lastSeen\x12*\n\x11\x63lass_schedule_id\x18\x0b \x01(\x03R\x0f\x63lassScheduleId\"o\n\x11\x41ttendanceSummary\x12\x14\n\x05total\x18\x01 \x01(\x05R\x05total\x12\x18\n\x07present\x18\x02 \x01(\x05R\x07present\x12\x16\n\x06\x61\x62sent\x18\x03 \x01(\x05R\x06\x61\x62sent\x12\x12\n\x04late\x18\x04 \x01(\x05R\x04late\"8\n\x17RecordAttendanceRequest\x12\x1d\n\nface_image\x18\x01 \x01(\x0cR\tfaceImage\"m\n\x18RecordAttendanceResponse\x12\x37\n\x06record\x18\x01 \x01(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x06record\x12\x18\n\x07matched\x18\x02 \x01(\x08R\x07matched\"n\n\x19GetDailyAttendanceRequest\x12.\n\x04\x64\x61te\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x04\x64\x61te\x12!\n\x0c\x63lass_filter\x18\x02 \x01(\tR\x0b\x63lassFilter\"\x93\x01\n\x1aGetDailyAttendanceResponse\x12\x39\n\x07records\x18\x01 \x03(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x07records\x12:\n\x07summary\x18\x02 \x01(\x0b\x32 .attendance.v1.AttendanceSummaryR\x07summary\"\x8c\x01\n\x15ListAttendanceRequest\x12\x17\n\x07user_id\x18\x01 \x01(\x03R\x06userId\x12.\n\x04\x66rom\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x04\x66rom\x12*\n\x02to\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x02to\"S\n\x16ListAttendanceResponse\x12\x39\n\x07records\x18\x01 \x03(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x07records\"\x18\n\x16WatchAttendanceRequest\"R\n\x17WatchAttendanceResponse\x12\x37\n\x06record\x18\x01 \x01(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x06record\"\xad\x02\n\x17\x43reateAttendanceRequest\x12 \n\x07user_id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x06userId\x12\x41\n\x06status\x18\x02 \x01(\x0e\x32\x1f.attendance.v1.AttendanceStatusB\x08\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12\x14\n\x05notes\x18\x03 \x01(\tR\x05notes\x12>\n\rcheck_in_time\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x0b\x63heckInTime\x12\"\n\x08\x63lass_id\x18\x05 \x01(\x03\x42\x07\xbaH\x04\"\x02(\x00R\x07\x63lassId\x12\x33\n\x11\x63lass_schedule_id\x18\x06 \x01(\x03\x42\x07\xbaH\x04\"\x02(\x00R\x0f\x63lassScheduleId\"S\n\x18\x43reateAttendanceResponse\x12\x37\n\x06record\x18\x01 \x01(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x06record\"2\n\x17\x44\x65leteAttendanceRequest\x12\x17\n\x02id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x02id\"\x1a\n\x18\x44\x65leteAttendanceResponse\"\xaf\x02\n\x18\x41ttendancePushLogRequest\x12\x1d\n\nsession_id\x18\x01 \x01(\tR\tsessionId\x12\x17\n\x07user_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n\nstudent_id\x18\x03 \x01(\tR\tstudentId\x12!\n\x0cstudent_name\x18\x04 \x01(\tR\x0bstudentName\x12\x19\n\x08\x63lass_id\x18\x05 \x01(\x03R\x07\x63lassId\x12\x1d\n\nclass_name\x18\x06 \x01(\tR\tclassName\x12\x33\n\x07seen_at\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x06seenAt\x12*\n\x11\x63lass_schedule_id\x18\x08 \x01(\x03R\x0f\x63lassScheduleId\"\x1b\n\x19\x41ttendancePushLogResponse*\x8e\x01\n\x10\x41ttendanceStatus\x12!\n\x1d\x41TTENDANCE_STATUS_UNSPECIFIED\x10\x00\x12\x1d\n\x19\x41TTENDANCE_STATUS_PRESENT\x10\x01\x12\x1c\n\x18\x41TTENDANCE_STATUS_ABSENT\x10\x02\x12\x1a\n\x16\x41TTENDANCE_STATUS_LATE\x10\x03\x32\xd8\x05\n\x11\x41ttendanceService\x12\x63\n\x10RecordAttendance\x12&.attendance.v1.RecordAttendanceRequest\x1a\'.attendance.v1.RecordAttendanceResponse\x12i\n\x12GetDailyAttendance\x12(.attendance.v1.GetDailyAttendanceRequest\x1a).attendance.v1.GetDailyAttendanceResponse\x12]\n\x0eListAttendance\x12$.attendance.v1.ListAttendanceRequest\x1a%.attendance.v1.ListAttendanceResponse\x12\x62\n\x0fWatchAttendance\x12%.attendance.v1.WatchAttendanceRequest\x1a&.attendance.v1.WatchAttendanceResponse0\x01\x12\x63\n\x10\x43reateAttendance\x12&.attendance.v1.CreateAttendanceRequest\x1a\'.attendance.v1.CreateAttendanceResponse\x12\x63\n\x10\x44\x65leteAttendance\x12&.attendance.v1.DeleteAttendanceRequest\x1a\'.attendance.v1.DeleteAttendanceResponse\x12\x66\n\x11\x41ttendancePushLog\x12\'.attendance.v1.AttendancePushLogRequest\x1a(.attendance.v1.AttendancePushLogResponseB\xb6\x01\n\x11\x63om.attendance.v1B\x0f\x41ttendanceProtoP\x01Z;github.com/wargasipil/facego/gen/attendance/v1;attendancev1\xa2\x02\x03\x41XX\xaa\x02\rAttendance.V1\xca\x02\rAttendance\\V1\xe2\x02\x19\x41ttendance\\V1\\GPBMetadata\xea\x02\x0e\x41ttendance::V1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1e\x61ttendance/v1/attendance.proto\x12\rattendance.v1\x1a\x1b\x62uf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x98\x03\n\x10\x41ttendanceRecord\x12\x0e\n\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n\x07user_id\x18\x02 \x01(\x03R\x06userId\x12\x12\n\x04name\x18\x03 \x01(\tR\x04name\x12\x37\n\x06status\x18\x04 \x01(\x0e\x32\x1f.attendance.v1.AttendanceStatusR\x06status\x12\x1b\n\tphoto_url\x18\x05 \x01(\tR\x08photoUrl\x12\x38\n\ttimestamp\x18\x06 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\ttimestamp\x12\x1d\n\nclass_name\x18\x07 \x01(\tR\tclassName\x12\x1d\n\nstudent_id\x18\x08 \x01(\tR\tstudentId\x12\x14\n\x05notes\x18\t \x01(\tR\x05notes\x12\x37\n\tlast_seen\x18\n \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x08lastSeen\x12*\n\x11\x63lass_schedule_id\x18\x0b \x01(\x03R\x0f\x63lassScheduleId\"[\n\x11\x41ttendanceSummary\x12\x14\n\x05total\x18\x01 \x01(\x05R\x05total\x12\x18\n\x07present\x18\x02 \x01(\x05R\x07present\x12\x16\n\x06\x61\x62sent\x18\x03 \x01(\x05R\x06\x61\x62sent\"8\n\x17RecordAttendanceRequest\x12\x1d\n\nface_image\x18\x01 \x01(\x0cR\tfaceImage\"m\n\x18RecordAttendanceResponse\x12\x37\n\x06record\x18\x01 \x01(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x06record\x12\x18\n\x07matched\x18\x02 \x01(\x08R\x07matched\"n\n\x19GetDailyAttendanceRequest\x12.\n\x04\x64\x61te\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x04\x64\x61te\x12!\n\x0c\x63lass_filter\x18\x02 \x01(\tR\x0b\x63lassFilter\"\x93\x01\n\x1aGetDailyAttendanceResponse\x12\x39\n\x07records\x18\x01 \x03(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x07records\x12:\n\x07summary\x18\x02 \x01(\x0b\x32 .attendance.v1.AttendanceSummaryR\x07summary\"\x8c\x01\n\x15ListAttendanceRequest\x12\x17\n\x07user_id\x18\x01 \x01(\x03R\x06userId\x12.\n\x04\x66rom\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x04\x66rom\x12*\n\x02to\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x02to\"S\n\x16ListAttendanceResponse\x12\x39\n\x07records\x18\x01 \x03(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x07records\"\x18\n\x16WatchAttendanceRequest\"R\n\x17WatchAttendanceResponse\x12\x37\n\x06record\x18\x01 \x01(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x06record\"\xad\x02\n\x17\x43reateAttendanceRequest\x12 \n\x07user_id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x06userId\x12\x41\n\x06status\x18\x02 \x01(\x0e\x32\x1f.attendance.v1.AttendanceStatusB\x08\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12\x14\n\x05notes\x18\x03 \x01(\tR\x05notes\x12>\n\rcheck_in_time\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x0b\x63heckInTime\x12\"\n\x08\x63lass_id\x18\x05 \x01(\x03\x42\x07\xbaH\x04\"\x02(\x00R\x07\x63lassId\x12\x33\n\x11\x63lass_schedule_id\x18\x06 \x01(\x03\x42\x07\xbaH\x04\"\x02(\x00R\x0f\x63lassScheduleId\"S\n\x18\x43reateAttendanceResponse\x12\x37\n\x06record\x18\x01 \x01(\x0b\x32\x1f.attendance.v1.AttendanceRecordR\x06record\"2\n\x17\x44\x65leteAttendanceRequest\x12\x17\n\x02id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x02id\"\x1a\n\x18\x44\x65leteAttendanceResponse\"\xaf\x02\n\x18\x41ttendancePushLogRequest\x12&\n\nsession_id\x18\x01 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\tsessionId\x12 \n\x07user_id\x18\x02 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x06userId\x12&\n\nstudent_id\x18\x03 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\tstudentId\x12!\n\x0cstudent_name\x18\x04 \x01(\tR\x0bstudentName\x12\"\n\x08\x63lass_id\x18\x05 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x07\x63lassId\x12\x1d\n\nclass_name\x18\x06 \x01(\tR\tclassName\x12;\n\x07seen_at\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\x06seenAt\"\x1b\n\x19\x41ttendancePushLogResponse*r\n\x10\x41ttendanceStatus\x12!\n\x1d\x41TTENDANCE_STATUS_UNSPECIFIED\x10\x00\x12\x1d\n\x19\x41TTENDANCE_STATUS_PRESENT\x10\x01\x12\x1c\n\x18\x41TTENDANCE_STATUS_ABSENT\x10\x02\x32\xd8\x05\n\x11\x41ttendanceService\x12\x63\n\x10RecordAttendance\x12&.attendance.v1.RecordAttendanceRequest\x1a\'.attendance.v1.RecordAttendanceResponse\x12i\n\x12GetDailyAttendance\x12(.attendance.v1.GetDailyAttendanceRequest\x1a).attendance.v1.GetDailyAttendanceResponse\x12]\n\x0eListAttendance\x12$.attendance.v1.ListAttendanceRequest\x1a%.attendance.v1.ListAttendanceResponse\x12\x62\n\x0fWatchAttendance\x12%.attendance.v1.WatchAttendanceRequest\x1a&.attendance.v1.WatchAttendanceResponse0\x01\x12\x63\n\x10\x43reateAttendance\x12&.attendance.v1.CreateAttendanceRequest\x1a\'.attendance.v1.CreateAttendanceResponse\x12\x63\n\x10\x44\x65leteAttendance\x12&.attendance.v1.DeleteAttendanceRequest\x1a\'.attendance.v1.DeleteAttendanceResponse\x12\x66\n\x11\x41ttendancePushLog\x12\'.attendance.v1.AttendancePushLogRequest\x1a(.attendance.v1.AttendancePushLogResponseB\xb6\x01\n\x11\x63om.attendance.v1B\x0f\x41ttendanceProtoP\x01Z;github.com/wargasipil/facego/gen/attendance/v1;attendancev1\xa2\x02\x03\x41XX\xaa\x02\rAttendance.V1\xca\x02\rAttendance\\V1\xe2\x02\x19\x41ttendance\\V1\\GPBMetadata\xea\x02\x0e\x41ttendance::V1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -44,40 +44,50 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_CREATEATTENDANCEREQUEST'].fields_by_name['class_schedule_id']._serialized_options = b'\272H\004\"\002(\000'
   _globals['_DELETEATTENDANCEREQUEST'].fields_by_name['id']._loaded_options = None
   _globals['_DELETEATTENDANCEREQUEST'].fields_by_name['id']._serialized_options = b'\272H\004\"\002 \000'
-  _globals['_ATTENDANCESTATUS']._serialized_start=2209
-  _globals['_ATTENDANCESTATUS']._serialized_end=2351
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['session_id']._loaded_options = None
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['session_id']._serialized_options = b'\272H\004r\002\020\001'
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['user_id']._loaded_options = None
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['user_id']._serialized_options = b'\272H\004\"\002 \000'
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['student_id']._loaded_options = None
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['student_id']._serialized_options = b'\272H\004r\002\020\001'
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['class_id']._loaded_options = None
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['class_id']._serialized_options = b'\272H\004\"\002 \000'
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['seen_at']._loaded_options = None
+  _globals['_ATTENDANCEPUSHLOGREQUEST'].fields_by_name['seen_at']._serialized_options = b'\272H\003\310\001\001'
+  _globals['_ATTENDANCESTATUS']._serialized_start=2188
+  _globals['_ATTENDANCESTATUS']._serialized_end=2302
   _globals['_ATTENDANCERECORD']._serialized_start=112
   _globals['_ATTENDANCERECORD']._serialized_end=520
   _globals['_ATTENDANCESUMMARY']._serialized_start=522
-  _globals['_ATTENDANCESUMMARY']._serialized_end=633
-  _globals['_RECORDATTENDANCEREQUEST']._serialized_start=635
-  _globals['_RECORDATTENDANCEREQUEST']._serialized_end=691
-  _globals['_RECORDATTENDANCERESPONSE']._serialized_start=693
-  _globals['_RECORDATTENDANCERESPONSE']._serialized_end=802
-  _globals['_GETDAILYATTENDANCEREQUEST']._serialized_start=804
-  _globals['_GETDAILYATTENDANCEREQUEST']._serialized_end=914
-  _globals['_GETDAILYATTENDANCERESPONSE']._serialized_start=917
-  _globals['_GETDAILYATTENDANCERESPONSE']._serialized_end=1064
-  _globals['_LISTATTENDANCEREQUEST']._serialized_start=1067
-  _globals['_LISTATTENDANCEREQUEST']._serialized_end=1207
-  _globals['_LISTATTENDANCERESPONSE']._serialized_start=1209
-  _globals['_LISTATTENDANCERESPONSE']._serialized_end=1292
-  _globals['_WATCHATTENDANCEREQUEST']._serialized_start=1294
-  _globals['_WATCHATTENDANCEREQUEST']._serialized_end=1318
-  _globals['_WATCHATTENDANCERESPONSE']._serialized_start=1320
-  _globals['_WATCHATTENDANCERESPONSE']._serialized_end=1402
-  _globals['_CREATEATTENDANCEREQUEST']._serialized_start=1405
-  _globals['_CREATEATTENDANCEREQUEST']._serialized_end=1706
-  _globals['_CREATEATTENDANCERESPONSE']._serialized_start=1708
-  _globals['_CREATEATTENDANCERESPONSE']._serialized_end=1791
-  _globals['_DELETEATTENDANCEREQUEST']._serialized_start=1793
-  _globals['_DELETEATTENDANCEREQUEST']._serialized_end=1843
-  _globals['_DELETEATTENDANCERESPONSE']._serialized_start=1845
-  _globals['_DELETEATTENDANCERESPONSE']._serialized_end=1871
-  _globals['_ATTENDANCEPUSHLOGREQUEST']._serialized_start=1874
-  _globals['_ATTENDANCEPUSHLOGREQUEST']._serialized_end=2177
-  _globals['_ATTENDANCEPUSHLOGRESPONSE']._serialized_start=2179
-  _globals['_ATTENDANCEPUSHLOGRESPONSE']._serialized_end=2206
-  _globals['_ATTENDANCESERVICE']._serialized_start=2354
-  _globals['_ATTENDANCESERVICE']._serialized_end=3082
+  _globals['_ATTENDANCESUMMARY']._serialized_end=613
+  _globals['_RECORDATTENDANCEREQUEST']._serialized_start=615
+  _globals['_RECORDATTENDANCEREQUEST']._serialized_end=671
+  _globals['_RECORDATTENDANCERESPONSE']._serialized_start=673
+  _globals['_RECORDATTENDANCERESPONSE']._serialized_end=782
+  _globals['_GETDAILYATTENDANCEREQUEST']._serialized_start=784
+  _globals['_GETDAILYATTENDANCEREQUEST']._serialized_end=894
+  _globals['_GETDAILYATTENDANCERESPONSE']._serialized_start=897
+  _globals['_GETDAILYATTENDANCERESPONSE']._serialized_end=1044
+  _globals['_LISTATTENDANCEREQUEST']._serialized_start=1047
+  _globals['_LISTATTENDANCEREQUEST']._serialized_end=1187
+  _globals['_LISTATTENDANCERESPONSE']._serialized_start=1189
+  _globals['_LISTATTENDANCERESPONSE']._serialized_end=1272
+  _globals['_WATCHATTENDANCEREQUEST']._serialized_start=1274
+  _globals['_WATCHATTENDANCEREQUEST']._serialized_end=1298
+  _globals['_WATCHATTENDANCERESPONSE']._serialized_start=1300
+  _globals['_WATCHATTENDANCERESPONSE']._serialized_end=1382
+  _globals['_CREATEATTENDANCEREQUEST']._serialized_start=1385
+  _globals['_CREATEATTENDANCEREQUEST']._serialized_end=1686
+  _globals['_CREATEATTENDANCERESPONSE']._serialized_start=1688
+  _globals['_CREATEATTENDANCERESPONSE']._serialized_end=1771
+  _globals['_DELETEATTENDANCEREQUEST']._serialized_start=1773
+  _globals['_DELETEATTENDANCEREQUEST']._serialized_end=1823
+  _globals['_DELETEATTENDANCERESPONSE']._serialized_start=1825
+  _globals['_DELETEATTENDANCERESPONSE']._serialized_end=1851
+  _globals['_ATTENDANCEPUSHLOGREQUEST']._serialized_start=1854
+  _globals['_ATTENDANCEPUSHLOGREQUEST']._serialized_end=2157
+  _globals['_ATTENDANCEPUSHLOGRESPONSE']._serialized_start=2159
+  _globals['_ATTENDANCEPUSHLOGRESPONSE']._serialized_end=2186
+  _globals['_ATTENDANCESERVICE']._serialized_start=2305
+  _globals['_ATTENDANCESERVICE']._serialized_end=3033
 # @@protoc_insertion_point(module_scope)

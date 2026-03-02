@@ -1,7 +1,7 @@
 import datetime
 
-from google.protobuf import timestamp_pb2 as _timestamp_pb2
 from buf.validate import validate_pb2 as _validate_pb2
+from google.protobuf import timestamp_pb2 as _timestamp_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
@@ -16,11 +16,9 @@ class AttendanceStatus(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     ATTENDANCE_STATUS_UNSPECIFIED: _ClassVar[AttendanceStatus]
     ATTENDANCE_STATUS_PRESENT: _ClassVar[AttendanceStatus]
     ATTENDANCE_STATUS_ABSENT: _ClassVar[AttendanceStatus]
-    ATTENDANCE_STATUS_LATE: _ClassVar[AttendanceStatus]
 ATTENDANCE_STATUS_UNSPECIFIED: AttendanceStatus
 ATTENDANCE_STATUS_PRESENT: AttendanceStatus
 ATTENDANCE_STATUS_ABSENT: AttendanceStatus
-ATTENDANCE_STATUS_LATE: AttendanceStatus
 
 class AttendanceRecord(_message.Message):
     __slots__ = ("id", "user_id", "name", "status", "photo_url", "timestamp", "class_name", "student_id", "notes", "last_seen", "class_schedule_id")
@@ -49,16 +47,14 @@ class AttendanceRecord(_message.Message):
     def __init__(self, id: _Optional[int] = ..., user_id: _Optional[int] = ..., name: _Optional[str] = ..., status: _Optional[_Union[AttendanceStatus, str]] = ..., photo_url: _Optional[str] = ..., timestamp: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., class_name: _Optional[str] = ..., student_id: _Optional[str] = ..., notes: _Optional[str] = ..., last_seen: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., class_schedule_id: _Optional[int] = ...) -> None: ...
 
 class AttendanceSummary(_message.Message):
-    __slots__ = ("total", "present", "absent", "late")
+    __slots__ = ("total", "present", "absent")
     TOTAL_FIELD_NUMBER: _ClassVar[int]
     PRESENT_FIELD_NUMBER: _ClassVar[int]
     ABSENT_FIELD_NUMBER: _ClassVar[int]
-    LATE_FIELD_NUMBER: _ClassVar[int]
     total: int
     present: int
     absent: int
-    late: int
-    def __init__(self, total: _Optional[int] = ..., present: _Optional[int] = ..., absent: _Optional[int] = ..., late: _Optional[int] = ...) -> None: ...
+    def __init__(self, total: _Optional[int] = ..., present: _Optional[int] = ..., absent: _Optional[int] = ...) -> None: ...
 
 class RecordAttendanceRequest(_message.Message):
     __slots__ = ("face_image",)
@@ -148,7 +144,7 @@ class DeleteAttendanceResponse(_message.Message):
     def __init__(self) -> None: ...
 
 class AttendancePushLogRequest(_message.Message):
-    __slots__ = ("session_id", "user_id", "student_id", "student_name", "class_id", "class_name", "seen_at", "class_schedule_id")
+    __slots__ = ("session_id", "user_id", "student_id", "student_name", "class_id", "class_name", "seen_at")
     SESSION_ID_FIELD_NUMBER: _ClassVar[int]
     USER_ID_FIELD_NUMBER: _ClassVar[int]
     STUDENT_ID_FIELD_NUMBER: _ClassVar[int]
@@ -156,7 +152,6 @@ class AttendancePushLogRequest(_message.Message):
     CLASS_ID_FIELD_NUMBER: _ClassVar[int]
     CLASS_NAME_FIELD_NUMBER: _ClassVar[int]
     SEEN_AT_FIELD_NUMBER: _ClassVar[int]
-    CLASS_SCHEDULE_ID_FIELD_NUMBER: _ClassVar[int]
     session_id: str
     user_id: int
     student_id: str
@@ -164,8 +159,7 @@ class AttendancePushLogRequest(_message.Message):
     class_id: int
     class_name: str
     seen_at: _timestamp_pb2.Timestamp
-    class_schedule_id: int
-    def __init__(self, session_id: _Optional[str] = ..., user_id: _Optional[int] = ..., student_id: _Optional[str] = ..., student_name: _Optional[str] = ..., class_id: _Optional[int] = ..., class_name: _Optional[str] = ..., seen_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., class_schedule_id: _Optional[int] = ...) -> None: ...
+    def __init__(self, session_id: _Optional[str] = ..., user_id: _Optional[int] = ..., student_id: _Optional[str] = ..., student_name: _Optional[str] = ..., class_id: _Optional[int] = ..., class_name: _Optional[str] = ..., seen_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ...) -> None: ...
 
 class AttendancePushLogResponse(_message.Message):
     __slots__ = ()

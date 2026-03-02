@@ -29,7 +29,6 @@ const (
 	AttendanceStatus_ATTENDANCE_STATUS_UNSPECIFIED AttendanceStatus = 0
 	AttendanceStatus_ATTENDANCE_STATUS_PRESENT     AttendanceStatus = 1
 	AttendanceStatus_ATTENDANCE_STATUS_ABSENT      AttendanceStatus = 2
-	AttendanceStatus_ATTENDANCE_STATUS_LATE        AttendanceStatus = 3
 )
 
 // Enum value maps for AttendanceStatus.
@@ -38,13 +37,11 @@ var (
 		0: "ATTENDANCE_STATUS_UNSPECIFIED",
 		1: "ATTENDANCE_STATUS_PRESENT",
 		2: "ATTENDANCE_STATUS_ABSENT",
-		3: "ATTENDANCE_STATUS_LATE",
 	}
 	AttendanceStatus_value = map[string]int32{
 		"ATTENDANCE_STATUS_UNSPECIFIED": 0,
 		"ATTENDANCE_STATUS_PRESENT":     1,
 		"ATTENDANCE_STATUS_ABSENT":      2,
-		"ATTENDANCE_STATUS_LATE":        3,
 	}
 )
 
@@ -204,7 +201,6 @@ type AttendanceSummary struct {
 	Total         int32                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
 	Present       int32                  `protobuf:"varint,2,opt,name=present,proto3" json:"present,omitempty"`
 	Absent        int32                  `protobuf:"varint,3,opt,name=absent,proto3" json:"absent,omitempty"`
-	Late          int32                  `protobuf:"varint,4,opt,name=late,proto3" json:"late,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -256,13 +252,6 @@ func (x *AttendanceSummary) GetPresent() int32 {
 func (x *AttendanceSummary) GetAbsent() int32 {
 	if x != nil {
 		return x.Absent
-	}
-	return 0
-}
-
-func (x *AttendanceSummary) GetLate() int32 {
-	if x != nil {
-		return x.Late
 	}
 	return 0
 }
@@ -870,17 +859,16 @@ func (*DeleteAttendanceResponse) Descriptor() ([]byte, []int) {
 // Backend stores to ClickHouse detection_log and (if user_id > 0) deduplicates
 // and upserts an Attendance row in PostgreSQL.
 type AttendancePushLogRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	SessionId       string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"` // UUID for this detection session
-	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`         // 0 = face not linked to a backend user
-	StudentId       string                 `protobuf:"bytes,3,opt,name=student_id,json=studentId,proto3" json:"student_id,omitempty"` // face DB person_id key
-	StudentName     string                 `protobuf:"bytes,4,opt,name=student_name,json=studentName,proto3" json:"student_name,omitempty"`
-	ClassId         int64                  `protobuf:"varint,5,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
-	ClassName       string                 `protobuf:"bytes,6,opt,name=class_name,json=className,proto3" json:"class_name,omitempty"`
-	SeenAt          *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=seen_at,json=seenAt,proto3" json:"seen_at,omitempty"`                               // exact Python detection timestamp
-	ClassScheduleId int64                  `protobuf:"varint,8,opt,name=class_schedule_id,json=classScheduleId,proto3" json:"class_schedule_id,omitempty"` // 0 = not linked to a specific schedule slot
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"` // UUID for this detection session
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	StudentId     string                 `protobuf:"bytes,3,opt,name=student_id,json=studentId,proto3" json:"student_id,omitempty"` // face DB person_id key
+	StudentName   string                 `protobuf:"bytes,4,opt,name=student_name,json=studentName,proto3" json:"student_name,omitempty"`
+	ClassId       int64                  `protobuf:"varint,5,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	ClassName     string                 `protobuf:"bytes,6,opt,name=class_name,json=className,proto3" json:"class_name,omitempty"`
+	SeenAt        *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=seen_at,json=seenAt,proto3" json:"seen_at,omitempty"` // exact Python detection timestamp
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AttendancePushLogRequest) Reset() {
@@ -962,13 +950,6 @@ func (x *AttendancePushLogRequest) GetSeenAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *AttendancePushLogRequest) GetClassScheduleId() int64 {
-	if x != nil {
-		return x.ClassScheduleId
-	}
-	return 0
-}
-
 type AttendancePushLogResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1009,7 +990,7 @@ var File_attendance_v1_attendance_proto protoreflect.FileDescriptor
 
 const file_attendance_v1_attendance_proto_rawDesc = "" +
 	"\n" +
-	"\x1eattendance/v1/attendance.proto\x12\rattendance.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bbuf/validate/validate.proto\"\x98\x03\n" +
+	"\x1eattendance/v1/attendance.proto\x12\rattendance.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x98\x03\n" +
 	"\x10AttendanceRecord\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x12\n" +
@@ -1024,12 +1005,11 @@ const file_attendance_v1_attendance_proto_rawDesc = "" +
 	"\x05notes\x18\t \x01(\tR\x05notes\x127\n" +
 	"\tlast_seen\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\blastSeen\x12*\n" +
-	"\x11class_schedule_id\x18\v \x01(\x03R\x0fclassScheduleId\"o\n" +
+	"\x11class_schedule_id\x18\v \x01(\x03R\x0fclassScheduleId\"[\n" +
 	"\x11AttendanceSummary\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x05R\x05total\x12\x18\n" +
 	"\apresent\x18\x02 \x01(\x05R\apresent\x12\x16\n" +
-	"\x06absent\x18\x03 \x01(\x05R\x06absent\x12\x12\n" +
-	"\x04late\x18\x04 \x01(\x05R\x04late\"8\n" +
+	"\x06absent\x18\x03 \x01(\x05R\x06absent\"8\n" +
 	"\x17RecordAttendanceRequest\x12\x1d\n" +
 	"\n" +
 	"face_image\x18\x01 \x01(\fR\tfaceImage\"m\n" +
@@ -1063,24 +1043,22 @@ const file_attendance_v1_attendance_proto_rawDesc = "" +
 	"\x17DeleteAttendanceRequest\x12\x17\n" +
 	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x1a\n" +
 	"\x18DeleteAttendanceResponse\"\xaf\x02\n" +
-	"\x18AttendancePushLogRequest\x12\x1d\n" +
+	"\x18AttendancePushLogRequest\x12&\n" +
 	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
+	"session_id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\tsessionId\x12 \n" +
+	"\auser_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x06userId\x12&\n" +
 	"\n" +
-	"student_id\x18\x03 \x01(\tR\tstudentId\x12!\n" +
-	"\fstudent_name\x18\x04 \x01(\tR\vstudentName\x12\x19\n" +
-	"\bclass_id\x18\x05 \x01(\x03R\aclassId\x12\x1d\n" +
+	"student_id\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\tstudentId\x12!\n" +
+	"\fstudent_name\x18\x04 \x01(\tR\vstudentName\x12\"\n" +
+	"\bclass_id\x18\x05 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aclassId\x12\x1d\n" +
 	"\n" +
-	"class_name\x18\x06 \x01(\tR\tclassName\x123\n" +
-	"\aseen_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x06seenAt\x12*\n" +
-	"\x11class_schedule_id\x18\b \x01(\x03R\x0fclassScheduleId\"\x1b\n" +
-	"\x19AttendancePushLogResponse*\x8e\x01\n" +
+	"class_name\x18\x06 \x01(\tR\tclassName\x12;\n" +
+	"\aseen_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\x06seenAt\"\x1b\n" +
+	"\x19AttendancePushLogResponse*r\n" +
 	"\x10AttendanceStatus\x12!\n" +
 	"\x1dATTENDANCE_STATUS_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19ATTENDANCE_STATUS_PRESENT\x10\x01\x12\x1c\n" +
-	"\x18ATTENDANCE_STATUS_ABSENT\x10\x02\x12\x1a\n" +
-	"\x16ATTENDANCE_STATUS_LATE\x10\x032\xd8\x05\n" +
+	"\x18ATTENDANCE_STATUS_ABSENT\x10\x022\xd8\x05\n" +
 	"\x11AttendanceService\x12c\n" +
 	"\x10RecordAttendance\x12&.attendance.v1.RecordAttendanceRequest\x1a'.attendance.v1.RecordAttendanceResponse\x12i\n" +
 	"\x12GetDailyAttendance\x12(.attendance.v1.GetDailyAttendanceRequest\x1a).attendance.v1.GetDailyAttendanceResponse\x12]\n" +

@@ -19,8 +19,8 @@ func (s *Service) UpdateSchedule(
 		Where("id = ?", msg.Id).
 		Updates(map[string]any{
 			"day_of_week": msg.DayOfWeek,
-			"start_time":  msg.StartTime,
-			"end_time":    msg.EndTime,
+			"start_time":  parseScheduleTime(msg.StartTime),
+			"end_time":    parseScheduleTime(msg.EndTime),
 			"subject":     msg.Subject,
 			"room":        msg.Room,
 		})

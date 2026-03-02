@@ -38,14 +38,7 @@ func (s *Service) SendAttendanceAlerts(
 	dayEnd = dayStart.Add(24 * time.Hour)
 
 	// Collect which statuses to notify
-	var statuses []string
-	if req.Msg.NotifyLate {
-		statuses = append(statuses, "late")
-	}
-	if req.Msg.NotifyAbsent {
-		statuses = append(statuses, "absent")
-	}
-	if len(statuses) == 0 {
+	if !req.Msg.NotifyAbsent {
 		return connect.NewResponse(&whatsappv1.SendAttendanceAlertsResponse{}), nil
 	}
 
@@ -64,8 +57,8 @@ JOIN users u ON u.id = a.user_id
 LEFT JOIN class_enrollments ce ON ce.user_id = u.id
 LEFT JOIN classes c ON c.id = ce.class_id
 WHERE a.check_in_time >= ? AND a.check_in_time < ?
-  AND a.status IN ?`
-	args := []any{dayStart, dayEnd, statuses}
+  AND a.status = 2`
+	args := []any{dayStart, dayEnd}
 
 	if req.Msg.ClassFilter != "" {
 		sql += ` AND c.name = ?`
@@ -85,11 +78,7 @@ WHERE a.check_in_time >= ? AND a.check_in_time < ?
 	// Load config for templates
 	var cfgModel db_models.WhatsappConfig
 	s.db.WithContext(ctx).First(&cfgModel)
-	lateTmpl := cfgModel.LateMessageTemplate
 	absentTmpl := cfgModel.AbsentMessageTemplate
-	if lateTmpl == "" {
-		lateTmpl = defaultLateTemplate
-	}
 	if absentTmpl == "" {
 		absentTmpl = defaultAbsentTemplate
 	}
@@ -103,11 +92,7 @@ WHERE a.check_in_time >= ? AND a.check_in_time < ?
 			continue
 		}
 
-		tmpl := lateTmpl
-		if row.Status == "absent" {
-			tmpl = absentTmpl
-		}
-		msg := renderTemplate(tmpl, row.Name, row.ParentName, row.ClassName, row.CheckInTime)
+		msg := renderTemplate(absentTmpl, row.Name, row.ParentName, row.ClassName, row.CheckInTime)
 
 		model := db_models.WhatsappMessage{
 			UserID:     row.UserID,

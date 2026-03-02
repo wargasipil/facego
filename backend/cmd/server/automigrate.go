@@ -33,6 +33,7 @@ func automigrate(ctx context.Context, cmd *cli.Command) error {
 		&db_models.WhatsappConfig{},
 		&db_models.ClassSchedule{},
 		&db_models.ClassEnrollment{},
+		&db_models.FaceEmbedding{},
 	); err != nil {
 		return err
 	}

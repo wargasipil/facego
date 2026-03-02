@@ -14,10 +14,10 @@ func (s *Service) CreateSchedule(
 ) (*connect.Response[classesv1.CreateScheduleResponse], error) {
 	msg := req.Msg
 	model := db_models.ClassSchedule{
-		ClassID:   uint(msg.ClassId),
+		ClassID:   msg.ClassId,
 		DayOfWeek: msg.DayOfWeek,
-		StartTime: msg.StartTime,
-		EndTime:   msg.EndTime,
+		StartTime: parseScheduleTime(msg.StartTime),
+		EndTime:   parseScheduleTime(msg.EndTime),
 		Subject:   msg.Subject,
 		Room:      msg.Room,
 	}

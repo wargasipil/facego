@@ -3,7 +3,6 @@ package attendance_service
 import (
 	"context"
 	"log/slog"
-	"time"
 
 	"connectrpc.com/connect"
 	attendancev1 "github.com/wargasipil/facego/gen/attendance/v1"
@@ -20,12 +19,7 @@ func (s *Service) AttendancePushLog(
 ) (*connect.Response[attendancev1.AttendancePushLogResponse], error) {
 	msg := req.Msg
 
-	seenAt := time.Now().UTC()
-	if msg.SeenAt != nil {
-		seenAt = msg.SeenAt.AsTime()
-	}
-
-	s.writeDetectionLog(ctx, msg, seenAt)
+	s.writeDetectionLog(ctx, msg)
 
 	return connect.NewResponse(&attendancev1.AttendancePushLogResponse{}), nil
 }
@@ -35,17 +29,12 @@ func (s *Service) AttendancePushLog(
 func (s *Service) writeDetectionLog(
 	ctx context.Context,
 	msg *attendancev1.AttendancePushLogRequest,
-	seenAt time.Time,
 ) int64 {
 	row := db_models.DetectionLog{
-		SessionID:       msg.SessionId,
-		UserID:          msg.UserId,
-		StudentID:       msg.StudentId,
-		StudentName:     msg.StudentName,
-		ClassID:         msg.ClassId,
-		ClassName:       msg.ClassName,
-		ClassScheduleID: msg.ClassScheduleId,
-		SeenAt:          seenAt,
+		SessionID: msg.SessionId,
+		UserID:    msg.UserId,
+		ClassID:   msg.ClassId,
+		SeenAt:    msg.SeenAt.AsTime().Local(),
 	}
 	if err := s.db.WithContext(ctx).Create(&row).Error; err != nil {
 		slog.Warn("push_log: detection_logs insert failed", "session", msg.SessionId, "err", err)
@@ -53,4 +42,3 @@ func (s *Service) writeDetectionLog(
 	}
 	return row.ID
 }
-

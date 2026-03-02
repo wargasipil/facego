@@ -40,12 +40,10 @@ import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 const STATUS_COLOR: Record<number, string> = {
   [AttendanceStatus.PRESENT]: 'green',
   [AttendanceStatus.ABSENT]:  'red',
-  [AttendanceStatus.LATE]:    'orange',
 }
 const STATUS_LABEL: Record<number, string> = {
   [AttendanceStatus.PRESENT]: 'Present',
   [AttendanceStatus.ABSENT]:  'Absent',
-  [AttendanceStatus.LATE]:    'Late',
 }
 
 function formatDate(ts?: { seconds: bigint }) {
@@ -113,7 +111,6 @@ export default function StudentDetailPage() {
     total:   records.length,
     present: records.filter(r => r.status === AttendanceStatus.PRESENT).length,
     absent:  records.filter(r => r.status === AttendanceStatus.ABSENT).length,
-    late:    records.filter(r => r.status === AttendanceStatus.LATE).length,
   }
 
   const pct = (n: number) =>
@@ -191,13 +188,6 @@ export default function StudentDetailPage() {
               <StatLabel color="green.600">Present</StatLabel>
               <StatValueText color="green.600">{summary.present}</StatValueText>
               <StatHelpText>{pct(summary.present)}</StatHelpText>
-            </StatRoot>
-          </Box>
-          <Box bg="white" p={4} borderRadius="lg" shadow="sm">
-            <StatRoot>
-              <StatLabel color="orange.500">Late</StatLabel>
-              <StatValueText color="orange.500">{summary.late}</StatValueText>
-              <StatHelpText>{pct(summary.late)}</StatHelpText>
             </StatRoot>
           </Box>
           <Box bg="white" p={4} borderRadius="lg" shadow="sm">

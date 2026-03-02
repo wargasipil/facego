@@ -20,16 +20,12 @@ func (s *Service) CreateAttendance(
 	}
 
 	model := db_models.Attendance{
-		UserID:      req.Msg.UserId,
-		Status:      statusStr(req.Msg.Status),
-		CheckInTime: checkIn,
-		Notes:       req.Msg.Notes,
-	}
-	if req.Msg.ClassId > 0 {
-		model.ClassID = &req.Msg.ClassId
-	}
-	if req.Msg.ClassScheduleId > 0 {
-		model.ClassScheduleID = &req.Msg.ClassScheduleId
+		UserID:          req.Msg.UserId,
+		ClassID:         req.Msg.ClassId,
+		ClassScheduleID: req.Msg.ClassScheduleId,
+		Status:          req.Msg.Status,
+		CheckInTime:     checkIn,
+		Notes:           req.Msg.Notes,
 	}
 	if err := s.db.WithContext(ctx).Create(&model).Error; err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)

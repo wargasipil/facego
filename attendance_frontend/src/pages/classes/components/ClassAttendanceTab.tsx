@@ -43,13 +43,11 @@ const STATUS_LABEL: Record<AttendanceStatus, string> = {
   [AttendanceStatus.UNSPECIFIED]: 'Unknown',
   [AttendanceStatus.PRESENT]:     'Present',
   [AttendanceStatus.ABSENT]:      'Absent',
-  [AttendanceStatus.LATE]:        'Late',
 }
 const STATUS_COLOR: Record<AttendanceStatus, string> = {
   [AttendanceStatus.UNSPECIFIED]: 'gray',
   [AttendanceStatus.PRESENT]:     'green',
   [AttendanceStatus.ABSENT]:      'red',
-  [AttendanceStatus.LATE]:        'orange',
 }
 
 function todayIso() {
@@ -103,7 +101,6 @@ function parseStatus(s: string): AttendanceStatus {
   switch (s.toLowerCase()) {
     case 'present': return AttendanceStatus.PRESENT
     case 'absent':  return AttendanceStatus.ABSENT
-    case 'late':    return AttendanceStatus.LATE
     default:        return AttendanceStatus.PRESENT
   }
 }
@@ -115,7 +112,7 @@ interface ImportRow { name: string; studentId: string; userId: string; status: s
 export function ClassAttendanceTab({ className, active }: Props) {
   const [attendanceDate, setAttendanceDate] = useState(todayIso())
   const [records, setRecords]               = useState<AttendanceRecord[]>([])
-  const [summary, setSummary]               = useState<{ total: number; present: number; absent: number; late: number } | null>(null)
+  const [summary, setSummary]               = useState<{ total: number; present: number; absent: number } | null>(null)
   const [loading, setLoading]               = useState(false)
 
   // ── import / export ──
@@ -200,7 +197,7 @@ export function ClassAttendanceTab({ className, active }: Props) {
       })
       setRecords(r.records)
       setSummary(r.summary
-        ? { total: r.summary.total, present: r.summary.present, absent: r.summary.absent, late: r.summary.late }
+        ? { total: r.summary.total, present: r.summary.present, absent: r.summary.absent }
         : null
       )
     } catch {
@@ -257,10 +254,9 @@ export function ClassAttendanceTab({ className, active }: Props) {
 
       {summary && (
         <HStack gap={3} mb={4}>
-          <Badge colorPalette="gray"   variant="subtle" px={3} py={1}>Total: {summary.total}</Badge>
-          <Badge colorPalette="green"  variant="subtle" px={3} py={1}>Present: {summary.present}</Badge>
-          <Badge colorPalette="red"    variant="subtle" px={3} py={1}>Absent: {summary.absent}</Badge>
-          <Badge colorPalette="orange" variant="subtle" px={3} py={1}>Late: {summary.late}</Badge>
+          <Badge colorPalette="gray"  variant="subtle" px={3} py={1}>Total: {summary.total}</Badge>
+          <Badge colorPalette="green" variant="subtle" px={3} py={1}>Present: {summary.present}</Badge>
+          <Badge colorPalette="red"   variant="subtle" px={3} py={1}>Absent: {summary.absent}</Badge>
         </HStack>
       )}
 

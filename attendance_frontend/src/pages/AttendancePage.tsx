@@ -62,12 +62,10 @@ import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 const STATUS_COLOR: Record<number, string> = {
   [AttendanceStatus.PRESENT]: 'green',
   [AttendanceStatus.ABSENT]:  'red',
-  [AttendanceStatus.LATE]:    'orange',
 }
 const STATUS_LABEL: Record<number, string> = {
   [AttendanceStatus.PRESENT]: 'Present',
   [AttendanceStatus.ABSENT]:  'Absent',
-  [AttendanceStatus.LATE]:    'Late',
 }
 
 function formatTime(ts?: { seconds: bigint }) {
@@ -170,9 +168,9 @@ export default function AttendancePage() {
     r.studentId.toLowerCase().includes(search.toLowerCase())
   )
 
-  // Only late/absent records can be notified
+  // Only absent records can be notified
   const notifiableInView = filtered.filter(
-    r => r.status === AttendanceStatus.LATE || r.status === AttendanceStatus.ABSENT
+    r => r.status === AttendanceStatus.ABSENT
   )
   const allNotifiableSelected =
     notifiableInView.length > 0 &&
@@ -182,7 +180,6 @@ export default function AttendancePage() {
     total:   records.length,
     present: records.filter(r => r.status === AttendanceStatus.PRESENT).length,
     absent:  records.filter(r => r.status === AttendanceStatus.ABSENT).length,
-    late:    records.filter(r => r.status === AttendanceStatus.LATE).length,
   }
 
   const pct = (n: number) =>
@@ -219,7 +216,6 @@ export default function AttendancePage() {
       const dayStart = new Date(Date.UTC(y, m - 1, d, 0, 0, 0))
       const r = await whatsappService.sendAttendanceAlerts({
         date:         timestampFromDate(dayStart),
-        notifyLate:   true,
         notifyAbsent: true,
         classFilter,
         userIds:      [...selected].map(id => BigInt(id)),
@@ -300,13 +296,6 @@ export default function AttendancePage() {
               <StatLabel color="green.600">Present</StatLabel>
               <StatValueText color="green.600">{summary.present}</StatValueText>
               <StatHelpText>{pct(summary.present)}</StatHelpText>
-            </StatRoot>
-          </Box>
-          <Box bg="white" p={4} borderRadius="lg" shadow="sm">
-            <StatRoot>
-              <StatLabel color="orange.500">Late</StatLabel>
-              <StatValueText color="orange.500">{summary.late}</StatValueText>
-              <StatHelpText>{pct(summary.late)}</StatHelpText>
             </StatRoot>
           </Box>
           <Box bg="white" p={4} borderRadius="lg" shadow="sm">
@@ -452,7 +441,7 @@ export default function AttendancePage() {
                           type="checkbox"
                           checked={allNotifiableSelected}
                           onChange={toggleAllNotifiable}
-                          title="Select all late/absent"
+                          title="Select all absent"
                           style={{ cursor: 'pointer' }}
                         />
                       )}
@@ -477,7 +466,7 @@ export default function AttendancePage() {
                       </TableCell>
                     </TableRow>
                   ) : filtered.map(r => {
-                    const isNotifiable = r.status === AttendanceStatus.LATE || r.status === AttendanceStatus.ABSENT
+                    const isNotifiable = r.status === AttendanceStatus.ABSENT
                     const isChecked    = selected.has(String(r.userId))
                     return (
                       <TableRow
@@ -578,7 +567,6 @@ export default function AttendancePage() {
                       style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '14px', background: 'white' }}
                     >
                       <option value={String(AttendanceStatus.PRESENT)}>Present</option>
-                      <option value={String(AttendanceStatus.LATE)}>Late</option>
                       <option value={String(AttendanceStatus.ABSENT)}>Absent</option>
                     </select>
                   </Field.Root>

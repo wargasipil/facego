@@ -104,14 +104,22 @@ func New(db *gorm.DB) *Service {
 	return &Service{db: db}
 }
 
+// parseScheduleTime parses an "HH:MM" string into time.Time (date part is zero).
+// Returns zero time on malformed input.
+func parseScheduleTime(s string) time.Time {
+	t, _ := time.ParseInLocation("15:04", s, time.Local)
+	return t
+}
+
 // scheduleToProto converts a DB ClassSchedule model to its proto representation.
+// StartTime and EndTime are formatted back to "HH:MM" strings.
 func scheduleToProto(m db_models.ClassSchedule) *classesv1.ClassSchedule {
 	return &classesv1.ClassSchedule{
-		Id:        int64(m.ID),
-		ClassId:   int64(m.ClassID),
+		Id:        m.ID,
+		ClassId:   m.ClassID,
 		DayOfWeek: m.DayOfWeek,
-		StartTime: m.StartTime,
-		EndTime:   m.EndTime,
+		StartTime: m.StartTime.Format("15:04"),
+		EndTime:   m.EndTime.Format("15:04"),
 		Subject:   m.Subject,
 		Room:      m.Room,
 	}
