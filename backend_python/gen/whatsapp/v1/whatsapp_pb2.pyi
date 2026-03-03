@@ -1,7 +1,7 @@
 import datetime
 
-from google.protobuf import timestamp_pb2 as _timestamp_pb2
 from buf.validate import validate_pb2 as _validate_pb2
+from google.protobuf import timestamp_pb2 as _timestamp_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -98,7 +98,7 @@ class SendAttendanceAlertsResponse(_message.Message):
     messages: _containers.RepeatedCompositeFieldContainer[WhatsappMessage]
     def __init__(self, queued: _Optional[int] = ..., skipped: _Optional[int] = ..., messages: _Optional[_Iterable[_Union[WhatsappMessage, _Mapping]]] = ...) -> None: ...
 
-class SendTestMessageRequest(_message.Message):
+class SendMessageRequest(_message.Message):
     __slots__ = ("phone", "message")
     PHONE_FIELD_NUMBER: _ClassVar[int]
     MESSAGE_FIELD_NUMBER: _ClassVar[int]
@@ -106,7 +106,7 @@ class SendTestMessageRequest(_message.Message):
     message: str
     def __init__(self, phone: _Optional[str] = ..., message: _Optional[str] = ...) -> None: ...
 
-class SendTestMessageResponse(_message.Message):
+class SendMessageResponse(_message.Message):
     __slots__ = ("success", "error")
     SUCCESS_FIELD_NUMBER: _ClassVar[int]
     ERROR_FIELD_NUMBER: _ClassVar[int]

@@ -40,9 +40,9 @@ const (
 	// WhatsappServiceSendAttendanceAlertsProcedure is the fully-qualified name of the WhatsappService's
 	// SendAttendanceAlerts RPC.
 	WhatsappServiceSendAttendanceAlertsProcedure = "/whatsapp.v1.WhatsappService/SendAttendanceAlerts"
-	// WhatsappServiceSendTestMessageProcedure is the fully-qualified name of the WhatsappService's
-	// SendTestMessage RPC.
-	WhatsappServiceSendTestMessageProcedure = "/whatsapp.v1.WhatsappService/SendTestMessage"
+	// WhatsappServiceSendMessageProcedure is the fully-qualified name of the WhatsappService's
+	// SendMessage RPC.
+	WhatsappServiceSendMessageProcedure = "/whatsapp.v1.WhatsappService/SendMessage"
 	// WhatsappServiceListMessagesProcedure is the fully-qualified name of the WhatsappService's
 	// ListMessages RPC.
 	WhatsappServiceListMessagesProcedure = "/whatsapp.v1.WhatsappService/ListMessages"
@@ -60,8 +60,8 @@ type WhatsappServiceClient interface {
 	WStream(context.Context, *connect.Request[v1.WStreamRequest]) (*connect.ServerStreamForClient[v1.WStreamResponse], error)
 	// Send WhatsApp notifications to parents of late/absent students
 	SendAttendanceAlerts(context.Context, *connect.Request[v1.SendAttendanceAlertsRequest]) (*connect.Response[v1.SendAttendanceAlertsResponse], error)
-	// Send a test message to verify connectivity
-	SendTestMessage(context.Context, *connect.Request[v1.SendTestMessageRequest]) (*connect.Response[v1.SendTestMessageResponse], error)
+	// Send a message to a phone number
+	SendMessage(context.Context, *connect.Request[v1.SendMessageRequest]) (*connect.Response[v1.SendMessageResponse], error)
 	// Message history
 	ListMessages(context.Context, *connect.Request[v1.ListMessagesRequest]) (*connect.Response[v1.ListMessagesResponse], error)
 	// Configuration (message templates)
@@ -98,10 +98,10 @@ func NewWhatsappServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(whatsappServiceMethods.ByName("SendAttendanceAlerts")),
 			connect.WithClientOptions(opts...),
 		),
-		sendTestMessage: connect.NewClient[v1.SendTestMessageRequest, v1.SendTestMessageResponse](
+		sendMessage: connect.NewClient[v1.SendMessageRequest, v1.SendMessageResponse](
 			httpClient,
-			baseURL+WhatsappServiceSendTestMessageProcedure,
-			connect.WithSchema(whatsappServiceMethods.ByName("SendTestMessage")),
+			baseURL+WhatsappServiceSendMessageProcedure,
+			connect.WithSchema(whatsappServiceMethods.ByName("SendMessage")),
 			connect.WithClientOptions(opts...),
 		),
 		listMessages: connect.NewClient[v1.ListMessagesRequest, v1.ListMessagesResponse](
@@ -130,7 +130,7 @@ type whatsappServiceClient struct {
 	status               *connect.Client[v1.StatusRequest, v1.StatusResponse]
 	wStream              *connect.Client[v1.WStreamRequest, v1.WStreamResponse]
 	sendAttendanceAlerts *connect.Client[v1.SendAttendanceAlertsRequest, v1.SendAttendanceAlertsResponse]
-	sendTestMessage      *connect.Client[v1.SendTestMessageRequest, v1.SendTestMessageResponse]
+	sendMessage          *connect.Client[v1.SendMessageRequest, v1.SendMessageResponse]
 	listMessages         *connect.Client[v1.ListMessagesRequest, v1.ListMessagesResponse]
 	getConfig            *connect.Client[v1.GetConfigRequest, v1.GetConfigResponse]
 	saveConfig           *connect.Client[v1.SaveConfigRequest, v1.SaveConfigResponse]
@@ -151,9 +151,9 @@ func (c *whatsappServiceClient) SendAttendanceAlerts(ctx context.Context, req *c
 	return c.sendAttendanceAlerts.CallUnary(ctx, req)
 }
 
-// SendTestMessage calls whatsapp.v1.WhatsappService.SendTestMessage.
-func (c *whatsappServiceClient) SendTestMessage(ctx context.Context, req *connect.Request[v1.SendTestMessageRequest]) (*connect.Response[v1.SendTestMessageResponse], error) {
-	return c.sendTestMessage.CallUnary(ctx, req)
+// SendMessage calls whatsapp.v1.WhatsappService.SendMessage.
+func (c *whatsappServiceClient) SendMessage(ctx context.Context, req *connect.Request[v1.SendMessageRequest]) (*connect.Response[v1.SendMessageResponse], error) {
+	return c.sendMessage.CallUnary(ctx, req)
 }
 
 // ListMessages calls whatsapp.v1.WhatsappService.ListMessages.
@@ -177,8 +177,8 @@ type WhatsappServiceHandler interface {
 	WStream(context.Context, *connect.Request[v1.WStreamRequest], *connect.ServerStream[v1.WStreamResponse]) error
 	// Send WhatsApp notifications to parents of late/absent students
 	SendAttendanceAlerts(context.Context, *connect.Request[v1.SendAttendanceAlertsRequest]) (*connect.Response[v1.SendAttendanceAlertsResponse], error)
-	// Send a test message to verify connectivity
-	SendTestMessage(context.Context, *connect.Request[v1.SendTestMessageRequest]) (*connect.Response[v1.SendTestMessageResponse], error)
+	// Send a message to a phone number
+	SendMessage(context.Context, *connect.Request[v1.SendMessageRequest]) (*connect.Response[v1.SendMessageResponse], error)
 	// Message history
 	ListMessages(context.Context, *connect.Request[v1.ListMessagesRequest]) (*connect.Response[v1.ListMessagesResponse], error)
 	// Configuration (message templates)
@@ -211,10 +211,10 @@ func NewWhatsappServiceHandler(svc WhatsappServiceHandler, opts ...connect.Handl
 		connect.WithSchema(whatsappServiceMethods.ByName("SendAttendanceAlerts")),
 		connect.WithHandlerOptions(opts...),
 	)
-	whatsappServiceSendTestMessageHandler := connect.NewUnaryHandler(
-		WhatsappServiceSendTestMessageProcedure,
-		svc.SendTestMessage,
-		connect.WithSchema(whatsappServiceMethods.ByName("SendTestMessage")),
+	whatsappServiceSendMessageHandler := connect.NewUnaryHandler(
+		WhatsappServiceSendMessageProcedure,
+		svc.SendMessage,
+		connect.WithSchema(whatsappServiceMethods.ByName("SendMessage")),
 		connect.WithHandlerOptions(opts...),
 	)
 	whatsappServiceListMessagesHandler := connect.NewUnaryHandler(
@@ -243,8 +243,8 @@ func NewWhatsappServiceHandler(svc WhatsappServiceHandler, opts ...connect.Handl
 			whatsappServiceWStreamHandler.ServeHTTP(w, r)
 		case WhatsappServiceSendAttendanceAlertsProcedure:
 			whatsappServiceSendAttendanceAlertsHandler.ServeHTTP(w, r)
-		case WhatsappServiceSendTestMessageProcedure:
-			whatsappServiceSendTestMessageHandler.ServeHTTP(w, r)
+		case WhatsappServiceSendMessageProcedure:
+			whatsappServiceSendMessageHandler.ServeHTTP(w, r)
 		case WhatsappServiceListMessagesProcedure:
 			whatsappServiceListMessagesHandler.ServeHTTP(w, r)
 		case WhatsappServiceGetConfigProcedure:
@@ -272,8 +272,8 @@ func (UnimplementedWhatsappServiceHandler) SendAttendanceAlerts(context.Context,
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("whatsapp.v1.WhatsappService.SendAttendanceAlerts is not implemented"))
 }
 
-func (UnimplementedWhatsappServiceHandler) SendTestMessage(context.Context, *connect.Request[v1.SendTestMessageRequest]) (*connect.Response[v1.SendTestMessageResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("whatsapp.v1.WhatsappService.SendTestMessage is not implemented"))
+func (UnimplementedWhatsappServiceHandler) SendMessage(context.Context, *connect.Request[v1.SendMessageRequest]) (*connect.Response[v1.SendMessageResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("whatsapp.v1.WhatsappService.SendMessage is not implemented"))
 }
 
 func (UnimplementedWhatsappServiceHandler) ListMessages(context.Context, *connect.Request[v1.ListMessagesRequest]) (*connect.Response[v1.ListMessagesResponse], error) {

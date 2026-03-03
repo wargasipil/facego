@@ -158,8 +158,11 @@ func (s *Service) ProcessBatch(ctx context.Context) {
 							continue
 						}
 
-						year, month, day := item.SeenAt.Date()
-						dayOnly := time.Date(year, month, day, 0, 0, 0, 0, item.SeenAt.Location())
+						tstr := item.SeenAt.Format(time.DateOnly)
+						dayOnly, err := time.Parse(time.DateOnly, tstr)
+						if err != nil {
+							return err
+						}
 
 						attend := db_models.Attendance{
 							UserID:          item.UserID,

@@ -39,6 +39,7 @@ go run ./cmd/server automigrate         # run GORM AutoMigrate + seed admin
 **Timezone convention:**
 - Schedule `start_time`/`end_time`: parsed with `time.ParseInLocation("15:04", s, time.Local)` — local time.
 - Detection `seen_at`: `msg.SeenAt.AsTime().Local()` — protobuf UTC converted to local before storing.
+- Date filters from proto Timestamp: use `.AsTime().In(time.Local)` before `.Format(time.DateOnly)`.
 - DSN session timezone = system local → all `timestamptz` round-trips stay in local time.
 
 **Service pattern:**
@@ -46,6 +47,11 @@ go run ./cmd/server automigrate         # run GORM AutoMigrate + seed admin
 // service.go
 type Service struct { db *gorm.DB }
 func New(db *gorm.DB) *Service { return &Service{db: db} }
+```
+
+**Compile-time interface check** (add to service.go):
+```go
+var _ somev1connect.SomeServiceHandler = (*Service)(nil)
 ```
 
 **Tests:** use `go-sqlmock` + GORM postgres driver. See `grade_service_test.go` as reference.
@@ -57,7 +63,19 @@ func newMockDB(t *testing.T) (*gorm.DB, sqlmock.Sqlmock) { ... }
 
 **AutoMigrate:** add new models to `backend/cmd/server/automigrate.go`.
 
-**Register new service in `run.go`:** add handler + reflector entry.
+**Register new service in `run.go`:** instantiate → `mux.Handle(connect.NewXxxHandler(...))` → add name to reflector.
+
+## Services
+
+| Service | Package | Notes |
+|---------|---------|-------|
+| AttendanceService | `attendance_service` | `StartProcessor(ctx)` runs background job |
+| NotifierService | `notifier_service` | Parent notification via WhatsApp |
+| WhatsappService | `whatsapp_service` | WhatsApp connectivity + message log |
+| ClassService | `class_service` | |
+| UserService | `user_service` | |
+| AuthService | `auth_service` | JWT; Login is public endpoint |
+| FaceEmbeddingService | `face_embedding_service` | pgvector embeddings |
 
 ## Proto / Buf
 
@@ -74,20 +92,10 @@ Or use `./generate.bat` (runs both).
 
 **Never edit generated files.** Edit `.proto` → run `buf generate`.
 
-## Python Client
-
-**Entry point:** `backend_python/app.py` (Textual TUI app)
-
-**Key files:**
-- `face_engine.py` — InsightFace, `load_faces_db()` calls gRPC `list_face_embeddings()`
-- `backend_client.py` — gRPC client; face embeddings stored in PostgreSQL via `FaceEmbeddingService`
-- `ch_logger.py` — `now_ts()` returns **UTC** (`datetime.now(tz=timezone.utc)`)
-- `screens/face_manager.py` — all write ops call gRPC, no local pickle
-
-**face_db key:** `str(backend_user_id)` (not student string ID like "S001")
-
-**Embeddings:** `np.array(embeddings, dtype=np.float32).tobytes()` → `bytea` in PostgreSQL.
-Deserialized: `np.frombuffer(data, dtype=np.float32).reshape(-1, 512)`
+**Key proto files:**
+- `protos/attendance/v1/attendance.proto` — `AttendanceRecord`, `NotifyStatus`, `GetDailyAttendance`
+- `protos/notifiers/v1/notifier.proto` — `NotifyParentRequest` (oneof: all / student)
+- `protos/whatsapp/v1/whatsapp.proto` — `SendMessage`, `SendAttendanceAlerts`
 
 ## Frontend
 
@@ -98,6 +106,18 @@ cd attendance_frontend
 npm run dev      # dev server (proxies /*.v1/* to localhost:8080)
 npm run build    # TypeScript check + bundle
 ```
+
+**Services** (`src/services/`):
+- `attendance_service.ts` — ConnectRPC client for AttendanceService
+- `notifier_service.ts` — ConnectRPC client for NotifierService
+- `whatsapp_service.ts` — ConnectRPC client for WhatsappService
+
+**Key pages/components:**
+- `pages/classes/tabs/attendance.tsx` — attendance tab with notify parent, pagination, import/export
+- `components/ScheduleSelector.tsx` — shared schedule filter dropdown (matches TeacherSelector style)
+- `components/ClassPagination.tsx` — pagination component
+
+**`bigint` for proto `int64`** — all `int64` fields are TypeScript `bigint`; use `BigInt(x)` / `String(id)`.
 
 ## Docker
 
@@ -111,6 +131,7 @@ docker-compose up db       # just the database
 - **RPC framework:** ConnectRPC (`connectrpc.com/connect`) — not plain gRPC
 - **Error codes:** `connect.CodeNotFound`, `connect.CodeInternal`, etc.
 - **Logging:** `log/slog` (structured)
-- **Chain middleware:** `common_helpers.NewChain(...)` for multi-step DB operations
+- **Chain middleware:** `common_helpers.NewChainParam[*gorm.DB](...)` for multi-step DB operations
 - **Proto validation:** `buf.build/bufbuild/protovalidate` annotations on request fields
 - **No Makefile** — use go/npm/buf/docker commands directly
+- **Notify status flow:** `UNSPECIFIED` → button shown → `PENDING` after send → `NOTIFIED` after delivery

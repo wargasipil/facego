@@ -13,7 +13,49 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file attendance/v1/attendance.proto.
  */
 export const file_attendance_v1_attendance: GenFile = /*@__PURE__*/
-  fileDesc("Ch5hdHRlbmRhbmNlL3YxL2F0dGVuZGFuY2UucHJvdG8SDWF0dGVuZGFuY2UudjEisQIKEEF0dGVuZGFuY2VSZWNvcmQSCgoCaWQYASABKAMSDwoHdXNlcl9pZBgCIAEoAxIMCgRuYW1lGAMgASgJEi8KBnN0YXR1cxgEIAEoDjIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN0YXR1cxIRCglwaG90b191cmwYBSABKAkSLQoJdGltZXN0YW1wGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBISCgpjbGFzc19uYW1lGAcgASgJEhIKCnN0dWRlbnRfaWQYCCABKAkSDQoFbm90ZXMYCSABKAkSLQoJbGFzdF9zZWVuGAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIZChFjbGFzc19zY2hlZHVsZV9pZBgLIAEoAyJDChFBdHRlbmRhbmNlU3VtbWFyeRINCgV0b3RhbBgBIAEoBRIPCgdwcmVzZW50GAIgASgFEg4KBmFic2VudBgDIAEoBSItChdSZWNvcmRBdHRlbmRhbmNlUmVxdWVzdBISCgpmYWNlX2ltYWdlGAEgASgMIlwKGFJlY29yZEF0dGVuZGFuY2VSZXNwb25zZRIvCgZyZWNvcmQYASABKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQSDwoHbWF0Y2hlZBgCIAEoCCJbChlHZXREYWlseUF0dGVuZGFuY2VSZXF1ZXN0EigKBGRhdGUYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKDGNsYXNzX2ZpbHRlchgCIAEoCSKBAQoaR2V0RGFpbHlBdHRlbmRhbmNlUmVzcG9uc2USMAoHcmVjb3JkcxgBIAMoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZBIxCgdzdW1tYXJ5GAIgASgLMiAuYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlU3VtbWFyeSJ6ChVMaXN0QXR0ZW5kYW5jZVJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoAxIoCgRmcm9tGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiSgoWTGlzdEF0dGVuZGFuY2VSZXNwb25zZRIwCgdyZWNvcmRzGAEgAygLMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUmVjb3JkIhgKFldhdGNoQXR0ZW5kYW5jZVJlcXVlc3QiSgoXV2F0Y2hBdHRlbmRhbmNlUmVzcG9uc2USLwoGcmVjb3JkGAEgASgLMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUmVjb3JkIu8BChdDcmVhdGVBdHRlbmRhbmNlUmVxdWVzdBIYCgd1c2VyX2lkGAEgASgDQge6SAQiAiAAEjkKBnN0YXR1cxgCIAEoDjIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN0YXR1c0IIukgFggECEAESDQoFbm90ZXMYAyABKAkSMQoNY2hlY2tfaW5fdGltZRgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASGQoIY2xhc3NfaWQYBSABKANCB7pIBCICKAASIgoRY2xhc3Nfc2NoZWR1bGVfaWQYBiABKANCB7pIBCICKAAiSwoYQ3JlYXRlQXR0ZW5kYW5jZVJlc3BvbnNlEi8KBnJlY29yZBgBIAEoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZCIuChdEZWxldGVBdHRlbmRhbmNlUmVxdWVzdBITCgJpZBgBIAEoA0IHukgEIgIgACIaChhEZWxldGVBdHRlbmRhbmNlUmVzcG9uc2Ui6AEKGEF0dGVuZGFuY2VQdXNoTG9nUmVxdWVzdBIbCgpzZXNzaW9uX2lkGAEgASgJQge6SARyAhABEhgKB3VzZXJfaWQYAiABKANCB7pIBCICIAASGwoKc3R1ZGVudF9pZBgDIAEoCUIHukgEcgIQARIUCgxzdHVkZW50X25hbWUYBCABKAkSGQoIY2xhc3NfaWQYBSABKANCB7pIBCICIAASEgoKY2xhc3NfbmFtZRgGIAEoCRIzCgdzZWVuX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEIGukgDyAEBIhsKGUF0dGVuZGFuY2VQdXNoTG9nUmVzcG9uc2UqcgoQQXR0ZW5kYW5jZVN0YXR1cxIhCh1BVFRFTkRBTkNFX1NUQVRVU19VTlNQRUNJRklFRBAAEh0KGUFUVEVOREFOQ0VfU1RBVFVTX1BSRVNFTlQQARIcChhBVFRFTkRBTkNFX1NUQVRVU19BQlNFTlQQAjLYBQoRQXR0ZW5kYW5jZVNlcnZpY2USYwoQUmVjb3JkQXR0ZW5kYW5jZRImLmF0dGVuZGFuY2UudjEuUmVjb3JkQXR0ZW5kYW5jZVJlcXVlc3QaJy5hdHRlbmRhbmNlLnYxLlJlY29yZEF0dGVuZGFuY2VSZXNwb25zZRJpChJHZXREYWlseUF0dGVuZGFuY2USKC5hdHRlbmRhbmNlLnYxLkdldERhaWx5QXR0ZW5kYW5jZVJlcXVlc3QaKS5hdHRlbmRhbmNlLnYxLkdldERhaWx5QXR0ZW5kYW5jZVJlc3BvbnNlEl0KDkxpc3RBdHRlbmRhbmNlEiQuYXR0ZW5kYW5jZS52MS5MaXN0QXR0ZW5kYW5jZVJlcXVlc3QaJS5hdHRlbmRhbmNlLnYxLkxpc3RBdHRlbmRhbmNlUmVzcG9uc2USYgoPV2F0Y2hBdHRlbmRhbmNlEiUuYXR0ZW5kYW5jZS52MS5XYXRjaEF0dGVuZGFuY2VSZXF1ZXN0GiYuYXR0ZW5kYW5jZS52MS5XYXRjaEF0dGVuZGFuY2VSZXNwb25zZTABEmMKEENyZWF0ZUF0dGVuZGFuY2USJi5hdHRlbmRhbmNlLnYxLkNyZWF0ZUF0dGVuZGFuY2VSZXF1ZXN0GicuYXR0ZW5kYW5jZS52MS5DcmVhdGVBdHRlbmRhbmNlUmVzcG9uc2USYwoQRGVsZXRlQXR0ZW5kYW5jZRImLmF0dGVuZGFuY2UudjEuRGVsZXRlQXR0ZW5kYW5jZVJlcXVlc3QaJy5hdHRlbmRhbmNlLnYxLkRlbGV0ZUF0dGVuZGFuY2VSZXNwb25zZRJmChFBdHRlbmRhbmNlUHVzaExvZxInLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVB1c2hMb2dSZXF1ZXN0GiguYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUHVzaExvZ1Jlc3BvbnNlQrYBChFjb20uYXR0ZW5kYW5jZS52MUIPQXR0ZW5kYW5jZVByb3RvUAFaO2dpdGh1Yi5jb20vd2FyZ2FzaXBpbC9mYWNlZ28vZ2VuL2F0dGVuZGFuY2UvdjE7YXR0ZW5kYW5jZXYxogIDQVhYqgINQXR0ZW5kYW5jZS5WMcoCDUF0dGVuZGFuY2VcVjHiAhlBdHRlbmRhbmNlXFYxXEdQQk1ldGFkYXRh6gIOQXR0ZW5kYW5jZTo6VjFiBnByb3RvMw", [file_buf_validate_validate, file_google_protobuf_timestamp]);
+  fileDesc("Ch5hdHRlbmRhbmNlL3YxL2F0dGVuZGFuY2UucHJvdG8SDWF0dGVuZGFuY2UudjEifAoOVXNlckF0dGVuZGFuY2USCgoCaWQYASABKAMSEgoKc3R1ZGVudF9pZBgCIAEoCRIMCgRuYW1lGAMgASgJEhEKCXBob3RvX3VybBgEIAEoCRITCgtwYXJlbnRfbmFtZRgFIAEoCRIUCgxwYXJlbnRfcGhvbmUYBiABKAki/QIKEEF0dGVuZGFuY2VSZWNvcmQSCgoCaWQYASABKAMSDwoHdXNlcl9pZBgCIAEoAxIQCghjbGFzc19pZBgDIAEoAxIZChFjbGFzc19zY2hlZHVsZV9pZBgEIAEoAxInCgNkYXkYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KBnN0YXR1cxgGIAEoDjIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN0YXR1cxIyCg1ub3RpZnlfc3RhdHVzGAcgASgOMhsuYXR0ZW5kYW5jZS52MS5Ob3RpZnlTdGF0dXMSMQoNY2hlY2tfaW5fdGltZRgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoHc3R1ZGVudBgKIAEoCzIdLmF0dGVuZGFuY2UudjEuVXNlckF0dGVuZGFuY2UiQwoRQXR0ZW5kYW5jZVN1bW1hcnkSDQoFdG90YWwYASABKAUSDwoHcHJlc2VudBgCIAEoBRIOCgZhYnNlbnQYAyABKAUiLQoXUmVjb3JkQXR0ZW5kYW5jZVJlcXVlc3QSEgoKZmFjZV9pbWFnZRgBIAEoDCJcChhSZWNvcmRBdHRlbmRhbmNlUmVzcG9uc2USLwoGcmVjb3JkGAEgASgLMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUmVjb3JkEg8KB21hdGNoZWQYAiABKAgidgoYR2V0RGFpbHlBdHRlbmRhbmNlRmlsdGVyEhAKCGNsYXNzX2lkGAEgASgDEhMKC3NjaGVkdWxlX2lkGAIgASgDEigKBGRhdGUYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEgkKAXEYBCABKAkiigEKGUdldERhaWx5QXR0ZW5kYW5jZVJlcXVlc3QSNwoGZmlsdGVyGAEgASgLMicuYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VGaWx0ZXISFQoEcGFnZRgCIAEoBUIHukgEGgIoABIdCglwYWdlX3NpemUYAyABKAVCCrpIBxoFGMgBKAAikAEKGkdldERhaWx5QXR0ZW5kYW5jZVJlc3BvbnNlEjAKB3JlY29yZHMYASADKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQSMQoHc3VtbWFyeRgCIAEoCzIgLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN1bW1hcnkSDQoFdG90YWwYAyABKAUiegoVTGlzdEF0dGVuZGFuY2VSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAMSKAoEZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJgoCdG8YAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkoKFkxpc3RBdHRlbmRhbmNlUmVzcG9uc2USMAoHcmVjb3JkcxgBIAMoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZCIYChZXYXRjaEF0dGVuZGFuY2VSZXF1ZXN0IkoKF1dhdGNoQXR0ZW5kYW5jZVJlc3BvbnNlEi8KBnJlY29yZBgBIAEoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZCLvAQoXQ3JlYXRlQXR0ZW5kYW5jZVJlcXVlc3QSGAoHdXNlcl9pZBgBIAEoA0IHukgEIgIgABI5CgZzdGF0dXMYAiABKA4yHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VTdGF0dXNCCLpIBYIBAhABEg0KBW5vdGVzGAMgASgJEjEKDWNoZWNrX2luX3RpbWUYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhkKCGNsYXNzX2lkGAUgASgDQge6SAQiAigAEiIKEWNsYXNzX3NjaGVkdWxlX2lkGAYgASgDQge6SAQiAigAIksKGENyZWF0ZUF0dGVuZGFuY2VSZXNwb25zZRIvCgZyZWNvcmQYASABKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQiLgoXRGVsZXRlQXR0ZW5kYW5jZVJlcXVlc3QSEwoCaWQYASABKANCB7pIBCICIAAiGgoYRGVsZXRlQXR0ZW5kYW5jZVJlc3BvbnNlIugBChhBdHRlbmRhbmNlUHVzaExvZ1JlcXVlc3QSGwoKc2Vzc2lvbl9pZBgBIAEoCUIHukgEcgIQARIYCgd1c2VyX2lkGAIgASgDQge6SAQiAiAAEhsKCnN0dWRlbnRfaWQYAyABKAlCB7pIBHICEAESFAoMc3R1ZGVudF9uYW1lGAQgASgJEhkKCGNsYXNzX2lkGAUgASgDQge6SAQiAiAAEhIKCmNsYXNzX25hbWUYBiABKAkSMwoHc2Vlbl9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCBrpIA8gBASIbChlBdHRlbmRhbmNlUHVzaExvZ1Jlc3BvbnNlKnIKEEF0dGVuZGFuY2VTdGF0dXMSIQodQVRURU5EQU5DRV9TVEFUVVNfVU5TUEVDSUZJRUQQABIdChlBVFRFTkRBTkNFX1NUQVRVU19QUkVTRU5UEAESHAoYQVRURU5EQU5DRV9TVEFUVVNfQUJTRU5UEAIqZAoMTm90aWZ5U3RhdHVzEh0KGU5PVElGWV9TVEFUVVNfVU5TUEVDSUZJRUQQABIZChVOT1RJRllfU1RBVFVTX1BFTkRJTkcQARIaChZOT1RJRllfU1RBVFVTX05PVElGSUVEEAIy2AUKEUF0dGVuZGFuY2VTZXJ2aWNlEmMKEFJlY29yZEF0dGVuZGFuY2USJi5hdHRlbmRhbmNlLnYxLlJlY29yZEF0dGVuZGFuY2VSZXF1ZXN0GicuYXR0ZW5kYW5jZS52MS5SZWNvcmRBdHRlbmRhbmNlUmVzcG9uc2USaQoSR2V0RGFpbHlBdHRlbmRhbmNlEiguYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VSZXF1ZXN0GikuYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VSZXNwb25zZRJdCg5MaXN0QXR0ZW5kYW5jZRIkLmF0dGVuZGFuY2UudjEuTGlzdEF0dGVuZGFuY2VSZXF1ZXN0GiUuYXR0ZW5kYW5jZS52MS5MaXN0QXR0ZW5kYW5jZVJlc3BvbnNlEmIKD1dhdGNoQXR0ZW5kYW5jZRIlLmF0dGVuZGFuY2UudjEuV2F0Y2hBdHRlbmRhbmNlUmVxdWVzdBomLmF0dGVuZGFuY2UudjEuV2F0Y2hBdHRlbmRhbmNlUmVzcG9uc2UwARJjChBDcmVhdGVBdHRlbmRhbmNlEiYuYXR0ZW5kYW5jZS52MS5DcmVhdGVBdHRlbmRhbmNlUmVxdWVzdBonLmF0dGVuZGFuY2UudjEuQ3JlYXRlQXR0ZW5kYW5jZVJlc3BvbnNlEmMKEERlbGV0ZUF0dGVuZGFuY2USJi5hdHRlbmRhbmNlLnYxLkRlbGV0ZUF0dGVuZGFuY2VSZXF1ZXN0GicuYXR0ZW5kYW5jZS52MS5EZWxldGVBdHRlbmRhbmNlUmVzcG9uc2USZgoRQXR0ZW5kYW5jZVB1c2hMb2cSJy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VQdXNoTG9nUmVxdWVzdBooLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVB1c2hMb2dSZXNwb25zZUK2AQoRY29tLmF0dGVuZGFuY2UudjFCD0F0dGVuZGFuY2VQcm90b1ABWjtnaXRodWIuY29tL3dhcmdhc2lwaWwvZmFjZWdvL2dlbi9hdHRlbmRhbmNlL3YxO2F0dGVuZGFuY2V2MaICA0FYWKoCDUF0dGVuZGFuY2UuVjHKAg1BdHRlbmRhbmNlXFYx4gIZQXR0ZW5kYW5jZVxWMVxHUEJNZXRhZGF0YeoCDkF0dGVuZGFuY2U6OlYxYgZwcm90bzM", [file_buf_validate_validate, file_google_protobuf_timestamp]);
+
+/**
+ * @generated from message attendance.v1.UserAttendance
+ */
+export type UserAttendance = Message<"attendance.v1.UserAttendance"> & {
+  /**
+   * @generated from field: int64 id = 1;
+   */
+  id: bigint;
+
+  /**
+   * @generated from field: string student_id = 2;
+   */
+  studentId: string;
+
+  /**
+   * @generated from field: string name = 3;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string photo_url = 4;
+   */
+  photoUrl: string;
+
+  /**
+   * @generated from field: string parent_name = 5;
+   */
+  parentName: string;
+
+  /**
+   * @generated from field: string parent_phone = 6;
+   */
+  parentPhone: string;
+};
+
+/**
+ * Describes the message attendance.v1.UserAttendance.
+ * Use `create(UserAttendanceSchema)` to create a new message.
+ */
+export const UserAttendanceSchema: GenMessage<UserAttendance> = /*@__PURE__*/
+  messageDesc(file_attendance_v1_attendance, 0);
 
 /**
  * @generated from message attendance.v1.AttendanceRecord
@@ -30,55 +72,44 @@ export type AttendanceRecord = Message<"attendance.v1.AttendanceRecord"> & {
   userId: bigint;
 
   /**
-   * @generated from field: string name = 3;
+   * @generated from field: int64 class_id = 3;
    */
-  name: string;
+  classId: bigint;
 
   /**
-   * @generated from field: attendance.v1.AttendanceStatus status = 4;
+   * @generated from field: int64 class_schedule_id = 4;
+   */
+  classScheduleId: bigint;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp day = 5;
+   */
+  day?: Timestamp;
+
+  /**
+   * @generated from field: attendance.v1.AttendanceStatus status = 6;
    */
   status: AttendanceStatus;
 
   /**
-   * @generated from field: string photo_url = 5;
+   * @generated from field: attendance.v1.NotifyStatus notify_status = 7;
    */
-  photoUrl: string;
+  notifyStatus: NotifyStatus;
 
   /**
-   * first seen (check-in time)
-   *
-   * @generated from field: google.protobuf.Timestamp timestamp = 6;
+   * @generated from field: google.protobuf.Timestamp check_in_time = 8;
    */
-  timestamp?: Timestamp;
+  checkInTime?: Timestamp;
 
   /**
-   * @generated from field: string class_name = 7;
+   * @generated from field: google.protobuf.Timestamp created_at = 9;
    */
-  className: string;
+  createdAt?: Timestamp;
 
   /**
-   * @generated from field: string student_id = 8;
+   * @generated from field: attendance.v1.UserAttendance student = 10;
    */
-  studentId: string;
-
-  /**
-   * @generated from field: string notes = 9;
-   */
-  notes: string;
-
-  /**
-   * last seen time for this student today
-   *
-   * @generated from field: google.protobuf.Timestamp last_seen = 10;
-   */
-  lastSeen?: Timestamp;
-
-  /**
-   * 0 = not linked to a specific schedule slot
-   *
-   * @generated from field: int64 class_schedule_id = 11;
-   */
-  classScheduleId: bigint;
+  student?: UserAttendance;
 };
 
 /**
@@ -86,7 +117,7 @@ export type AttendanceRecord = Message<"attendance.v1.AttendanceRecord"> & {
  * Use `create(AttendanceRecordSchema)` to create a new message.
  */
 export const AttendanceRecordSchema: GenMessage<AttendanceRecord> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 0);
+  messageDesc(file_attendance_v1_attendance, 1);
 
 /**
  * @generated from message attendance.v1.AttendanceSummary
@@ -113,7 +144,7 @@ export type AttendanceSummary = Message<"attendance.v1.AttendanceSummary"> & {
  * Use `create(AttendanceSummarySchema)` to create a new message.
  */
 export const AttendanceSummarySchema: GenMessage<AttendanceSummary> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 1);
+  messageDesc(file_attendance_v1_attendance, 2);
 
 /**
  * RecordAttendance ────────────────────────────────────────────────────────────
@@ -134,7 +165,7 @@ export type RecordAttendanceRequest = Message<"attendance.v1.RecordAttendanceReq
  * Use `create(RecordAttendanceRequestSchema)` to create a new message.
  */
 export const RecordAttendanceRequestSchema: GenMessage<RecordAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 2);
+  messageDesc(file_attendance_v1_attendance, 3);
 
 /**
  * @generated from message attendance.v1.RecordAttendanceResponse
@@ -158,27 +189,66 @@ export type RecordAttendanceResponse = Message<"attendance.v1.RecordAttendanceRe
  * Use `create(RecordAttendanceResponseSchema)` to create a new message.
  */
 export const RecordAttendanceResponseSchema: GenMessage<RecordAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 3);
+  messageDesc(file_attendance_v1_attendance, 4);
 
 /**
  * GetDailyAttendance ──────────────────────────────────────────────────────────
  *
- * @generated from message attendance.v1.GetDailyAttendanceRequest
+ * @generated from message attendance.v1.GetDailyAttendanceFilter
  */
-export type GetDailyAttendanceRequest = Message<"attendance.v1.GetDailyAttendanceRequest"> & {
+export type GetDailyAttendanceFilter = Message<"attendance.v1.GetDailyAttendanceFilter"> & {
   /**
-   * only the date portion is used
+   * 0 = no filter
    *
-   * @generated from field: google.protobuf.Timestamp date = 1;
+   * @generated from field: int64 class_id = 1;
+   */
+  classId: bigint;
+
+  /**
+   * 0 = no filter
+   *
+   * @generated from field: int64 schedule_id = 2;
+   */
+  scheduleId: bigint;
+
+  /**
+   * nil = today
+   *
+   * @generated from field: google.protobuf.Timestamp date = 3;
    */
   date?: Timestamp;
 
   /**
-   * optional
-   *
-   * @generated from field: string class_filter = 2;
+   * @generated from field: string q = 4;
    */
-  classFilter: string;
+  q: string;
+};
+
+/**
+ * Describes the message attendance.v1.GetDailyAttendanceFilter.
+ * Use `create(GetDailyAttendanceFilterSchema)` to create a new message.
+ */
+export const GetDailyAttendanceFilterSchema: GenMessage<GetDailyAttendanceFilter> = /*@__PURE__*/
+  messageDesc(file_attendance_v1_attendance, 5);
+
+/**
+ * @generated from message attendance.v1.GetDailyAttendanceRequest
+ */
+export type GetDailyAttendanceRequest = Message<"attendance.v1.GetDailyAttendanceRequest"> & {
+  /**
+   * @generated from field: attendance.v1.GetDailyAttendanceFilter filter = 1;
+   */
+  filter?: GetDailyAttendanceFilter;
+
+  /**
+   * @generated from field: int32 page = 2;
+   */
+  page: number;
+
+  /**
+   * @generated from field: int32 page_size = 3;
+   */
+  pageSize: number;
 };
 
 /**
@@ -186,7 +256,7 @@ export type GetDailyAttendanceRequest = Message<"attendance.v1.GetDailyAttendanc
  * Use `create(GetDailyAttendanceRequestSchema)` to create a new message.
  */
 export const GetDailyAttendanceRequestSchema: GenMessage<GetDailyAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 4);
+  messageDesc(file_attendance_v1_attendance, 6);
 
 /**
  * @generated from message attendance.v1.GetDailyAttendanceResponse
@@ -201,6 +271,11 @@ export type GetDailyAttendanceResponse = Message<"attendance.v1.GetDailyAttendan
    * @generated from field: attendance.v1.AttendanceSummary summary = 2;
    */
   summary?: AttendanceSummary;
+
+  /**
+   * @generated from field: int32 total = 3;
+   */
+  total: number;
 };
 
 /**
@@ -208,7 +283,7 @@ export type GetDailyAttendanceResponse = Message<"attendance.v1.GetDailyAttendan
  * Use `create(GetDailyAttendanceResponseSchema)` to create a new message.
  */
 export const GetDailyAttendanceResponseSchema: GenMessage<GetDailyAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 5);
+  messageDesc(file_attendance_v1_attendance, 7);
 
 /**
  * ListAttendance ──────────────────────────────────────────────────────────────
@@ -243,7 +318,7 @@ export type ListAttendanceRequest = Message<"attendance.v1.ListAttendanceRequest
  * Use `create(ListAttendanceRequestSchema)` to create a new message.
  */
 export const ListAttendanceRequestSchema: GenMessage<ListAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 6);
+  messageDesc(file_attendance_v1_attendance, 8);
 
 /**
  * @generated from message attendance.v1.ListAttendanceResponse
@@ -260,7 +335,7 @@ export type ListAttendanceResponse = Message<"attendance.v1.ListAttendanceRespon
  * Use `create(ListAttendanceResponseSchema)` to create a new message.
  */
 export const ListAttendanceResponseSchema: GenMessage<ListAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 7);
+  messageDesc(file_attendance_v1_attendance, 9);
 
 /**
  * WatchAttendance ─────────────────────────────────────────────────────────────
@@ -275,7 +350,7 @@ export type WatchAttendanceRequest = Message<"attendance.v1.WatchAttendanceReque
  * Use `create(WatchAttendanceRequestSchema)` to create a new message.
  */
 export const WatchAttendanceRequestSchema: GenMessage<WatchAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 8);
+  messageDesc(file_attendance_v1_attendance, 10);
 
 /**
  * @generated from message attendance.v1.WatchAttendanceResponse
@@ -292,7 +367,7 @@ export type WatchAttendanceResponse = Message<"attendance.v1.WatchAttendanceResp
  * Use `create(WatchAttendanceResponseSchema)` to create a new message.
  */
 export const WatchAttendanceResponseSchema: GenMessage<WatchAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 9);
+  messageDesc(file_attendance_v1_attendance, 11);
 
 /**
  * CreateAttendance ────────────────────────────────────────────────────────────
@@ -342,7 +417,7 @@ export type CreateAttendanceRequest = Message<"attendance.v1.CreateAttendanceReq
  * Use `create(CreateAttendanceRequestSchema)` to create a new message.
  */
 export const CreateAttendanceRequestSchema: GenMessage<CreateAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 10);
+  messageDesc(file_attendance_v1_attendance, 12);
 
 /**
  * @generated from message attendance.v1.CreateAttendanceResponse
@@ -359,7 +434,7 @@ export type CreateAttendanceResponse = Message<"attendance.v1.CreateAttendanceRe
  * Use `create(CreateAttendanceResponseSchema)` to create a new message.
  */
 export const CreateAttendanceResponseSchema: GenMessage<CreateAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 11);
+  messageDesc(file_attendance_v1_attendance, 13);
 
 /**
  * DeleteAttendance ────────────────────────────────────────────────────────────
@@ -378,7 +453,7 @@ export type DeleteAttendanceRequest = Message<"attendance.v1.DeleteAttendanceReq
  * Use `create(DeleteAttendanceRequestSchema)` to create a new message.
  */
 export const DeleteAttendanceRequestSchema: GenMessage<DeleteAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 12);
+  messageDesc(file_attendance_v1_attendance, 14);
 
 /**
  * @generated from message attendance.v1.DeleteAttendanceResponse
@@ -391,7 +466,7 @@ export type DeleteAttendanceResponse = Message<"attendance.v1.DeleteAttendanceRe
  * Use `create(DeleteAttendanceResponseSchema)` to create a new message.
  */
 export const DeleteAttendanceResponseSchema: GenMessage<DeleteAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 13);
+  messageDesc(file_attendance_v1_attendance, 15);
 
 /**
  * AttendancePushLog ───────────────────────────────────────────────────────────
@@ -449,7 +524,7 @@ export type AttendancePushLogRequest = Message<"attendance.v1.AttendancePushLogR
  * Use `create(AttendancePushLogRequestSchema)` to create a new message.
  */
 export const AttendancePushLogRequestSchema: GenMessage<AttendancePushLogRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 14);
+  messageDesc(file_attendance_v1_attendance, 16);
 
 /**
  * @generated from message attendance.v1.AttendancePushLogResponse
@@ -462,7 +537,7 @@ export type AttendancePushLogResponse = Message<"attendance.v1.AttendancePushLog
  * Use `create(AttendancePushLogResponseSchema)` to create a new message.
  */
 export const AttendancePushLogResponseSchema: GenMessage<AttendancePushLogResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 15);
+  messageDesc(file_attendance_v1_attendance, 17);
 
 /**
  * @generated from enum attendance.v1.AttendanceStatus
@@ -489,6 +564,32 @@ export enum AttendanceStatus {
  */
 export const AttendanceStatusSchema: GenEnum<AttendanceStatus> = /*@__PURE__*/
   enumDesc(file_attendance_v1_attendance, 0);
+
+/**
+ * @generated from enum attendance.v1.NotifyStatus
+ */
+export enum NotifyStatus {
+  /**
+   * @generated from enum value: NOTIFY_STATUS_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: NOTIFY_STATUS_PENDING = 1;
+   */
+  PENDING = 1,
+
+  /**
+   * @generated from enum value: NOTIFY_STATUS_NOTIFIED = 2;
+   */
+  NOTIFIED = 2,
+}
+
+/**
+ * Describes the enum attendance.v1.NotifyStatus.
+ */
+export const NotifyStatusSchema: GenEnum<NotifyStatus> = /*@__PURE__*/
+  enumDesc(file_attendance_v1_attendance, 1);
 
 /**
  * @generated from service attendance.v1.AttendanceService

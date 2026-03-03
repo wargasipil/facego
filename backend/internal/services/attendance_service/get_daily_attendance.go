@@ -2,69 +2,165 @@ package attendance_service
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"connectrpc.com/connect"
+	"github.com/wargasipil/facego/common_helpers"
 	attendancev1 "github.com/wargasipil/facego/gen/attendance/v1"
 	attendancev1connect "github.com/wargasipil/facego/gen/attendance/v1/attendancev1connect"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"gorm.io/gorm"
 )
 
 var _ attendancev1connect.AttendanceServiceHandler = (*Service)(nil)
 
+// do not touch, im implemented my own
 func (s *Service) GetDailyAttendance(
 	ctx context.Context,
 	req *connect.Request[attendancev1.GetDailyAttendanceRequest],
 ) (*connect.Response[attendancev1.GetDailyAttendanceResponse], error) {
-	// Determine the day bounds
-	var dayStart, dayEnd time.Time
-	if req.Msg.Date != nil {
-		t := req.Msg.Date.AsTime()
-		y, m, d := t.Date()
-		dayStart = time.Date(y, m, d, 0, 0, 0, 0, time.UTC)
-	} else {
-		now := time.Now().UTC()
-		y, m, d := now.Date()
-		dayStart = time.Date(y, m, d, 0, 0, 0, 0, time.UTC)
+	var err error
+
+	result := attendancev1.GetDailyAttendanceResponse{
+		Records: []*attendancev1.AttendanceRecord{},
+		Summary: &attendancev1.AttendanceSummary{},
+		Total:   0,
 	}
-	dayEnd = dayStart.Add(24 * time.Hour)
+	filter := req.Msg.Filter
+	pay := req.Msg
 
-	// dailyAttendanceSQL uses DISTINCT ON + window functions to return one row
-	// per student with MIN(check_in_time) as first seen and MAX as last seen.
-	sql := dailyAttendanceSQL + `WHERE a.check_in_time >= ? AND a.check_in_time < ?`
-	args := []any{dayStart, dayEnd}
+	db := s.db.WithContext(ctx).Debug()
 
-	if req.Msg.ClassFilter != "" {
-		sql += ` AND c.name = ?`
-		args = append(args, req.Msg.ClassFilter)
-	}
+	err = common_helpers.NewChainParam(
+		func(next common_helpers.NextFuncParam[*gorm.DB]) common_helpers.NextFuncParam[*gorm.DB] {
+			return func(query *gorm.DB) error { // creating base and filtering
+				query = query.
+					Table("attendances a").
+					Joins("left join users u on u.id = a.user_id")
 
-	// DISTINCT ON requires ORDER BY to start with the same expressions
-	sql += ` ORDER BY a.user_id, COALESCE(ce.class_id, 0), a.check_in_time ASC`
+				search := strings.TrimSpace(filter.Q)
+				if search != "" {
+					query = query.
+						Where("u.name ilike ?", "%"+search+"%")
+				}
 
-	var rows []attendanceRow
-	if err := s.db.WithContext(ctx).Raw(sql, args...).Scan(&rows).Error; err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
+				if filter.ClassId != 0 {
+					query = query.
+						Where("a.class_id = ?", filter.ClassId)
 
-	records := make([]*attendancev1.AttendanceRecord, 0, len(rows))
-	summary := &attendancev1.AttendanceSummary{}
-	seen := map[int64]bool{}
-	for _, r := range rows {
-		records = append(records, r.toProto())
-		if !seen[r.UserID] {
-			seen[r.UserID] = true
-			summary.Total++
-			switch r.Status {
-			case attendancev1.AttendanceStatus_ATTENDANCE_STATUS_PRESENT:
-				summary.Present++
-			case attendancev1.AttendanceStatus_ATTENDANCE_STATUS_ABSENT:
-				summary.Absent++
+				}
+
+				if filter.ScheduleId != 0 {
+					query = query.
+						Where("a.class_schedule_id = ?", filter.ScheduleId)
+				}
+
+				if filter.Date.IsValid() {
+					tfilter := filter.Date.AsTime().In(time.Local)
+					query = query.
+						Where("date(a.day) = ?", tfilter.Format(time.DateOnly))
+				}
+
+				return next(query)
 			}
-		}
+		},
+		func(next common_helpers.NextFuncParam[*gorm.DB]) common_helpers.NextFuncParam[*gorm.DB] {
+			return func(query *gorm.DB) error { // getting total
+				err = query.
+					Session(&gorm.Session{}).
+					Select("count(a.id)").
+					Find(&result.Total).
+					Error
+
+				if err != nil {
+					return err
+				}
+
+				return next(query)
+			}
+		},
+		func(next common_helpers.NextFuncParam[*gorm.DB]) common_helpers.NextFuncParam[*gorm.DB] {
+			return func(query *gorm.DB) error { // adding order
+				query = query.
+					Order("u.name asc").
+					Limit(int(pay.PageSize))
+
+				if pay.Page > 1 {
+					offset := (pay.Page - 1) * pay.PageSize
+					query = query.
+						Offset(int(offset))
+				}
+
+				return next(query)
+			}
+		},
+		func(next common_helpers.NextFuncParam[*gorm.DB]) common_helpers.NextFuncParam[*gorm.DB] {
+			return func(query *gorm.DB) error { // getting data
+				datas := []struct {
+					Id              int64
+					UserId          int64
+					ClassScheduleId int64
+					ClassId         int64
+					Day             time.Time
+					Status          attendancev1.AttendanceStatus
+					NotifyStatus    attendancev1.NotifyStatus
+					CheckInTime     time.Time
+					CreatedAt       time.Time
+				}{}
+
+				err = query.
+					Session(&gorm.Session{}).
+					Select("a.*").
+					Find(&datas).
+					Error
+
+				if err != nil {
+					return err
+				}
+
+				for _, data := range datas {
+					result.Records = append(result.Records, &attendancev1.AttendanceRecord{
+						Id:              data.Id,
+						UserId:          data.UserId,
+						ClassId:         data.ClassId,
+						ClassScheduleId: data.ClassScheduleId,
+						Day:             timestamppb.New(data.Day),
+						Status:          data.Status,
+						NotifyStatus:    data.NotifyStatus,
+						CheckInTime:     timestamppb.New(data.CheckInTime),
+						CreatedAt:       timestamppb.New(data.CreatedAt),
+					})
+				}
+
+				return next(query)
+			}
+		},
+		func(next common_helpers.NextFuncParam[*gorm.DB]) common_helpers.NextFuncParam[*gorm.DB] {
+			return func(query *gorm.DB) error {
+				users := []*attendancev1.UserAttendance{}
+				err = query.
+					Session(&gorm.Session{}).
+					Select("u.*").
+					Find(&users).
+					Error
+
+				if err != nil {
+					return err
+				}
+
+				for i, user := range users {
+					result.Records[i].Student = user
+				}
+
+				return next(query)
+			}
+		},
+	)(db)
+
+	if err != nil {
+		return connect.NewResponse(&result), err
 	}
 
-	return connect.NewResponse(&attendancev1.GetDailyAttendanceResponse{
-		Records: records,
-		Summary: summary,
-	}), nil
+	return connect.NewResponse(&result), err
 }

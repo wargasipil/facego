@@ -13,9 +13,10 @@ type Attendance struct {
 	ClassScheduleID int64                         `gorm:"index:day_unique,unique"`
 	Day             time.Time                     `gorm:"index:day_unique,unique"`
 	Status          attendancev1.AttendanceStatus `gorm:"column:status;not null"`
-	CheckInTime     time.Time                     `gorm:"column:check_in_time;not null;index"`
-	Notes           string                        `gorm:"column:notes;not null;default:''"`
-	CreatedAt       time.Time                     `gorm:"column:created_at;autoCreateTime"`
+	NotifyStatus    attendancev1.NotifyStatus
+	CheckInTime     time.Time `gorm:"column:check_in_time;not null;index"`
+	Notes           string    `gorm:"column:notes;not null;default:''"`
+	CreatedAt       time.Time `gorm:"column:created_at;autoCreateTime"`
 
 	Class         Class
 	ClassSchedule ClassSchedule

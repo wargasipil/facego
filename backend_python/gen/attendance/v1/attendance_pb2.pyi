@@ -16,35 +16,58 @@ class AttendanceStatus(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     ATTENDANCE_STATUS_UNSPECIFIED: _ClassVar[AttendanceStatus]
     ATTENDANCE_STATUS_PRESENT: _ClassVar[AttendanceStatus]
     ATTENDANCE_STATUS_ABSENT: _ClassVar[AttendanceStatus]
+
+class NotifyStatus(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    NOTIFY_STATUS_UNSPECIFIED: _ClassVar[NotifyStatus]
+    NOTIFY_STATUS_PENDING: _ClassVar[NotifyStatus]
+    NOTIFY_STATUS_NOTIFIED: _ClassVar[NotifyStatus]
 ATTENDANCE_STATUS_UNSPECIFIED: AttendanceStatus
 ATTENDANCE_STATUS_PRESENT: AttendanceStatus
 ATTENDANCE_STATUS_ABSENT: AttendanceStatus
+NOTIFY_STATUS_UNSPECIFIED: NotifyStatus
+NOTIFY_STATUS_PENDING: NotifyStatus
+NOTIFY_STATUS_NOTIFIED: NotifyStatus
+
+class UserAttendance(_message.Message):
+    __slots__ = ("id", "student_id", "name", "photo_url", "parent_name", "parent_phone")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    STUDENT_ID_FIELD_NUMBER: _ClassVar[int]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    PHOTO_URL_FIELD_NUMBER: _ClassVar[int]
+    PARENT_NAME_FIELD_NUMBER: _ClassVar[int]
+    PARENT_PHONE_FIELD_NUMBER: _ClassVar[int]
+    id: int
+    student_id: str
+    name: str
+    photo_url: str
+    parent_name: str
+    parent_phone: str
+    def __init__(self, id: _Optional[int] = ..., student_id: _Optional[str] = ..., name: _Optional[str] = ..., photo_url: _Optional[str] = ..., parent_name: _Optional[str] = ..., parent_phone: _Optional[str] = ...) -> None: ...
 
 class AttendanceRecord(_message.Message):
-    __slots__ = ("id", "user_id", "name", "status", "photo_url", "timestamp", "class_name", "student_id", "notes", "last_seen", "class_schedule_id")
+    __slots__ = ("id", "user_id", "class_id", "class_schedule_id", "day", "status", "notify_status", "check_in_time", "created_at", "student")
     ID_FIELD_NUMBER: _ClassVar[int]
     USER_ID_FIELD_NUMBER: _ClassVar[int]
-    NAME_FIELD_NUMBER: _ClassVar[int]
-    STATUS_FIELD_NUMBER: _ClassVar[int]
-    PHOTO_URL_FIELD_NUMBER: _ClassVar[int]
-    TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
-    CLASS_NAME_FIELD_NUMBER: _ClassVar[int]
-    STUDENT_ID_FIELD_NUMBER: _ClassVar[int]
-    NOTES_FIELD_NUMBER: _ClassVar[int]
-    LAST_SEEN_FIELD_NUMBER: _ClassVar[int]
+    CLASS_ID_FIELD_NUMBER: _ClassVar[int]
     CLASS_SCHEDULE_ID_FIELD_NUMBER: _ClassVar[int]
+    DAY_FIELD_NUMBER: _ClassVar[int]
+    STATUS_FIELD_NUMBER: _ClassVar[int]
+    NOTIFY_STATUS_FIELD_NUMBER: _ClassVar[int]
+    CHECK_IN_TIME_FIELD_NUMBER: _ClassVar[int]
+    CREATED_AT_FIELD_NUMBER: _ClassVar[int]
+    STUDENT_FIELD_NUMBER: _ClassVar[int]
     id: int
     user_id: int
-    name: str
-    status: AttendanceStatus
-    photo_url: str
-    timestamp: _timestamp_pb2.Timestamp
-    class_name: str
-    student_id: str
-    notes: str
-    last_seen: _timestamp_pb2.Timestamp
+    class_id: int
     class_schedule_id: int
-    def __init__(self, id: _Optional[int] = ..., user_id: _Optional[int] = ..., name: _Optional[str] = ..., status: _Optional[_Union[AttendanceStatus, str]] = ..., photo_url: _Optional[str] = ..., timestamp: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., class_name: _Optional[str] = ..., student_id: _Optional[str] = ..., notes: _Optional[str] = ..., last_seen: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., class_schedule_id: _Optional[int] = ...) -> None: ...
+    day: _timestamp_pb2.Timestamp
+    status: AttendanceStatus
+    notify_status: NotifyStatus
+    check_in_time: _timestamp_pb2.Timestamp
+    created_at: _timestamp_pb2.Timestamp
+    student: UserAttendance
+    def __init__(self, id: _Optional[int] = ..., user_id: _Optional[int] = ..., class_id: _Optional[int] = ..., class_schedule_id: _Optional[int] = ..., day: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., status: _Optional[_Union[AttendanceStatus, str]] = ..., notify_status: _Optional[_Union[NotifyStatus, str]] = ..., check_in_time: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., created_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., student: _Optional[_Union[UserAttendance, _Mapping]] = ...) -> None: ...
 
 class AttendanceSummary(_message.Message):
     __slots__ = ("total", "present", "absent")
@@ -70,21 +93,37 @@ class RecordAttendanceResponse(_message.Message):
     matched: bool
     def __init__(self, record: _Optional[_Union[AttendanceRecord, _Mapping]] = ..., matched: _Optional[bool] = ...) -> None: ...
 
-class GetDailyAttendanceRequest(_message.Message):
-    __slots__ = ("date", "class_filter")
+class GetDailyAttendanceFilter(_message.Message):
+    __slots__ = ("class_id", "schedule_id", "date", "q")
+    CLASS_ID_FIELD_NUMBER: _ClassVar[int]
+    SCHEDULE_ID_FIELD_NUMBER: _ClassVar[int]
     DATE_FIELD_NUMBER: _ClassVar[int]
-    CLASS_FILTER_FIELD_NUMBER: _ClassVar[int]
+    Q_FIELD_NUMBER: _ClassVar[int]
+    class_id: int
+    schedule_id: int
     date: _timestamp_pb2.Timestamp
-    class_filter: str
-    def __init__(self, date: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., class_filter: _Optional[str] = ...) -> None: ...
+    q: str
+    def __init__(self, class_id: _Optional[int] = ..., schedule_id: _Optional[int] = ..., date: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., q: _Optional[str] = ...) -> None: ...
+
+class GetDailyAttendanceRequest(_message.Message):
+    __slots__ = ("filter", "page", "page_size")
+    FILTER_FIELD_NUMBER: _ClassVar[int]
+    PAGE_FIELD_NUMBER: _ClassVar[int]
+    PAGE_SIZE_FIELD_NUMBER: _ClassVar[int]
+    filter: GetDailyAttendanceFilter
+    page: int
+    page_size: int
+    def __init__(self, filter: _Optional[_Union[GetDailyAttendanceFilter, _Mapping]] = ..., page: _Optional[int] = ..., page_size: _Optional[int] = ...) -> None: ...
 
 class GetDailyAttendanceResponse(_message.Message):
-    __slots__ = ("records", "summary")
+    __slots__ = ("records", "summary", "total")
     RECORDS_FIELD_NUMBER: _ClassVar[int]
     SUMMARY_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_FIELD_NUMBER: _ClassVar[int]
     records: _containers.RepeatedCompositeFieldContainer[AttendanceRecord]
     summary: AttendanceSummary
-    def __init__(self, records: _Optional[_Iterable[_Union[AttendanceRecord, _Mapping]]] = ..., summary: _Optional[_Union[AttendanceSummary, _Mapping]] = ...) -> None: ...
+    total: int
+    def __init__(self, records: _Optional[_Iterable[_Union[AttendanceRecord, _Mapping]]] = ..., summary: _Optional[_Union[AttendanceSummary, _Mapping]] = ..., total: _Optional[int] = ...) -> None: ...
 
 class ListAttendanceRequest(_message.Message):
     __slots__ = ("user_id", "to")

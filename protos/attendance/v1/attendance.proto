@@ -28,18 +28,32 @@ enum AttendanceStatus {
   ATTENDANCE_STATUS_ABSENT = 2;
 }
 
+enum NotifyStatus {
+  NOTIFY_STATUS_UNSPECIFIED = 0;
+  NOTIFY_STATUS_PENDING = 1;
+  NOTIFY_STATUS_NOTIFIED = 2;
+}
+
+message UserAttendance {
+  int64 id = 1;
+  string student_id = 2;
+  string name = 3;
+  string photo_url = 4;
+  string parent_name = 5;
+  string parent_phone = 6;
+}
+
 message AttendanceRecord {
   int64 id = 1;
   int64 user_id = 2;
-  string name = 3;
-  AttendanceStatus status = 4;
-  string photo_url = 5;
-  google.protobuf.Timestamp timestamp = 6; // first seen (check-in time)
-  string class_name = 7;
-  string student_id = 8;
-  string notes = 9;
-  google.protobuf.Timestamp last_seen = 10; // last seen time for this student today
-  int64 class_schedule_id = 11; // 0 = not linked to a specific schedule slot
+  int64 class_id = 3;
+  int64 class_schedule_id = 4;
+  google.protobuf.Timestamp day = 5;
+  AttendanceStatus status = 6;
+  NotifyStatus notify_status = 7;
+  google.protobuf.Timestamp check_in_time = 8;
+  google.protobuf.Timestamp created_at = 9;
+  UserAttendance student = 10;
 }
 
 message AttendanceSummary {
@@ -58,13 +72,24 @@ message RecordAttendanceResponse {
 }
 
 // GetDailyAttendance ──────────────────────────────────────────────────────────
+message GetDailyAttendanceFilter {
+  int64 class_id = 1; // 0 = no filter
+  int64 schedule_id = 2; // 0 = no filter
+  google.protobuf.Timestamp date = 3; // nil = today
+  string q = 4;
+}
 message GetDailyAttendanceRequest {
-  google.protobuf.Timestamp date = 1; // only the date portion is used
-  string class_filter = 2; // optional
+  GetDailyAttendanceFilter filter = 1;
+  int32 page = 2 [(buf.validate.field).int32.gte = 0];
+  int32 page_size = 3 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 200
+  }];
 }
 message GetDailyAttendanceResponse {
   repeated AttendanceRecord records = 1;
   AttendanceSummary summary = 2;
+  int32 total = 3;
 }
 
 // ListAttendance ──────────────────────────────────────────────────────────────

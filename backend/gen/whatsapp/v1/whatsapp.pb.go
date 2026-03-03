@@ -585,7 +585,7 @@ func (x *SendAttendanceAlertsResponse) GetMessages() []*WhatsappMessage {
 	return nil
 }
 
-type SendTestMessageRequest struct {
+type SendMessageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Phone         string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
 	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
@@ -593,20 +593,20 @@ type SendTestMessageRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SendTestMessageRequest) Reset() {
-	*x = SendTestMessageRequest{}
+func (x *SendMessageRequest) Reset() {
+	*x = SendMessageRequest{}
 	mi := &file_whatsapp_v1_whatsapp_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SendTestMessageRequest) String() string {
+func (x *SendMessageRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SendTestMessageRequest) ProtoMessage() {}
+func (*SendMessageRequest) ProtoMessage() {}
 
-func (x *SendTestMessageRequest) ProtoReflect() protoreflect.Message {
+func (x *SendMessageRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_whatsapp_v1_whatsapp_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -618,26 +618,26 @@ func (x *SendTestMessageRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SendTestMessageRequest.ProtoReflect.Descriptor instead.
-func (*SendTestMessageRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SendMessageRequest.ProtoReflect.Descriptor instead.
+func (*SendMessageRequest) Descriptor() ([]byte, []int) {
 	return file_whatsapp_v1_whatsapp_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *SendTestMessageRequest) GetPhone() string {
+func (x *SendMessageRequest) GetPhone() string {
 	if x != nil {
 		return x.Phone
 	}
 	return ""
 }
 
-func (x *SendTestMessageRequest) GetMessage() string {
+func (x *SendMessageRequest) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
 	return ""
 }
 
-type SendTestMessageResponse struct {
+type SendMessageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
@@ -645,20 +645,20 @@ type SendTestMessageResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SendTestMessageResponse) Reset() {
-	*x = SendTestMessageResponse{}
+func (x *SendMessageResponse) Reset() {
+	*x = SendMessageResponse{}
 	mi := &file_whatsapp_v1_whatsapp_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SendTestMessageResponse) String() string {
+func (x *SendMessageResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SendTestMessageResponse) ProtoMessage() {}
+func (*SendMessageResponse) ProtoMessage() {}
 
-func (x *SendTestMessageResponse) ProtoReflect() protoreflect.Message {
+func (x *SendMessageResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_whatsapp_v1_whatsapp_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -670,19 +670,19 @@ func (x *SendTestMessageResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SendTestMessageResponse.ProtoReflect.Descriptor instead.
-func (*SendTestMessageResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use SendMessageResponse.ProtoReflect.Descriptor instead.
+func (*SendMessageResponse) Descriptor() ([]byte, []int) {
 	return file_whatsapp_v1_whatsapp_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *SendTestMessageResponse) GetSuccess() bool {
+func (x *SendMessageResponse) GetSuccess() bool {
 	if x != nil {
 		return x.Success
 	}
 	return false
 }
 
-func (x *SendTestMessageResponse) GetError() string {
+func (x *SendMessageResponse) GetError() string {
 	if x != nil {
 		return x.Error
 	}
@@ -957,7 +957,7 @@ var File_whatsapp_v1_whatsapp_proto protoreflect.FileDescriptor
 
 const file_whatsapp_v1_whatsapp_proto_rawDesc = "" +
 	"\n" +
-	"\x1awhatsapp/v1/whatsapp.proto\x12\vwhatsapp.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bbuf/validate/validate.proto\"\x10\n" +
+	"\x1awhatsapp/v1/whatsapp.proto\x12\vwhatsapp.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x10\n" +
 	"\x0eWStreamRequest\"\x1f\n" +
 	"\tNeedLogin\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\"x\n" +
@@ -997,11 +997,11 @@ const file_whatsapp_v1_whatsapp_proto_rawDesc = "" +
 	"\x1cSendAttendanceAlertsResponse\x12\x16\n" +
 	"\x06queued\x18\x01 \x01(\x05R\x06queued\x12\x18\n" +
 	"\askipped\x18\x02 \x01(\x05R\askipped\x128\n" +
-	"\bmessages\x18\x03 \x03(\v2\x1c.whatsapp.v1.WhatsappMessageR\bmessages\"Z\n" +
-	"\x16SendTestMessageRequest\x12\x1d\n" +
+	"\bmessages\x18\x03 \x03(\v2\x1c.whatsapp.v1.WhatsappMessageR\bmessages\"V\n" +
+	"\x12SendMessageRequest\x12\x1d\n" +
 	"\x05phone\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\x05phone\x12!\n" +
-	"\amessage\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\amessage\"I\n" +
-	"\x17SendTestMessageResponse\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x10\x01R\amessage\"E\n" +
+	"\x13SendMessageResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x14\n" +
 	"\x05error\x18\x02 \x01(\tR\x05error\"q\n" +
 	"\x13ListMessagesRequest\x12.\n" +
@@ -1015,12 +1015,12 @@ const file_whatsapp_v1_whatsapp_proto_rawDesc = "" +
 	"\x11SaveConfigRequest\x12;\n" +
 	"\x06config\x18\x01 \x01(\v2\x1b.whatsapp.v1.WhatsappConfigB\x06\xbaH\x03\xc8\x01\x01R\x06config\"I\n" +
 	"\x12SaveConfigResponse\x123\n" +
-	"\x06config\x18\x01 \x01(\v2\x1b.whatsapp.v1.WhatsappConfigR\x06config2\xd7\x04\n" +
+	"\x06config\x18\x01 \x01(\v2\x1b.whatsapp.v1.WhatsappConfigR\x06config2\xcb\x04\n" +
 	"\x0fWhatsappService\x12A\n" +
 	"\x06Status\x12\x1a.whatsapp.v1.StatusRequest\x1a\x1b.whatsapp.v1.StatusResponse\x12F\n" +
 	"\aWStream\x12\x1b.whatsapp.v1.WStreamRequest\x1a\x1c.whatsapp.v1.WStreamResponse0\x01\x12k\n" +
-	"\x14SendAttendanceAlerts\x12(.whatsapp.v1.SendAttendanceAlertsRequest\x1a).whatsapp.v1.SendAttendanceAlertsResponse\x12\\\n" +
-	"\x0fSendTestMessage\x12#.whatsapp.v1.SendTestMessageRequest\x1a$.whatsapp.v1.SendTestMessageResponse\x12S\n" +
+	"\x14SendAttendanceAlerts\x12(.whatsapp.v1.SendAttendanceAlertsRequest\x1a).whatsapp.v1.SendAttendanceAlertsResponse\x12P\n" +
+	"\vSendMessage\x12\x1f.whatsapp.v1.SendMessageRequest\x1a .whatsapp.v1.SendMessageResponse\x12S\n" +
 	"\fListMessages\x12 .whatsapp.v1.ListMessagesRequest\x1a!.whatsapp.v1.ListMessagesResponse\x12J\n" +
 	"\tGetConfig\x12\x1d.whatsapp.v1.GetConfigRequest\x1a\x1e.whatsapp.v1.GetConfigResponse\x12M\n" +
 	"\n" +
@@ -1050,8 +1050,8 @@ var file_whatsapp_v1_whatsapp_proto_goTypes = []any{
 	(*WhatsappConfig)(nil),               // 6: whatsapp.v1.WhatsappConfig
 	(*SendAttendanceAlertsRequest)(nil),  // 7: whatsapp.v1.SendAttendanceAlertsRequest
 	(*SendAttendanceAlertsResponse)(nil), // 8: whatsapp.v1.SendAttendanceAlertsResponse
-	(*SendTestMessageRequest)(nil),       // 9: whatsapp.v1.SendTestMessageRequest
-	(*SendTestMessageResponse)(nil),      // 10: whatsapp.v1.SendTestMessageResponse
+	(*SendMessageRequest)(nil),           // 9: whatsapp.v1.SendMessageRequest
+	(*SendMessageResponse)(nil),          // 10: whatsapp.v1.SendMessageResponse
 	(*ListMessagesRequest)(nil),          // 11: whatsapp.v1.ListMessagesRequest
 	(*ListMessagesResponse)(nil),         // 12: whatsapp.v1.ListMessagesResponse
 	(*GetConfigRequest)(nil),             // 13: whatsapp.v1.GetConfigRequest
@@ -1074,14 +1074,14 @@ var file_whatsapp_v1_whatsapp_proto_depIdxs = []int32{
 	3,  // 10: whatsapp.v1.WhatsappService.Status:input_type -> whatsapp.v1.StatusRequest
 	0,  // 11: whatsapp.v1.WhatsappService.WStream:input_type -> whatsapp.v1.WStreamRequest
 	7,  // 12: whatsapp.v1.WhatsappService.SendAttendanceAlerts:input_type -> whatsapp.v1.SendAttendanceAlertsRequest
-	9,  // 13: whatsapp.v1.WhatsappService.SendTestMessage:input_type -> whatsapp.v1.SendTestMessageRequest
+	9,  // 13: whatsapp.v1.WhatsappService.SendMessage:input_type -> whatsapp.v1.SendMessageRequest
 	11, // 14: whatsapp.v1.WhatsappService.ListMessages:input_type -> whatsapp.v1.ListMessagesRequest
 	13, // 15: whatsapp.v1.WhatsappService.GetConfig:input_type -> whatsapp.v1.GetConfigRequest
 	15, // 16: whatsapp.v1.WhatsappService.SaveConfig:input_type -> whatsapp.v1.SaveConfigRequest
 	4,  // 17: whatsapp.v1.WhatsappService.Status:output_type -> whatsapp.v1.StatusResponse
 	2,  // 18: whatsapp.v1.WhatsappService.WStream:output_type -> whatsapp.v1.WStreamResponse
 	8,  // 19: whatsapp.v1.WhatsappService.SendAttendanceAlerts:output_type -> whatsapp.v1.SendAttendanceAlertsResponse
-	10, // 20: whatsapp.v1.WhatsappService.SendTestMessage:output_type -> whatsapp.v1.SendTestMessageResponse
+	10, // 20: whatsapp.v1.WhatsappService.SendMessage:output_type -> whatsapp.v1.SendMessageResponse
 	12, // 21: whatsapp.v1.WhatsappService.ListMessages:output_type -> whatsapp.v1.ListMessagesResponse
 	14, // 22: whatsapp.v1.WhatsappService.GetConfig:output_type -> whatsapp.v1.GetConfigResponse
 	16, // 23: whatsapp.v1.WhatsappService.SaveConfig:output_type -> whatsapp.v1.SaveConfigResponse

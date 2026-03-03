@@ -226,20 +226,18 @@ export default function StudentDetailPage() {
                     <TableColumnHeader>Date</TableColumnHeader>
                     <TableColumnHeader>Status</TableColumnHeader>
                     <TableColumnHeader>Check-in Time</TableColumnHeader>
-                    <TableColumnHeader>Notes</TableColumnHeader>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {records.map(r => (
                     <TableRow key={String(r.id)}>
-                      <TableCell fontWeight="medium" fontSize="sm">{formatDate(r.timestamp)}</TableCell>
+                      <TableCell fontWeight="medium" fontSize="sm">{formatDate(r.checkInTime)}</TableCell>
                       <TableCell>
                         <Badge colorPalette={STATUS_COLOR[r.status] ?? 'gray'}>
                           {STATUS_LABEL[r.status] ?? 'Unknown'}
                         </Badge>
                       </TableCell>
-                      <TableCell color="gray.500" fontSize="sm">{formatTime(r.timestamp)}</TableCell>
-                      <TableCell color="gray.400" fontSize="xs">{r.notes || '—'}</TableCell>
+                      <TableCell color="gray.500" fontSize="sm">{formatTime(r.checkInTime)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

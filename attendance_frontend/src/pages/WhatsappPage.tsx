@@ -22,10 +22,10 @@ import {
   Separator,
   Flex,
 } from '@chakra-ui/react'
-import { FiRefreshCw, FiSave, FiMessageSquare, FiSend } from 'react-icons/fi'
+import { FiRefreshCw, FiMessageSquare, FiSend } from 'react-icons/fi'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import { type WhatsappMessage, type WhatsappConfig } from '../gen/whatsapp/v1/whatsapp_pb'
+import { type WhatsappMessage } from '../gen/whatsapp/v1/whatsapp_pb'
 import { whatsappService } from '../services/whatsapp_service'
 import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 
@@ -50,13 +50,6 @@ export default function WhatsappPage() {
   const [qrCode, setQrCode]           = useState<string | null>(null)
   const [phoneNumber, setPhoneNumber] = useState('')
   const abortRef                      = useRef<AbortController | null>(null)
-
-  // ── config / templates ──
-  const [config, setConfig]             = useState<WhatsappConfig | null>(null)
-  const [lateTmpl, setLateTmpl]         = useState('')
-  const [absentTmpl, setAbsentTmpl]     = useState('')
-  const [configSaving, setConfigSaving] = useState(false)
-  const [configMsg, setConfigMsg]       = useState<string | null>(null)
 
   // ── test message ──
   const [testPhone, setTestPhone]         = useState('')
@@ -97,18 +90,6 @@ export default function WhatsappPage() {
     run()
   }, [])
 
-  // ── load config ──
-  const loadConfig = useCallback(async () => {
-    try {
-      const r = await whatsappService.getConfig({})
-      if (r.config) {
-        setConfig(r.config)
-        setLateTmpl(r.config.lateMessageTemplate)
-        setAbsentTmpl(r.config.absentMessageTemplate)
-      }
-    } catch {}
-  }, [])
-
   // ── load message log ──
   const loadMessages = useCallback(async () => {
     setLogLoading(true)
@@ -130,37 +111,16 @@ export default function WhatsappPage() {
 
   useEffect(() => {
     connectStream()
-    loadConfig()
     loadMessages()
     return () => abortRef.current?.abort()
-  }, [connectStream, loadConfig, loadMessages])
-
-  // ── save config ──
-  const handleSaveConfig = async () => {
-    setConfigSaving(true)
-    setConfigMsg(null)
-    try {
-      await whatsappService.saveConfig({
-        config: {
-          enabled:               config?.enabled ?? true,
-          lateMessageTemplate:   lateTmpl,
-          absentMessageTemplate: absentTmpl,
-        },
-      })
-      setConfigMsg('Templates saved.')
-    } catch (e: unknown) {
-      setConfigMsg('Failed to save: ' + (e as Error).message)
-    } finally {
-      setConfigSaving(false)
-    }
-  }
+  }, [connectStream, loadMessages])
 
   // ── send test message ──
   const handleSendTest = async () => {
     setTestSending(true)
     setTestResult(null)
     try {
-      const r = await whatsappService.sendTestMessage({ phone: testPhone, message: testMsg })
+      const r = await whatsappService.sendMessage({ phone: testPhone, message: testMsg })
       if (r.success) {
         setTestResult({ ok: true, text: 'Message sent successfully.' })
       } else {
@@ -236,45 +196,6 @@ export default function WhatsappPage() {
                 <Text fontSize="sm">Stream lost. Make sure the backend is running.</Text>
               </HStack>
             )}
-          </Box>
-
-          {/* ── Templates Card ── */}
-          <Box bg="white" borderRadius="lg" shadow="sm" p={5}>
-            <Heading size="sm" mb={1}>Message Templates</Heading>
-            <Text fontSize="xs" color="gray.500" mb={4}>
-              Available variables: <code>{'{student_name}'}</code>, <code>{'{parent_name}'}</code>, <code>{'{class}'}</code>, <code>{'{date}'}</code>, <code>{'{time}'}</code>
-            </Text>
-            <VStack gap={4} align="stretch">
-              <Field.Root>
-                <Field.Label>Late Message Template</Field.Label>
-                <Textarea
-                  value={lateTmpl}
-                  onChange={e => setLateTmpl(e.target.value)}
-                  rows={4}
-                  placeholder="e.g. Yth. {parent_name}, ananda {student_name} kelas {class} datang terlambat pada {date} pukul {time}."
-                />
-              </Field.Root>
-              <Field.Root>
-                <Field.Label>Absent Message Template</Field.Label>
-                <Textarea
-                  value={absentTmpl}
-                  onChange={e => setAbsentTmpl(e.target.value)}
-                  rows={4}
-                  placeholder="e.g. Yth. {parent_name}, ananda {student_name} kelas {class} tidak hadir pada {date}."
-                />
-              </Field.Root>
-              {configMsg && (
-                <Text fontSize="sm" color={configMsg.startsWith('Failed') ? 'red.500' : 'green.600'}>
-                  {configMsg}
-                </Text>
-              )}
-              <Box>
-                <Button size="sm" colorPalette="blue" loading={configSaving} onClick={handleSaveConfig}>
-                  <FiSave />
-                  Save Templates
-                </Button>
-              </Box>
-            </VStack>
           </Box>
 
           {/* ── Test Message Card ── */}

@@ -29,10 +29,10 @@ class WhatsappServiceStub(object):
                 request_serializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendAttendanceAlertsRequest.SerializeToString,
                 response_deserializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendAttendanceAlertsResponse.FromString,
                 _registered_method=True)
-        self.SendTestMessage = channel.unary_unary(
-                '/whatsapp.v1.WhatsappService/SendTestMessage',
-                request_serializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendTestMessageRequest.SerializeToString,
-                response_deserializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendTestMessageResponse.FromString,
+        self.SendMessage = channel.unary_unary(
+                '/whatsapp.v1.WhatsappService/SendMessage',
+                request_serializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendMessageRequest.SerializeToString,
+                response_deserializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendMessageResponse.FromString,
                 _registered_method=True)
         self.ListMessages = channel.unary_unary(
                 '/whatsapp.v1.WhatsappService/ListMessages',
@@ -73,8 +73,8 @@ class WhatsappServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def SendTestMessage(self, request, context):
-        """Send a test message to verify connectivity
+    def SendMessage(self, request, context):
+        """Send a message to a phone number
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -118,10 +118,10 @@ def add_WhatsappServiceServicer_to_server(servicer, server):
                     request_deserializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendAttendanceAlertsRequest.FromString,
                     response_serializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendAttendanceAlertsResponse.SerializeToString,
             ),
-            'SendTestMessage': grpc.unary_unary_rpc_method_handler(
-                    servicer.SendTestMessage,
-                    request_deserializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendTestMessageRequest.FromString,
-                    response_serializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendTestMessageResponse.SerializeToString,
+            'SendMessage': grpc.unary_unary_rpc_method_handler(
+                    servicer.SendMessage,
+                    request_deserializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendMessageRequest.FromString,
+                    response_serializer=whatsapp_dot_v1_dot_whatsapp__pb2.SendMessageResponse.SerializeToString,
             ),
             'ListMessages': grpc.unary_unary_rpc_method_handler(
                     servicer.ListMessages,
@@ -231,7 +231,7 @@ class WhatsappService(object):
             _registered_method=True)
 
     @staticmethod
-    def SendTestMessage(request,
+    def SendMessage(request,
             target,
             options=(),
             channel_credentials=None,
@@ -244,9 +244,9 @@ class WhatsappService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/whatsapp.v1.WhatsappService/SendTestMessage',
-            whatsapp_dot_v1_dot_whatsapp__pb2.SendTestMessageRequest.SerializeToString,
-            whatsapp_dot_v1_dot_whatsapp__pb2.SendTestMessageResponse.FromString,
+            '/whatsapp.v1.WhatsappService/SendMessage',
+            whatsapp_dot_v1_dot_whatsapp__pb2.SendMessageRequest.SerializeToString,
+            whatsapp_dot_v1_dot_whatsapp__pb2.SendMessageResponse.FromString,
             options,
             channel_credentials,
             insecure,

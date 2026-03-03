@@ -26,9 +26,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { type Class, type ClassSchedule } from '../../gen/classes/v1/classes_pb'
 import { classService } from '../../services/class_service'
-import { ClassStudentsTab } from './components/ClassStudentsTab'
-import { ClassScheduleTab } from './components/ClassScheduleTab'
-import { ClassAttendanceTab } from './components/ClassAttendanceTab'
+import { StudentsTab } from './tabs/students'
+import { ScheduleTab } from './tabs/schedule'
+import { AttendanceTab } from './tabs/attendance'
 
 const formatDate = (ts?: { seconds: bigint }) =>
   ts ? new Date(Number(ts.seconds) * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'
@@ -170,13 +170,13 @@ export default function ClassDetailPage() {
             <TabsTrigger value="attendance">
               <HStack gap={2}>
                 <FiClipboard size={14} />
-                <Text>Attendance Log</Text>
+                <Text>Attendance</Text>
               </HStack>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="students">
-            <ClassStudentsTab
+            <StudentsTab
               classId={cls.id}
               className={cls.name}
               onTotalChange={setStudentTotal}
@@ -184,7 +184,7 @@ export default function ClassDetailPage() {
           </TabsContent>
 
           <TabsContent value="schedule">
-            <ClassScheduleTab
+            <ScheduleTab
               classId={cls.id}
               schedules={schedules}
               onSchedulesChange={setSchedules}
@@ -192,9 +192,11 @@ export default function ClassDetailPage() {
           </TabsContent>
 
           <TabsContent value="attendance">
-            <ClassAttendanceTab
+            <AttendanceTab
+              classId={cls.id}
               className={cls.name}
               active={activeTab === 'attendance'}
+              schedules={schedules}
             />
           </TabsContent>
         </TabsRoot>

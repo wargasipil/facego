@@ -43,7 +43,5 @@ func (s *Service) CreateAttendance(
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("user not found"))
 	}
 
-	return connect.NewResponse(&attendancev1.CreateAttendanceResponse{
-		Record: row.toProto(),
-	}), nil
+	return connect.NewResponse(&attendancev1.CreateAttendanceResponse{}), nil
 }

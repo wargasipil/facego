@@ -19,6 +19,7 @@ import (
 	studyprogramsv1connect "github.com/wargasipil/facego/gen/study_programs/v1/study_programsv1connect"
 	teachersv1connect "github.com/wargasipil/facego/gen/teachers/v1/teachersv1connect"
 	usersv1connect "github.com/wargasipil/facego/gen/users/v1/usersv1connect"
+	notifiersv1connect "github.com/wargasipil/facego/gen/notifiers/v1/notifiersv1connect"
 	whatsappv1connect "github.com/wargasipil/facego/gen/whatsapp/v1/whatsappv1connect"
 	"github.com/wargasipil/facego/internal/interceptors"
 	"github.com/wargasipil/facego/internal/services/attendance_service"
@@ -29,6 +30,7 @@ import (
 	"github.com/wargasipil/facego/internal/services/study_program_service"
 	"github.com/wargasipil/facego/internal/services/teacher_service"
 	"github.com/wargasipil/facego/internal/services/user_service"
+	"github.com/wargasipil/facego/internal/services/notifier_service"
 	"github.com/wargasipil/facego/internal/services/whatsapp_service"
 )
 
@@ -56,6 +58,7 @@ func run(ctx context.Context, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
+	notifierSvc := notifier_service.New(db)
 
 	// Interceptors
 	validateOpt := connect.WithInterceptors(interceptors.Validate())
@@ -79,6 +82,7 @@ func run(ctx context.Context, cmd *cli.Command) error {
 	mux.Handle(attendancev1connect.NewAttendanceServiceHandler(attendanceSvc, authOpts))
 	mux.Handle(whatsappv1connect.NewWhatsappServiceHandler(whatsappSvc, authOpts))
 	mux.Handle(facesv1connect.NewFaceEmbeddingServiceHandler(faceSvc, authOpts))
+	mux.Handle(notifiersv1connect.NewNotifierServiceHandler(notifierSvc, authOpts))
 
 	_ = validateOpt // kept for reference if needed
 
@@ -98,6 +102,7 @@ func run(ctx context.Context, cmd *cli.Command) error {
 		attendancev1connect.AttendanceServiceName,
 		whatsappv1connect.WhatsappServiceName,
 		facesv1connect.FaceEmbeddingServiceName,
+		notifiersv1connect.NotifierServiceName,
 	)
 	mux.Handle(grpcreflect.NewHandlerV1(reflector))
 	mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))

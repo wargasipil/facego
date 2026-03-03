@@ -50,7 +50,7 @@ import { useNavigate } from 'react-router-dom'
 import { type User } from '../../../gen/users/v1/users_pb'
 import { classService } from '../../../services/class_service'
 import { userService } from '../../../services/user_service'
-import { ClassPagination } from './ClassPagination'
+import { ClassPagination } from '../components/ClassPagination'
 
 const formatDate = (ts?: { seconds: bigint }) =>
   ts ? new Date(Number(ts.seconds) * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'
@@ -61,7 +61,7 @@ interface Props {
   onTotalChange: (n: number) => void
 }
 
-export function ClassStudentsTab({ classId, className, onTotalChange }: Props) {
+export function StudentsTab({ classId, className, onTotalChange }: Props) {
   const navigate = useNavigate()
 
   // ── pagination ──

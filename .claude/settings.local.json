@@ -27,7 +27,8 @@
       "Bash(python -c \"import ast, sys; [print\\(f.name, ''OK''\\) for f in [open\\(''config.py''\\), open\\(''ch_logger.py''\\), open\\(''face_engine.py''\\), open\\(''backend_client.py''\\)] if ast.parse\\(f.read\\(\\)\\)]\")",
       "Bash(python -c \":*)",
       "Bash(ls d:/research/facego/backend_python/*.py d:/research/facego/backend_python/screens/*.py)",
-      "Bash(find . -type f -name \"*.go\" -path \"*/backend/internal/services/*\" -exec basename {} ;)"
+      "Bash(find . -type f -name \"*.go\" -path \"*/backend/internal/services/*\" -exec basename {} ;)",
+      "Bash(buf lint protos/notifiers/v1/notifier.proto)"
     ]
   }
 }

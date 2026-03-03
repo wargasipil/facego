@@ -4,42 +4,22 @@ import (
 	"time"
 
 	attendancev1 "github.com/wargasipil/facego/gen/attendance/v1"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
 
 // attendanceRow is used to scan join results (attendances + users).
 type attendanceRow struct {
-	ID              int64                        `gorm:"column:id"`
-	UserID          int64                        `gorm:"column:user_id"`
-	Name            string                       `gorm:"column:name"`
-	StudentID       string                       `gorm:"column:student_id"`
-	ClassName       string                       `gorm:"column:class_name"`
-	PhotoURL        string                       `gorm:"column:photo_url"`
+	ID              int64                         `gorm:"column:id"`
+	UserID          int64                         `gorm:"column:user_id"`
+	Name            string                        `gorm:"column:name"`
+	StudentID       string                        `gorm:"column:student_id"`
+	ClassName       string                        `gorm:"column:class_name"`
+	PhotoURL        string                        `gorm:"column:photo_url"`
 	Status          attendancev1.AttendanceStatus `gorm:"column:status"`
-	CheckInTime     time.Time                    `gorm:"column:check_in_time"`
-	LastSeen        time.Time                    `gorm:"column:last_seen"`
-	Notes           string                       `gorm:"column:notes"`
-	ClassScheduleID int64                        `gorm:"column:class_schedule_id"`
-}
-
-func (r attendanceRow) toProto() *attendancev1.AttendanceRecord {
-	rec := &attendancev1.AttendanceRecord{
-		Id:              r.ID,
-		UserId:          r.UserID,
-		Name:            r.Name,
-		StudentId:       r.StudentID,
-		ClassName:       r.ClassName,
-		PhotoUrl:        r.PhotoURL,
-		Status:          r.Status,
-		Timestamp:       timestamppb.New(r.CheckInTime),
-		Notes:           r.Notes,
-		ClassScheduleId: r.ClassScheduleID,
-	}
-	if !r.LastSeen.IsZero() {
-		rec.LastSeen = timestamppb.New(r.LastSeen)
-	}
-	return rec
+	CheckInTime     time.Time                     `gorm:"column:check_in_time"`
+	LastSeen        time.Time                     `gorm:"column:last_seen"`
+	Notes           string                        `gorm:"column:notes"`
+	ClassScheduleID int64                         `gorm:"column:class_schedule_id"`
 }
 
 // attendanceJoinSQL is used for single-record lookups (create, list).
