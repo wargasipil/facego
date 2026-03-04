@@ -46,19 +46,19 @@ func run(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	// Services
-	authSvc          := auth_service.New(db, jwtSecret)
-	gradeSvc         := grade_service.New(db)
-	studyProgramSvc  := study_program_service.New(db)
-	classSvc         := class_service.New(db)
-	userSvc          := user_service.New(db, cfg.Storage.UploadsDir)
-	teacherSvc       := teacher_service.New(db)
-	attendanceSvc    := attendance_service.New(db)
-	faceSvc          := face_embedding_service.New(db)
-	whatsappSvc, err := whatsapp_service.New(db)
+	authSvc          := auth_service.NewService(db, jwtSecret)
+	gradeSvc         := grade_service.NewService(db)
+	studyProgramSvc  := study_program_service.NewService(db)
+	classSvc         := class_service.NewService(db)
+	userSvc          := user_service.NewService(db, cfg.Storage.UploadsDir)
+	teacherSvc       := teacher_service.NewService(db)
+	attendanceSvc    := attendance_service.NewService(db)
+	faceSvc          := face_embedding_service.NewService(db)
+	whatsappSvc, err := whatsapp_service.NewService(db)
 	if err != nil {
 		return err
 	}
-	notifierSvc := notifier_service.New(db)
+	notifierSvc := notifier_service.NewService(db)
 
 	// Interceptors
 	validateOpt := connect.WithInterceptors(interceptors.Validate())

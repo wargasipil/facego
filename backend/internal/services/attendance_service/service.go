@@ -69,6 +69,6 @@ type Service struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *Service {
+func NewService(db *gorm.DB) *Service {
 	return &Service{db: db}
 }

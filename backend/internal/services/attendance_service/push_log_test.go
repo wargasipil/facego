@@ -49,7 +49,7 @@ func newPushLogReq(sessionID string, userID, classID int64, seenAt time.Time) *c
 
 func TestAttendancePushLog_Success(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := attendance_service.New(db)
+	svc := attendance_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectQuery(`INSERT INTO "detection_logs"`).
@@ -70,7 +70,7 @@ func TestAttendancePushLog_Success(t *testing.T) {
 // Storing a UTC time in timestamptz is timezone-neutral — no conversion bug here.
 func TestAttendancePushLog_SeenAtPreservesUTC(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := attendance_service.New(db)
+	svc := attendance_service.NewService(db)
 
 	// A late-night UTC timestamp: 2024-01-15 23:30:00 UTC.
 	// With WIB (UTC+7) this would be 06:30 the next day locally.
@@ -92,7 +92,7 @@ func TestAttendancePushLog_SeenAtPreservesUTC(t *testing.T) {
 // The error is only logged (slog.Warn) and the RPC caller is not notified.
 func TestAttendancePushLog_InsertError_StillReturnsSuccess(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := attendance_service.New(db)
+	svc := attendance_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectQuery(`INSERT INTO "detection_logs"`).

@@ -9,6 +9,7 @@ import (
 	"github.com/urfave/cli/v3"
 	authv1 "github.com/wargasipil/facego/gen/auth/v1"
 	classesv1 "github.com/wargasipil/facego/gen/classes/v1"
+	classesv1connect "github.com/wargasipil/facego/gen/classes/v1/classesv1connect"
 	usersv1 "github.com/wargasipil/facego/gen/users/v1"
 	db_models "github.com/wargasipil/facego/internal/db_models"
 	"github.com/wargasipil/facego/internal/services/auth_service"
@@ -217,9 +218,9 @@ func seed(ctx context.Context, cmd *cli.Command) error {
 		jwtSecret = "change-me-in-production"
 	}
 
-	authSvc  := auth_service.New(db, jwtSecret)
-	userSvc  := user_service.New(db, cfg.Storage.UploadsDir)
-	classSvc := class_service.New(db)
+	authSvc  := auth_service.NewService(db, jwtSecret)
+	userSvc  := user_service.NewService(db, cfg.Storage.UploadsDir)
+	classSvc := class_service.NewService(db)
 
 	// ── Accounts ──────────────────────────────────────────────────────────────
 	slog.Info("seeding accounts...")
@@ -404,7 +405,7 @@ var scheduleTemplate = []schedSlot{
 
 // seedWeeklySchedules inserts a weekly schedule for every class in classIDs.
 // If a class already has any schedule rows it is skipped (idempotent).
-func seedWeeklySchedules(ctx context.Context, db *gorm.DB, svc *class_service.Service, classIDs []uint) {
+func seedWeeklySchedules(ctx context.Context, db *gorm.DB, svc classesv1connect.ClassServiceHandler, classIDs []uint) {
 	slog.Info("seeding weekly schedules...", "classes", len(classIDs))
 	totalSlots, skippedClasses := 0, 0
 	n := len(weeklySubjects)

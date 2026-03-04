@@ -6,13 +6,11 @@ import (
 	notifiersv1connect "github.com/wargasipil/facego/gen/notifiers/v1/notifiersv1connect"
 )
 
-var _ notifiersv1connect.NotifierServiceHandler = (*Service)(nil)
-
 // Service implements notifiersv1connect.NotifierServiceHandler.
 type Service struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *Service {
+func NewService(db *gorm.DB) notifiersv1connect.NotifierServiceHandler {
 	return &Service{db: db}
 }

@@ -58,7 +58,7 @@ func scheduleRow(id, classID int64, dow int32, start, end, subject, room string)
 
 func TestUpdateSchedule_Success(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := class_service.New(db)
+	svc := class_service.NewService(db)
 
 	// UPDATE
 	mock.ExpectBegin()
@@ -92,7 +92,7 @@ func TestUpdateSchedule_Success(t *testing.T) {
 
 func TestUpdateSchedule_NotFound(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := class_service.New(db)
+	svc := class_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE "class_schedules"`).
@@ -112,7 +112,7 @@ func TestUpdateSchedule_NotFound(t *testing.T) {
 
 func TestUpdateSchedule_UpdateError(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := class_service.New(db)
+	svc := class_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE "class_schedules"`).
@@ -135,7 +135,7 @@ func TestUpdateSchedule_UpdateError(t *testing.T) {
 // e.g. "23:59" was returned as "06:59". Fix: add TimeZone=UTC to the DSN.
 func TestUpdateSchedule_LateNightTime(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := class_service.New(db)
+	svc := class_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE "class_schedules"`).
@@ -161,7 +161,7 @@ func TestUpdateSchedule_LateNightTime(t *testing.T) {
 
 func TestUpdateSchedule_FetchError(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := class_service.New(db)
+	svc := class_service.NewService(db)
 
 	// UPDATE succeeds
 	mock.ExpectBegin()

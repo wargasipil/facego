@@ -5,6 +5,7 @@ import (
 
 	"connectrpc.com/connect"
 	facesv1 "github.com/wargasipil/facego/gen/faces/v1"
+	facesv1connect "github.com/wargasipil/facego/gen/faces/v1/facesv1connect"
 	db_models "github.com/wargasipil/facego/internal/db_models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -14,7 +15,7 @@ type Service struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *Service {
+func NewService(db *gorm.DB) facesv1connect.FaceEmbeddingServiceHandler {
 	return &Service{db: db}
 }
 

@@ -12,6 +12,7 @@ import (
 	"go.mau.fi/whatsmeow/types/events"
 	waLog "go.mau.fi/whatsmeow/util/log"
 	whatsappv1 "github.com/wargasipil/facego/gen/whatsapp/v1"
+	whatsappv1connect "github.com/wargasipil/facego/gen/whatsapp/v1/whatsappv1connect"
 	db_models "github.com/wargasipil/facego/internal/db_models"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
@@ -70,7 +71,7 @@ type Service struct {
 	lastQR string // last QR code, sent to new WStream subscribers immediately
 }
 
-func New(db *gorm.DB) (*Service, error) {
+func NewService(db *gorm.DB) (whatsappv1connect.WhatsappServiceHandler, error) {
 	sqlDB, err := db.DB()
 	if err != nil {
 		return nil, err

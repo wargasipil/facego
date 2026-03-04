@@ -17,7 +17,7 @@ import (
 
 func TestListSchedules_Success(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := class_service.New(db)
+	svc := class_service.NewService(db)
 
 	mock.ExpectQuery(`SELECT`).
 		WillReturnRows(sqlmock.NewRows(scheduleCols()).
@@ -39,7 +39,7 @@ func TestListSchedules_Success(t *testing.T) {
 
 func TestListSchedules_Empty(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := class_service.New(db)
+	svc := class_service.NewService(db)
 
 	mock.ExpectQuery(`SELECT`).
 		WillReturnRows(sqlmock.NewRows(scheduleCols()))
@@ -52,7 +52,7 @@ func TestListSchedules_Empty(t *testing.T) {
 
 func TestListSchedules_DBError(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := class_service.New(db)
+	svc := class_service.NewService(db)
 
 	mock.ExpectQuery(`SELECT`).
 		WillReturnError(errors.New("connection reset"))
@@ -68,7 +68,7 @@ func TestListSchedules_DBError(t *testing.T) {
 // e.g. "23:59" was returned as "06:59". Fix: TimeZone=UTC in DSN.
 func TestListSchedules_LateNightTimeNotShifted(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := class_service.New(db)
+	svc := class_service.NewService(db)
 
 	mock.ExpectQuery(`SELECT`).
 		WillReturnRows(scheduleRow(1, 10, 5, "22:00", "23:59", "Night Class", "202"))
