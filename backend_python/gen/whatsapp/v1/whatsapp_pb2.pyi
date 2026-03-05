@@ -3,12 +3,22 @@ import datetime
 from buf.validate import validate_pb2 as _validate_pb2
 from google.protobuf import timestamp_pb2 as _timestamp_pb2
 from google.protobuf.internal import containers as _containers
+from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from collections.abc import Iterable as _Iterable, Mapping as _Mapping
 from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
+
+class WhatsappMessageStatus(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    WHATSAPP_MESSAGE_STATUS_UNSPECIFIED: _ClassVar[WhatsappMessageStatus]
+    WHATSAPP_MESSAGE_STATUS_PENDING: _ClassVar[WhatsappMessageStatus]
+    WHATSAPP_MESSAGE_STATUS_SENT: _ClassVar[WhatsappMessageStatus]
+WHATSAPP_MESSAGE_STATUS_UNSPECIFIED: WhatsappMessageStatus
+WHATSAPP_MESSAGE_STATUS_PENDING: WhatsappMessageStatus
+WHATSAPP_MESSAGE_STATUS_SENT: WhatsappMessageStatus
 
 class WStreamRequest(_message.Message):
     __slots__ = ()
@@ -41,10 +51,13 @@ class StatusResponse(_message.Message):
     def __init__(self, connected: _Optional[bool] = ..., phone_number: _Optional[str] = ...) -> None: ...
 
 class WhatsappMessage(_message.Message):
-    __slots__ = ("id", "user_id", "name", "parent_name", "phone", "message", "status", "error", "sent_at")
+    __slots__ = ("id", "student_id", "class_id", "class_schedule_id", "attendance_id", "student_name", "parent_name", "phone", "message", "status", "error", "sent_at")
     ID_FIELD_NUMBER: _ClassVar[int]
-    USER_ID_FIELD_NUMBER: _ClassVar[int]
-    NAME_FIELD_NUMBER: _ClassVar[int]
+    STUDENT_ID_FIELD_NUMBER: _ClassVar[int]
+    CLASS_ID_FIELD_NUMBER: _ClassVar[int]
+    CLASS_SCHEDULE_ID_FIELD_NUMBER: _ClassVar[int]
+    ATTENDANCE_ID_FIELD_NUMBER: _ClassVar[int]
+    STUDENT_NAME_FIELD_NUMBER: _ClassVar[int]
     PARENT_NAME_FIELD_NUMBER: _ClassVar[int]
     PHONE_FIELD_NUMBER: _ClassVar[int]
     MESSAGE_FIELD_NUMBER: _ClassVar[int]
@@ -52,15 +65,34 @@ class WhatsappMessage(_message.Message):
     ERROR_FIELD_NUMBER: _ClassVar[int]
     SENT_AT_FIELD_NUMBER: _ClassVar[int]
     id: int
-    user_id: int
-    name: str
+    student_id: int
+    class_id: int
+    class_schedule_id: int
+    attendance_id: int
+    student_name: str
     parent_name: str
     phone: str
     message: str
-    status: str
+    status: WhatsappMessageStatus
     error: str
     sent_at: _timestamp_pb2.Timestamp
-    def __init__(self, id: _Optional[int] = ..., user_id: _Optional[int] = ..., name: _Optional[str] = ..., parent_name: _Optional[str] = ..., phone: _Optional[str] = ..., message: _Optional[str] = ..., status: _Optional[str] = ..., error: _Optional[str] = ..., sent_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., student_id: _Optional[int] = ..., class_id: _Optional[int] = ..., class_schedule_id: _Optional[int] = ..., attendance_id: _Optional[int] = ..., student_name: _Optional[str] = ..., parent_name: _Optional[str] = ..., phone: _Optional[str] = ..., message: _Optional[str] = ..., status: _Optional[_Union[WhatsappMessageStatus, str]] = ..., error: _Optional[str] = ..., sent_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ...) -> None: ...
+
+class ListMessagesRequest(_message.Message):
+    __slots__ = ("page", "page_size")
+    PAGE_FIELD_NUMBER: _ClassVar[int]
+    PAGE_SIZE_FIELD_NUMBER: _ClassVar[int]
+    page: int
+    page_size: int
+    def __init__(self, page: _Optional[int] = ..., page_size: _Optional[int] = ...) -> None: ...
+
+class ListMessagesResponse(_message.Message):
+    __slots__ = ("messages", "total")
+    MESSAGES_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_FIELD_NUMBER: _ClassVar[int]
+    messages: _containers.RepeatedCompositeFieldContainer[WhatsappMessage]
+    total: int
+    def __init__(self, messages: _Optional[_Iterable[_Union[WhatsappMessage, _Mapping]]] = ..., total: _Optional[int] = ...) -> None: ...
 
 class WhatsappConfig(_message.Message):
     __slots__ = ("enabled", "late_message_template", "absent_message_template", "sender_name")
@@ -113,19 +145,6 @@ class SendMessageResponse(_message.Message):
     success: bool
     error: str
     def __init__(self, success: _Optional[bool] = ..., error: _Optional[str] = ...) -> None: ...
-
-class ListMessagesRequest(_message.Message):
-    __slots__ = ("to",)
-    FROM_FIELD_NUMBER: _ClassVar[int]
-    TO_FIELD_NUMBER: _ClassVar[int]
-    to: _timestamp_pb2.Timestamp
-    def __init__(self, to: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., **kwargs) -> None: ...
-
-class ListMessagesResponse(_message.Message):
-    __slots__ = ("messages",)
-    MESSAGES_FIELD_NUMBER: _ClassVar[int]
-    messages: _containers.RepeatedCompositeFieldContainer[WhatsappMessage]
-    def __init__(self, messages: _Optional[_Iterable[_Union[WhatsappMessage, _Mapping]]] = ...) -> None: ...
 
 class GetConfigRequest(_message.Message):
     __slots__ = ()

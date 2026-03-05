@@ -92,15 +92,15 @@ WHERE a.check_in_time >= ? AND a.check_in_time < ?
 			continue
 		}
 
-		msg := renderTemplate(absentTmpl, row.Name, row.ParentName, row.ClassName, row.CheckInTime)
+		// msg := renderTemplate(absentTmpl, row.Name, row.ParentName, row.ClassName, row.CheckInTime)
 
 		model := db_models.WhatsappMessage{
-			UserID:     row.UserID,
-			Name:       row.Name,
-			ParentName: row.ParentName,
-			Phone:      row.ParentPhone,
-			Message:    msg,
-			Status:     "pending",
+			// UserID:     row.UserID,
+			// Name:       row.Name,
+			// ParentName: row.ParentName,
+			// Phone:      row.ParentPhone,
+			// Message:    msg,
+			// Status:     "pending",
 		}
 		if err := s.db.WithContext(ctx).Create(&model).Error; err != nil {
 			continue

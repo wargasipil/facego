@@ -60,7 +60,7 @@ export default function TemplatePage() {
           <Box bg="white" borderRadius="lg" shadow="sm" p={5}>
             <Heading size="sm" mb={1}>Message Templates</Heading>
             <Text fontSize="xs" color="gray.500" mb={4}>
-              Available variables: <code>{'{student_name}'}</code>, <code>{'{parent_name}'}</code>, <code>{'{class}'}</code>, <code>{'{date}'}</code>, <code>{'{time}'}</code>
+              Available variables: <code>{'{{.StudentName}}'}</code>, <code>{'{{.ClassName}}'}</code>, <code>{'{{.Day}}'}</code>
             </Text>
             <VStack gap={4} align="stretch">
               <Field.Root>
@@ -69,7 +69,7 @@ export default function TemplatePage() {
                   value={lateTmpl}
                   onChange={e => setLateTmpl(e.target.value)}
                   rows={5}
-                  placeholder="e.g. Yth. {parent_name}, ananda {student_name} kelas {class} datang terlambat pada {date} pukul {time}."
+                  placeholder="e.g. Assalamualaikum, ananda {{.StudentName}} dari kelas {{.ClassName}} datang terlambat pada {{.Day}}."
                 />
               </Field.Root>
               <Field.Root>
@@ -78,7 +78,7 @@ export default function TemplatePage() {
                   value={absentTmpl}
                   onChange={e => setAbsentTmpl(e.target.value)}
                   rows={5}
-                  placeholder="e.g. Yth. {parent_name}, ananda {student_name} kelas {class} tidak hadir pada {date}."
+                  placeholder="e.g. Assalamualaikum, ananda {{.StudentName}} dari kelas {{.ClassName}} tidak hadir pada {{.Day}}."
                 />
               </Field.Root>
               {configMsg && (

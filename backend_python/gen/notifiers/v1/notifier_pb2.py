@@ -22,11 +22,10 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 from buf.validate import validate_pb2 as buf_dot_validate_dot_validate__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1bnotifiers/v1/notifier.proto\x12\x0cnotifiers.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1b\x62uf/validate/validate.proto\"\x9b\x01\n\nNotifyMeta\x12\"\n\x08\x63lass_id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x07\x63lassId\x12\x33\n\x11\x63lass_schedule_id\x18\x02 \x01(\x03\x42\x07\xbaH\x04\"\x02(\x00R\x0f\x63lassScheduleId\x12\x34\n\x03\x64\x61y\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\x03\x64\x61y\"\x0b\n\tNotifyAll\"@\n\rNotifyStudent\x12/\n\x0bstudent_ids\x18\x01 \x03(\x03\x42\x0e\xbaH\x0b\x92\x01\x08\x08\x01\"\x04\"\x02 \x00R\nstudentIds\"\xc0\x01\n\x13NotifyParentRequest\x12\x34\n\x04meta\x18\x01 \x01(\x0b\x32\x18.notifiers.v1.NotifyMetaB\x06\xbaH\x03\xc8\x01\x01R\x04meta\x12+\n\x03\x61ll\x18\x02 \x01(\x0b\x32\x17.notifiers.v1.NotifyAllH\x00R\x03\x61ll\x12\x37\n\x07student\x18\x03 \x01(\x0b\x32\x1b.notifiers.v1.NotifyStudentH\x00R\x07studentB\r\n\x04type\x12\x05\xbaH\x02\x08\x01\"\x16\n\x14NotifyParentResponse2h\n\x0fNotifierService\x12U\n\x0cNotifyParent\x12!.notifiers.v1.NotifyParentRequest\x1a\".notifiers.v1.NotifyParentResponseB\xad\x01\n\x10\x63om.notifiers.v1B\rNotifierProtoP\x01Z9github.com/wargasipil/facego/gen/notifiers/v1;notifiersv1\xa2\x02\x03NXX\xaa\x02\x0cNotifiers.V1\xca\x02\x0cNotifiers\\V1\xe2\x02\x18Notifiers\\V1\\GPBMetadata\xea\x02\rNotifiers::V1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1bnotifiers/v1/notifier.proto\x12\x0cnotifiers.v1\x1a\x1b\x62uf/validate/validate.proto\"e\n\nNotifyMeta\x12\"\n\x08\x63lass_id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x07\x63lassId\x12\x33\n\x11\x63lass_schedule_id\x18\x02 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x0f\x63lassScheduleId\"\x0b\n\tNotifyAll\"e\n\rNotifyStudent\x12,\n\rattendance_id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\x0c\x61ttendanceId\x12&\n\nstudent_id\x18\x02 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\tstudentId\"S\n\x0eNotifyStudents\x12\x41\n\x07student\x18\x03 \x03(\x0b\x32\x1b.notifiers.v1.NotifyStudentB\n\xbaH\x07\x92\x01\x04\x08\x01\x10\x64R\x07student\"\xc3\x01\n\x13NotifyParentRequest\x12\x34\n\x04meta\x18\x01 \x01(\x0b\x32\x18.notifiers.v1.NotifyMetaB\x06\xbaH\x03\xc8\x01\x01R\x04meta\x12+\n\x03\x61ll\x18\x02 \x01(\x0b\x32\x17.notifiers.v1.NotifyAllH\x00R\x03\x61ll\x12:\n\x08students\x18\x03 \x01(\x0b\x32\x1c.notifiers.v1.NotifyStudentsH\x00R\x08studentsB\r\n\x04type\x12\x05\xbaH\x02\x08\x01\"\x16\n\x14NotifyParentResponse2h\n\x0fNotifierService\x12U\n\x0cNotifyParent\x12!.notifiers.v1.NotifyParentRequest\x1a\".notifiers.v1.NotifyParentResponseB\xad\x01\n\x10\x63om.notifiers.v1B\rNotifierProtoP\x01Z9github.com/wargasipil/facego/gen/notifiers/v1;notifiersv1\xa2\x02\x03NXX\xaa\x02\x0cNotifiers.V1\xca\x02\x0cNotifiers\\V1\xe2\x02\x18Notifiers\\V1\\GPBMetadata\xea\x02\rNotifiers::V1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -37,25 +36,29 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_NOTIFYMETA'].fields_by_name['class_id']._loaded_options = None
   _globals['_NOTIFYMETA'].fields_by_name['class_id']._serialized_options = b'\272H\004\"\002 \000'
   _globals['_NOTIFYMETA'].fields_by_name['class_schedule_id']._loaded_options = None
-  _globals['_NOTIFYMETA'].fields_by_name['class_schedule_id']._serialized_options = b'\272H\004\"\002(\000'
-  _globals['_NOTIFYMETA'].fields_by_name['day']._loaded_options = None
-  _globals['_NOTIFYMETA'].fields_by_name['day']._serialized_options = b'\272H\003\310\001\001'
-  _globals['_NOTIFYSTUDENT'].fields_by_name['student_ids']._loaded_options = None
-  _globals['_NOTIFYSTUDENT'].fields_by_name['student_ids']._serialized_options = b'\272H\013\222\001\010\010\001\"\004\"\002 \000'
+  _globals['_NOTIFYMETA'].fields_by_name['class_schedule_id']._serialized_options = b'\272H\004\"\002 \000'
+  _globals['_NOTIFYSTUDENT'].fields_by_name['attendance_id']._loaded_options = None
+  _globals['_NOTIFYSTUDENT'].fields_by_name['attendance_id']._serialized_options = b'\272H\004\"\002 \000'
+  _globals['_NOTIFYSTUDENT'].fields_by_name['student_id']._loaded_options = None
+  _globals['_NOTIFYSTUDENT'].fields_by_name['student_id']._serialized_options = b'\272H\004\"\002 \000'
+  _globals['_NOTIFYSTUDENTS'].fields_by_name['student']._loaded_options = None
+  _globals['_NOTIFYSTUDENTS'].fields_by_name['student']._serialized_options = b'\272H\007\222\001\004\010\001\020d'
   _globals['_NOTIFYPARENTREQUEST'].oneofs_by_name['type']._loaded_options = None
   _globals['_NOTIFYPARENTREQUEST'].oneofs_by_name['type']._serialized_options = b'\272H\002\010\001'
   _globals['_NOTIFYPARENTREQUEST'].fields_by_name['meta']._loaded_options = None
   _globals['_NOTIFYPARENTREQUEST'].fields_by_name['meta']._serialized_options = b'\272H\003\310\001\001'
-  _globals['_NOTIFYMETA']._serialized_start=108
-  _globals['_NOTIFYMETA']._serialized_end=263
-  _globals['_NOTIFYALL']._serialized_start=265
-  _globals['_NOTIFYALL']._serialized_end=276
-  _globals['_NOTIFYSTUDENT']._serialized_start=278
-  _globals['_NOTIFYSTUDENT']._serialized_end=342
-  _globals['_NOTIFYPARENTREQUEST']._serialized_start=345
-  _globals['_NOTIFYPARENTREQUEST']._serialized_end=537
-  _globals['_NOTIFYPARENTRESPONSE']._serialized_start=539
-  _globals['_NOTIFYPARENTRESPONSE']._serialized_end=561
-  _globals['_NOTIFIERSERVICE']._serialized_start=563
-  _globals['_NOTIFIERSERVICE']._serialized_end=667
+  _globals['_NOTIFYMETA']._serialized_start=74
+  _globals['_NOTIFYMETA']._serialized_end=175
+  _globals['_NOTIFYALL']._serialized_start=177
+  _globals['_NOTIFYALL']._serialized_end=188
+  _globals['_NOTIFYSTUDENT']._serialized_start=190
+  _globals['_NOTIFYSTUDENT']._serialized_end=291
+  _globals['_NOTIFYSTUDENTS']._serialized_start=293
+  _globals['_NOTIFYSTUDENTS']._serialized_end=376
+  _globals['_NOTIFYPARENTREQUEST']._serialized_start=379
+  _globals['_NOTIFYPARENTREQUEST']._serialized_end=574
+  _globals['_NOTIFYPARENTRESPONSE']._serialized_start=576
+  _globals['_NOTIFYPARENTRESPONSE']._serialized_end=598
+  _globals['_NOTIFIERSERVICE']._serialized_start=600
+  _globals['_NOTIFIERSERVICE']._serialized_end=704
 # @@protoc_insertion_point(module_scope)

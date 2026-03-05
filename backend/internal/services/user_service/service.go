@@ -11,26 +11,27 @@ import (
 	"connectrpc.com/connect"
 	usersv1 "github.com/wargasipil/facego/gen/users/v1"
 	usersv1connect "github.com/wargasipil/facego/gen/users/v1/usersv1connect"
+	"github.com/wargasipil/facego/internal/configs"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
 
 // userRow scans users + aggregated enrollment results.
 type userRow struct {
-	ID              int64     `gorm:"column:id"`
-	StudentID       string    `gorm:"column:student_id"`
-	Name            string    `gorm:"column:name"`
-	ClassName       string    `gorm:"column:class_name"` // comma-separated from subquery
-	Email           string    `gorm:"column:email"`
-	PhotoURL        string    `gorm:"column:photo_url"`
-	RegisteredAt    time.Time `gorm:"column:registered_at"`
-	ParentName      string    `gorm:"column:parent_name"`
-	ParentPhone     string    `gorm:"column:parent_phone"`
-	ParentEmail     string    `gorm:"column:parent_email"`
-	StudyProgramID   *int64 `gorm:"column:study_program_id"`
-	StudyProgramName string `gorm:"column:study_program_name"`
-	GradeID          *int64 `gorm:"column:grade_id"`
-	GradeLabel       string `gorm:"column:grade_label"`
+	ID               int64     `gorm:"column:id"`
+	StudentID        string    `gorm:"column:student_id"`
+	Name             string    `gorm:"column:name"`
+	ClassName        string    `gorm:"column:class_name"` // comma-separated from subquery
+	Email            string    `gorm:"column:email"`
+	PhotoURL         string    `gorm:"column:photo_url"`
+	RegisteredAt     time.Time `gorm:"column:registered_at"`
+	ParentName       string    `gorm:"column:parent_name"`
+	ParentPhone      string    `gorm:"column:parent_phone"`
+	ParentEmail      string    `gorm:"column:parent_email"`
+	StudyProgramID   *int64    `gorm:"column:study_program_id"`
+	StudyProgramName string    `gorm:"column:study_program_name"`
+	GradeID          *int64    `gorm:"column:grade_id"`
+	GradeLabel       string    `gorm:"column:grade_label"`
 }
 
 func (r userRow) toProto() *usersv1.User {
@@ -75,8 +76,8 @@ type Service struct {
 	uploadsDir string
 }
 
-func NewService(db *gorm.DB, uploadsDir string) usersv1connect.UserServiceHandler {
-	return &Service{db: db, uploadsDir: uploadsDir}
+func NewService(db *gorm.DB, cfg *configs.AppConfig) usersv1connect.UserServiceHandler {
+	return &Service{db: db, uploadsDir: cfg.Storage.UploadsDir}
 }
 
 // fetchUser retrieves one user by ID with class name via JOIN.

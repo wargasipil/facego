@@ -2,14 +2,19 @@ package main
 
 import (
 	"context"
-	"log/slog"
 	"os"
 
 	"github.com/urfave/cli/v3"
 )
 
-func main() {
-	app := &cli.Command{
+type App *cli.Command
+
+func NewApp(
+	apprunner AppRunnerFunc,
+	autoMigrate AutoMigrateFunc,
+	seed SeedFunc,
+) App {
+	return &cli.Command{
 		Name:  "facego-server",
 		Usage: "FaceGo attendance backend server",
 		Flags: []cli.Flag{
@@ -21,23 +26,33 @@ func main() {
 				Sources: cli.EnvVars("CONFIG_FILE"),
 			},
 		},
-		Action: run,
+		Action: cli.ActionFunc(apprunner),
 		Commands: []*cli.Command{
 			{
 				Name:   "automigrate",
 				Usage:  "run GORM AutoMigrate for all db_models",
-				Action: automigrate,
+				Action: cli.ActionFunc(autoMigrate),
 			},
 			{
 				Name:   "seed",
 				Usage:  "seed development accounts and sample students",
-				Action: seed,
+				Action: cli.ActionFunc(seed),
 			},
 		},
 	}
+}
 
-	if err := app.Run(context.Background(), os.Args); err != nil {
-		slog.Error("exited with error", "err", err)
-		os.Exit(1)
+func main() {
+	var err error
+	var app *cli.Command
+
+	app, err = initApp()
+	if err != nil {
+		panic(err)
+	}
+
+	err = app.Run(context.Background(), os.Args)
+	if err != nil {
+		panic(err)
 	}
 }

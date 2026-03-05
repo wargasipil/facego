@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	authv1 "github.com/wargasipil/facego/gen/auth/v1"
 	authv1connect "github.com/wargasipil/facego/gen/auth/v1/authv1connect"
+	"github.com/wargasipil/facego/internal/configs"
 	db_models "github.com/wargasipil/facego/internal/db_models"
 	"gorm.io/gorm"
 )
@@ -17,8 +18,8 @@ type Service struct {
 	jwtSecret []byte
 }
 
-func NewService(db *gorm.DB, jwtSecret string) authv1connect.AuthServiceHandler {
-	return &Service{db: db, jwtSecret: []byte(jwtSecret)}
+func NewService(db *gorm.DB, cfg *configs.AppConfig) authv1connect.AuthServiceHandler {
+	return &Service{db: db, jwtSecret: []byte(cfg.Auth.JWTSecret)}
 }
 
 // ── JWT helpers ───────────────────────────────────────────────────────────────

@@ -1,25 +1,32 @@
 package whatsapp_service
 
 import (
+	"bytes"
 	"context"
 	"log/slog"
-	"strings"
 	"sync"
+	"text/template"
 	"time"
 
+	whatsappv1 "github.com/wargasipil/facego/gen/whatsapp/v1"
+	whatsappv1connect "github.com/wargasipil/facego/gen/whatsapp/v1/whatsappv1connect"
+	db_models "github.com/wargasipil/facego/internal/db_models"
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/store/sqlstore"
 	"go.mau.fi/whatsmeow/types/events"
 	waLog "go.mau.fi/whatsmeow/util/log"
-	whatsappv1 "github.com/wargasipil/facego/gen/whatsapp/v1"
-	whatsappv1connect "github.com/wargasipil/facego/gen/whatsapp/v1/whatsappv1connect"
-	db_models "github.com/wargasipil/facego/internal/db_models"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
 
-const defaultLateTemplate = "Assalamualaikum {parent_name}, ananda {student_name} dari kelas {class} datang terlambat pada {date} pukul {time}. Harap hubungi pihak sekolah untuk informasi lebih lanjut."
-const defaultAbsentTemplate = "Assalamualaikum {parent_name}, ananda {student_name} dari kelas {class} tidak hadir pada {date}. Harap hubungi pihak sekolah jika ada keterangan yang sah."
+const defaultLateTemplate = "Assalamualaikum, ananda {{.StudentName}} dari kelas {{.ClassName}} datang terlambat pada {{.Day}}. Harap hubungi pihak sekolah untuk informasi lebih lanjut."
+const defaultAbsentTemplate = "Assalamualaikum, ananda {{.StudentName}} dari kelas {{.ClassName}} tidak hadir pada {{.Day}}. Harap hubungi pihak sekolah jika ada keterangan yang sah."
+
+type templateData struct {
+	StudentName string
+	ClassName   string
+	Day         string
+}
 
 // waEvent is the internal fan-out event for WStream subscribers.
 type waEvent struct {
@@ -29,15 +36,18 @@ type waEvent struct {
 
 func msgToProto(m db_models.WhatsappMessage) *whatsappv1.WhatsappMessage {
 	return &whatsappv1.WhatsappMessage{
-		Id:         m.ID,
-		UserId:     m.UserID,
-		Name:       m.Name,
-		ParentName: m.ParentName,
-		Phone:      m.Phone,
-		Message:    m.Message,
-		Status:     m.Status,
-		Error:      m.Error,
-		SentAt:     timestamppb.New(m.SentAt),
+		Id:              m.ID,
+		StudentId:       m.StudentID,
+		ClassId:         m.ClassID,
+		ClassScheduleId: m.ClassScheduleID,
+		AttendanceId:    m.AttendanceID,
+		StudentName:     m.StudentName,
+		ParentName:      m.ParentName,
+		Phone:           m.Phone,
+		Message:         m.Message,
+		Status:          m.Status,
+		Error:           m.Error,
+		SentAt:          timestamppb.New(m.SentAt),
 	}
 }
 
@@ -50,15 +60,20 @@ func configToProto(c db_models.WhatsappConfig) *whatsappv1.WhatsappConfig {
 	}
 }
 
-func renderTemplate(tmpl, studentName, parentName, className string, ts time.Time) string {
-	r := strings.NewReplacer(
-		"{student_name}", studentName,
-		"{parent_name}", parentName,
-		"{class}", className,
-		"{date}", ts.Format("02/01/2006"),
-		"{time}", ts.Format("15:04"),
-	)
-	return r.Replace(tmpl)
+func renderTemplate(tmpl, studentName, className string, ts time.Time) (string, error) {
+	t, err := template.New("msg").Parse(tmpl)
+	if err != nil {
+		return "", err
+	}
+	var buf bytes.Buffer
+	if err := t.Execute(&buf, templateData{
+		StudentName: studentName,
+		ClassName:   className,
+		Day:         ts.Format("02/01/2006"),
+	}); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }
 
 // Service implements whatsappv1connect.WhatsappServiceHandler.

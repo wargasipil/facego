@@ -11,12 +11,14 @@ type RunnerContext struct {
 	Error  error
 }
 
+type RunnerFunc func(wctx *RunnerContext) error
+
 func NewRunnerContext(ctx context.Context) *RunnerContext {
 	ctx, cancel := context.WithCancel(ctx)
 	return &RunnerContext{ctx: ctx, cancel: cancel}
 }
 
-func (w *RunnerContext) Run(handler func(wctx *RunnerContext) error) {
+func (w *RunnerContext) Run(handler RunnerFunc) {
 	go func() {
 		var err error
 		err = handler(w)

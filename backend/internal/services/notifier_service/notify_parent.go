@@ -4,12 +4,16 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"html/template"
+	"time"
 
 	"connectrpc.com/connect"
+	attendancev1 "github.com/wargasipil/facego/gen/attendance/v1"
 	notifiersv1 "github.com/wargasipil/facego/gen/notifiers/v1"
 	whatsappv1 "github.com/wargasipil/facego/gen/whatsapp/v1"
 	"github.com/wargasipil/facego/internal/db_models"
+	"gorm.io/gorm"
 )
 
 func (s *Service) NotifyParent(
@@ -21,8 +25,8 @@ func (s *Service) NotifyParent(
 	switch notify := req.Msg.Type.(type) {
 	case *notifiersv1.NotifyParentRequest_All:
 		err = s.notifyAll(ctx, notify.All)
-	case *notifiersv1.NotifyParentRequest_Student:
-		err = s.notifyStudent(ctx, notify.Student)
+	case *notifiersv1.NotifyParentRequest_Students:
+		err = s.notifyStudent(ctx, notify.Students, req.Msg.Meta)
 	}
 
 	return connect.NewResponse(&notifiersv1.NotifyParentResponse{}), err
@@ -30,10 +34,10 @@ func (s *Service) NotifyParent(
 
 func (s *Service) notifyAll(ctx context.Context, msg *notifiersv1.NotifyAll) error {
 
-	return nil
+	return errors.New("not implemented")
 }
 
-func (s *Service) notifyStudent(ctx context.Context, msg *notifiersv1.NotifyStudent) error {
+func (s *Service) notifyStudent(ctx context.Context, msg *notifiersv1.NotifyStudents, meta *notifiersv1.NotifyMeta) error {
 	var err error
 	// getting template
 	messageTemplate, err := s.getMessageTemplate(ctx)
@@ -45,26 +49,66 @@ func (s *Service) notifyStudent(ctx context.Context, msg *notifiersv1.NotifyStud
 		return errors.New("message template not found")
 	}
 
-	// getting parent phone number
-	for _, studentId := range msg.StudentIds {
-		parentPhone, err := s.getParentPhone(ctx, studentId)
-		if err != nil {
-			return err
-		}
+	err = s.
+		db.
+		Transaction(func(tx *gorm.DB) error {
+			for _, item := range msg.Student {
+				student, err := s.getStudent(tx, item.StudentId)
+				if err != nil {
+					return err
+				}
 
-		message, err := messageTemplate.Execute(TemplateValue{})
-		if err != nil {
-			return err
-		}
+				attendance := db_models.Attendance{}
 
-		s.waclient.SendMessage(ctx, &connect.Request[whatsappv1.SendMessageRequest]{
-			Msg: &whatsappv1.SendMessageRequest{
-				Phone:   parentPhone,
-				Message: message,
-			},
+				// getting value
+				err = tx.
+					Model(&db_models.Attendance{}).
+					Preload("ClassSchedule").
+					Preload("ClassSchedule.Class").
+					First(&attendance, item.AttendanceId).
+					Error
+
+				if err != nil {
+					return err
+				}
+
+				textMessage, err := messageTemplate.Execute(TemplateValue{
+					StudentName: student.Name,
+					ClassName:   attendance.ClassSchedule.Class.Name,
+					Day:         attendance.Day.Format(time.DateOnly),
+				})
+				if err != nil {
+					return err
+				}
+
+				message := &db_models.WhatsappMessage{
+					StudentID:       item.StudentId,
+					ClassID:         meta.ClassId,
+					ClassScheduleID: meta.ClassScheduleId,
+					AttendanceID:    item.AttendanceId,
+					Status:          whatsappv1.WhatsappMessageStatus_WHATSAPP_MESSAGE_STATUS_PENDING,
+					Message:         textMessage,
+					StudentName:     student.Name,
+					ParentName:      student.ParentName,
+					Phone:           student.ParentPhone,
+				}
+
+				err = tx.
+					Save(message).
+					Error
+
+				if err != nil {
+					return err
+				}
+
+				err = tx.Model(&db_models.Attendance{}).Where("id = ?", attendance.ID).Update("notify_status", attendancev1.NotifyStatus_NOTIFY_STATUS_PENDING).Error
+				if err != nil {
+					return err
+				}
+			}
+
+			return nil
 		})
-
-	}
 
 	return err
 }
@@ -89,22 +133,25 @@ func (s *Service) getMessageTemplate(ctx context.Context) (*AbsentTemplate, erro
 	}, nil
 }
 
-func (s *Service) getParentPhone(ctx context.Context, studentID int64) (string, error) {
+func (s *Service) getStudent(tx *gorm.DB, studentID int64) (*db_models.User, error) {
 	var err error
-	db := s.db.WithContext(ctx)
 
 	var student db_models.User
 
-	err = db.
+	err = tx.
 		Model(&db_models.User{}).
 		First(&student, "id = ?", studentID).
 		Error
 
 	if err != nil {
-		return "", err
+		return &student, err
 	}
 
-	return student.ParentPhone, nil
+	if student.ParentPhone == "" {
+		return &student, fmt.Errorf("%s not have parent phone", student.Name)
+	}
+
+	return &student, nil
 }
 
 type TemplateValue struct {

@@ -22,12 +22,11 @@ import {
   Separator,
   Flex,
 } from '@chakra-ui/react'
-import { FiRefreshCw, FiMessageSquare, FiSend } from 'react-icons/fi'
+import { FiRefreshCw, FiMessageSquare, FiSend, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import { type WhatsappMessage } from '../gen/whatsapp/v1/whatsapp_pb'
+import { type WhatsappMessage, WhatsappMessageStatus } from '../gen/whatsapp/v1/whatsapp_pb'
 import { whatsappService } from '../services/whatsapp_service'
-import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 
 type StreamState = 'connecting' | 'need_login' | 'connected' | 'error'
 
@@ -38,10 +37,20 @@ function fmtSentAt(ts?: { seconds: bigint }) {
   })
 }
 
-const STATUS_COLOR: Record<string, string> = {
-  pending: 'orange',
-  sent:    'green',
-  failed:  'red',
+function statusColor(s: WhatsappMessageStatus): string {
+  switch (s) {
+    case WhatsappMessageStatus.PENDING: return 'orange'
+    case WhatsappMessageStatus.SENT:    return 'green'
+    default: return 'gray'
+  }
+}
+
+function statusLabel(s: WhatsappMessageStatus): string {
+  switch (s) {
+    case WhatsappMessageStatus.PENDING: return 'Pending'
+    case WhatsappMessageStatus.SENT:    return 'Sent'
+    default: return 'Unknown'
+  }
 }
 
 export default function WhatsappPage() {
@@ -58,8 +67,11 @@ export default function WhatsappPage() {
   const [testResult, setTestResult]       = useState<{ ok: boolean; text: string } | null>(null)
 
   // ── message log ──
+  const PAGE_SIZE = 20
   const [messages, setMessages]           = useState<WhatsappMessage[]>([])
   const [logLoading, setLogLoading]       = useState(true)
+  const [page, setPage]                   = useState(0)
+  const [total, setTotal]                 = useState(0)
 
   // ── WStream: connect on mount, abort on unmount ──
   const connectStream = useCallback(() => {
@@ -91,27 +103,28 @@ export default function WhatsappPage() {
   }, [])
 
   // ── load message log ──
-  const loadMessages = useCallback(async () => {
+  const loadMessages = useCallback(async (p: number) => {
     setLogLoading(true)
     try {
-      const now = new Date()
-      const from = new Date(now)
-      from.setDate(now.getDate() - 30)
-      const r = await whatsappService.listMessages({
-        from: timestampFromDate(from),
-        to:   timestampFromDate(now),
-      })
+      const r = await whatsappService.listMessages({ page: p, pageSize: PAGE_SIZE })
       setMessages(r.messages)
+      setTotal(r.total)
     } catch {
       setMessages([])
+      setTotal(0)
     } finally {
       setLogLoading(false)
     }
-  }, [])
+  }, [PAGE_SIZE])
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+    loadMessages(newPage)
+  }
 
   useEffect(() => {
     connectStream()
-    loadMessages()
+    loadMessages(0)
     return () => abortRef.current?.abort()
   }, [connectStream, loadMessages])
 
@@ -257,9 +270,9 @@ export default function WhatsappPage() {
             <Flex align="center" justify="space-between" mb={4}>
               <HStack gap={2}>
                 <FiMessageSquare size={16} />
-                <Heading size="sm">Message Log (last 30 days)</Heading>
+                <Heading size="sm">Message Log</Heading>
               </HStack>
-              <Button size="xs" variant="ghost" onClick={loadMessages} disabled={logLoading}>
+              <Button size="xs" variant="ghost" onClick={() => loadMessages(page)} disabled={logLoading}>
                 <FiRefreshCw size={14} />
                 Refresh
               </Button>
@@ -270,6 +283,7 @@ export default function WhatsappPage() {
             ) : messages.length === 0 ? (
               <Center py={8} color="gray.400">No messages sent yet.</Center>
             ) : (
+              <>
               <TableScrollArea>
                 <TableRoot size="sm">
                   <TableHeader>
@@ -285,15 +299,15 @@ export default function WhatsappPage() {
                   <TableBody>
                     {messages.map(m => (
                       <TableRow key={String(m.id)}>
-                        <TableCell fontWeight="medium" fontSize="sm">{m.name}</TableCell>
+                        <TableCell fontWeight="medium" fontSize="sm">{m.studentName}</TableCell>
                         <TableCell fontSize="sm" color="gray.600">{m.parentName}</TableCell>
                         <TableCell fontSize="sm" color="gray.600">{m.phone}</TableCell>
-                        <TableCell fontSize="xs" color="gray.500" maxW="280px">
-                          <Text truncate>{m.message}</Text>
+                        <TableCell fontSize="xs" color="gray.500">
+                          <Text whiteSpace="pre-line">{m.message}</Text>
                         </TableCell>
                         <TableCell>
-                          <Badge colorPalette={STATUS_COLOR[m.status] ?? 'gray'} variant="subtle" textTransform="capitalize">
-                            {m.status}
+                          <Badge colorPalette={statusColor(m.status)} variant="subtle">
+                            {statusLabel(m.status)}
                           </Badge>
                         </TableCell>
                         <TableCell fontSize="xs" color="gray.500">{fmtSentAt(m.sentAt)}</TableCell>
@@ -302,6 +316,28 @@ export default function WhatsappPage() {
                   </TableBody>
                 </TableRoot>
               </TableScrollArea>
+              <Flex align="center" justify="space-between" mt={3}>
+                <Text fontSize="xs" color="gray.500">
+                  {total} message{total !== 1 ? 's' : ''} · Page {page + 1} of {Math.max(1, Math.ceil(total / PAGE_SIZE))}
+                </Text>
+                <HStack gap={1}>
+                  <Button
+                    size="xs" variant="outline"
+                    disabled={page === 0 || logLoading}
+                    onClick={() => handlePageChange(page - 1)}
+                  >
+                    <FiChevronLeft size={12} /> Prev
+                  </Button>
+                  <Button
+                    size="xs" variant="outline"
+                    disabled={page >= Math.ceil(total / PAGE_SIZE) - 1 || logLoading}
+                    onClick={() => handlePageChange(page + 1)}
+                  >
+                    Next <FiChevronRight size={12} />
+                  </Button>
+                </HStack>
+              </Flex>
+              </>
             )}
           </Box>
 

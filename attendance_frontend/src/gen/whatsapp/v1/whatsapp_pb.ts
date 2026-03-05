@@ -2,8 +2,8 @@
 // @generated from file whatsapp/v1/whatsapp.proto (package whatsapp.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file whatsapp/v1/whatsapp.proto.
  */
 export const file_whatsapp_v1_whatsapp: GenFile = /*@__PURE__*/
-  fileDesc("Chp3aGF0c2FwcC92MS93aGF0c2FwcC5wcm90bxILd2hhdHNhcHAudjEiEAoOV1N0cmVhbVJlcXVlc3QiGQoJTmVlZExvZ2luEgwKBGNvZGUYASABKAkiXgoPV1N0cmVhbVJlc3BvbnNlEiwKCm5lZWRfbG9naW4YASABKAsyFi53aGF0c2FwcC52MS5OZWVkTG9naW5IABIYCg5zeW5jX2NvbXBsZXRlZBgCIAEoCEgAQgMKAWUiDwoNU3RhdHVzUmVxdWVzdCI5Cg5TdGF0dXNSZXNwb25zZRIRCgljb25uZWN0ZWQYASABKAgSFAoMcGhvbmVfbnVtYmVyGAIgASgJIr0BCg9XaGF0c2FwcE1lc3NhZ2USCgoCaWQYASABKAMSDwoHdXNlcl9pZBgCIAEoAxIMCgRuYW1lGAMgASgJEhMKC3BhcmVudF9uYW1lGAQgASgJEg0KBXBob25lGAUgASgJEg8KB21lc3NhZ2UYBiABKAkSDgoGc3RhdHVzGAcgASgJEg0KBWVycm9yGAggASgJEisKB3NlbnRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wInYKDldoYXRzYXBwQ29uZmlnEg8KB2VuYWJsZWQYASABKAgSHQoVbGF0ZV9tZXNzYWdlX3RlbXBsYXRlGAIgASgJEh8KF2Fic2VudF9tZXNzYWdlX3RlbXBsYXRlGAMgASgJEhMKC3NlbmRlcl9uYW1lGAQgASgJIpsBChtTZW5kQXR0ZW5kYW5jZUFsZXJ0c1JlcXVlc3QSKAoEZGF0ZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLbm90aWZ5X2xhdGUYAiABKAgSFQoNbm90aWZ5X2Fic2VudBgDIAEoCBIUCgxjbGFzc19maWx0ZXIYBCABKAkSEAoIdXNlcl9pZHMYBSADKAMibwocU2VuZEF0dGVuZGFuY2VBbGVydHNSZXNwb25zZRIOCgZxdWV1ZWQYASABKAUSDwoHc2tpcHBlZBgCIAEoBRIuCghtZXNzYWdlcxgDIAMoCzIcLndoYXRzYXBwLnYxLldoYXRzYXBwTWVzc2FnZSJGChJTZW5kTWVzc2FnZVJlcXVlc3QSFgoFcGhvbmUYASABKAlCB7pIBHICEAESGAoHbWVzc2FnZRgCIAEoCUIHukgEcgIQASI1ChNTZW5kTWVzc2FnZVJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkiZwoTTGlzdE1lc3NhZ2VzUmVxdWVzdBIoCgRmcm9tGAEgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBImCgJ0bxgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiRgoUTGlzdE1lc3NhZ2VzUmVzcG9uc2USLgoIbWVzc2FnZXMYASADKAsyHC53aGF0c2FwcC52MS5XaGF0c2FwcE1lc3NhZ2UiEgoQR2V0Q29uZmlnUmVxdWVzdCJAChFHZXRDb25maWdSZXNwb25zZRIrCgZjb25maWcYASABKAsyGy53aGF0c2FwcC52MS5XaGF0c2FwcENvbmZpZyJIChFTYXZlQ29uZmlnUmVxdWVzdBIzCgZjb25maWcYASABKAsyGy53aGF0c2FwcC52MS5XaGF0c2FwcENvbmZpZ0IGukgDyAEBIkEKElNhdmVDb25maWdSZXNwb25zZRIrCgZjb25maWcYASABKAsyGy53aGF0c2FwcC52MS5XaGF0c2FwcENvbmZpZzLLBAoPV2hhdHNhcHBTZXJ2aWNlEkEKBlN0YXR1cxIaLndoYXRzYXBwLnYxLlN0YXR1c1JlcXVlc3QaGy53aGF0c2FwcC52MS5TdGF0dXNSZXNwb25zZRJGCgdXU3RyZWFtEhsud2hhdHNhcHAudjEuV1N0cmVhbVJlcXVlc3QaHC53aGF0c2FwcC52MS5XU3RyZWFtUmVzcG9uc2UwARJrChRTZW5kQXR0ZW5kYW5jZUFsZXJ0cxIoLndoYXRzYXBwLnYxLlNlbmRBdHRlbmRhbmNlQWxlcnRzUmVxdWVzdBopLndoYXRzYXBwLnYxLlNlbmRBdHRlbmRhbmNlQWxlcnRzUmVzcG9uc2USUAoLU2VuZE1lc3NhZ2USHy53aGF0c2FwcC52MS5TZW5kTWVzc2FnZVJlcXVlc3QaIC53aGF0c2FwcC52MS5TZW5kTWVzc2FnZVJlc3BvbnNlElMKDExpc3RNZXNzYWdlcxIgLndoYXRzYXBwLnYxLkxpc3RNZXNzYWdlc1JlcXVlc3QaIS53aGF0c2FwcC52MS5MaXN0TWVzc2FnZXNSZXNwb25zZRJKCglHZXRDb25maWcSHS53aGF0c2FwcC52MS5HZXRDb25maWdSZXF1ZXN0Gh4ud2hhdHNhcHAudjEuR2V0Q29uZmlnUmVzcG9uc2USTQoKU2F2ZUNvbmZpZxIeLndoYXRzYXBwLnYxLlNhdmVDb25maWdSZXF1ZXN0Gh8ud2hhdHNhcHAudjEuU2F2ZUNvbmZpZ1Jlc3BvbnNlQqYBCg9jb20ud2hhdHNhcHAudjFCDVdoYXRzYXBwUHJvdG9QAVo3Z2l0aHViLmNvbS93YXJnYXNpcGlsL2ZhY2Vnby9nZW4vd2hhdHNhcHAvdjE7d2hhdHNhcHB2MaICA1dYWKoCC1doYXRzYXBwLlYxygILV2hhdHNhcHBcVjHiAhdXaGF0c2FwcFxWMVxHUEJNZXRhZGF0YeoCDFdoYXRzYXBwOjpWMWIGcHJvdG8z", [file_buf_validate_validate, file_google_protobuf_timestamp]);
+  fileDesc("Chp3aGF0c2FwcC92MS93aGF0c2FwcC5wcm90bxILd2hhdHNhcHAudjEiEAoOV1N0cmVhbVJlcXVlc3QiGQoJTmVlZExvZ2luEgwKBGNvZGUYASABKAkiXgoPV1N0cmVhbVJlc3BvbnNlEiwKCm5lZWRfbG9naW4YASABKAsyFi53aGF0c2FwcC52MS5OZWVkTG9naW5IABIYCg5zeW5jX2NvbXBsZXRlZBgCIAEoCEgAQgMKAWUiDwoNU3RhdHVzUmVxdWVzdCI5Cg5TdGF0dXNSZXNwb25zZRIRCgljb25uZWN0ZWQYASABKAgSFAoMcGhvbmVfbnVtYmVyGAIgASgJIrACCg9XaGF0c2FwcE1lc3NhZ2USCgoCaWQYASABKAMSEgoKc3R1ZGVudF9pZBgCIAEoAxIQCghjbGFzc19pZBgDIAEoAxIZChFjbGFzc19zY2hlZHVsZV9pZBgEIAEoAxIVCg1hdHRlbmRhbmNlX2lkGAUgASgDEhQKDHN0dWRlbnRfbmFtZRgGIAEoCRITCgtwYXJlbnRfbmFtZRgHIAEoCRINCgVwaG9uZRgIIAEoCRIPCgdtZXNzYWdlGAkgASgJEjIKBnN0YXR1cxgKIAEoDjIiLndoYXRzYXBwLnYxLldoYXRzYXBwTWVzc2FnZVN0YXR1cxINCgVlcnJvchgLIAEoCRIrCgdzZW50X2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJLChNMaXN0TWVzc2FnZXNSZXF1ZXN0EhUKBHBhZ2UYAiABKAVCB7pIBBoCKAASHQoJcGFnZV9zaXplGAMgASgFQgq6SAcaBRjIASgAIlUKFExpc3RNZXNzYWdlc1Jlc3BvbnNlEi4KCG1lc3NhZ2VzGAEgAygLMhwud2hhdHNhcHAudjEuV2hhdHNhcHBNZXNzYWdlEg0KBXRvdGFsGAIgASgFInYKDldoYXRzYXBwQ29uZmlnEg8KB2VuYWJsZWQYASABKAgSHQoVbGF0ZV9tZXNzYWdlX3RlbXBsYXRlGAIgASgJEh8KF2Fic2VudF9tZXNzYWdlX3RlbXBsYXRlGAMgASgJEhMKC3NlbmRlcl9uYW1lGAQgASgJIpsBChtTZW5kQXR0ZW5kYW5jZUFsZXJ0c1JlcXVlc3QSKAoEZGF0ZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLbm90aWZ5X2xhdGUYAiABKAgSFQoNbm90aWZ5X2Fic2VudBgDIAEoCBIUCgxjbGFzc19maWx0ZXIYBCABKAkSEAoIdXNlcl9pZHMYBSADKAMibwocU2VuZEF0dGVuZGFuY2VBbGVydHNSZXNwb25zZRIOCgZxdWV1ZWQYASABKAUSDwoHc2tpcHBlZBgCIAEoBRIuCghtZXNzYWdlcxgDIAMoCzIcLndoYXRzYXBwLnYxLldoYXRzYXBwTWVzc2FnZSJGChJTZW5kTWVzc2FnZVJlcXVlc3QSFgoFcGhvbmUYASABKAlCB7pIBHICEAESGAoHbWVzc2FnZRgCIAEoCUIHukgEcgIQASI1ChNTZW5kTWVzc2FnZVJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSDQoFZXJyb3IYAiABKAkiEgoQR2V0Q29uZmlnUmVxdWVzdCJAChFHZXRDb25maWdSZXNwb25zZRIrCgZjb25maWcYASABKAsyGy53aGF0c2FwcC52MS5XaGF0c2FwcENvbmZpZyJIChFTYXZlQ29uZmlnUmVxdWVzdBIzCgZjb25maWcYASABKAsyGy53aGF0c2FwcC52MS5XaGF0c2FwcENvbmZpZ0IGukgDyAEBIkEKElNhdmVDb25maWdSZXNwb25zZRIrCgZjb25maWcYASABKAsyGy53aGF0c2FwcC52MS5XaGF0c2FwcENvbmZpZyqHAQoVV2hhdHNhcHBNZXNzYWdlU3RhdHVzEicKI1dIQVRTQVBQX01FU1NBR0VfU1RBVFVTX1VOU1BFQ0lGSUVEEAASIwofV0hBVFNBUFBfTUVTU0FHRV9TVEFUVVNfUEVORElORxABEiAKHFdIQVRTQVBQX01FU1NBR0VfU1RBVFVTX1NFTlQQAjLLBAoPV2hhdHNhcHBTZXJ2aWNlEkEKBlN0YXR1cxIaLndoYXRzYXBwLnYxLlN0YXR1c1JlcXVlc3QaGy53aGF0c2FwcC52MS5TdGF0dXNSZXNwb25zZRJGCgdXU3RyZWFtEhsud2hhdHNhcHAudjEuV1N0cmVhbVJlcXVlc3QaHC53aGF0c2FwcC52MS5XU3RyZWFtUmVzcG9uc2UwARJrChRTZW5kQXR0ZW5kYW5jZUFsZXJ0cxIoLndoYXRzYXBwLnYxLlNlbmRBdHRlbmRhbmNlQWxlcnRzUmVxdWVzdBopLndoYXRzYXBwLnYxLlNlbmRBdHRlbmRhbmNlQWxlcnRzUmVzcG9uc2USUAoLU2VuZE1lc3NhZ2USHy53aGF0c2FwcC52MS5TZW5kTWVzc2FnZVJlcXVlc3QaIC53aGF0c2FwcC52MS5TZW5kTWVzc2FnZVJlc3BvbnNlElMKDExpc3RNZXNzYWdlcxIgLndoYXRzYXBwLnYxLkxpc3RNZXNzYWdlc1JlcXVlc3QaIS53aGF0c2FwcC52MS5MaXN0TWVzc2FnZXNSZXNwb25zZRJKCglHZXRDb25maWcSHS53aGF0c2FwcC52MS5HZXRDb25maWdSZXF1ZXN0Gh4ud2hhdHNhcHAudjEuR2V0Q29uZmlnUmVzcG9uc2USTQoKU2F2ZUNvbmZpZxIeLndoYXRzYXBwLnYxLlNhdmVDb25maWdSZXF1ZXN0Gh8ud2hhdHNhcHAudjEuU2F2ZUNvbmZpZ1Jlc3BvbnNlQqYBCg9jb20ud2hhdHNhcHAudjFCDVdoYXRzYXBwUHJvdG9QAVo3Z2l0aHViLmNvbS93YXJnYXNpcGlsL2ZhY2Vnby9nZW4vd2hhdHNhcHAvdjE7d2hhdHNhcHB2MaICA1dYWKoCC1doYXRzYXBwLlYxygILV2hhdHNhcHBcVjHiAhdXaGF0c2FwcFxWMVxHUEJNZXRhZGF0YeoCDFdoYXRzYXBwOjpWMWIGcHJvdG8z", [file_buf_validate_validate, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message whatsapp.v1.WStreamRequest
@@ -119,44 +119,57 @@ export type WhatsappMessage = Message<"whatsapp.v1.WhatsappMessage"> & {
   id: bigint;
 
   /**
-   * @generated from field: int64 user_id = 2;
+   * @generated from field: int64 student_id = 2;
    */
-  userId: bigint;
+  studentId: bigint;
 
   /**
-   * @generated from field: string name = 3;
+   * @generated from field: int64 class_id = 3;
    */
-  name: string;
+  classId: bigint;
 
   /**
-   * @generated from field: string parent_name = 4;
+   * @generated from field: int64 class_schedule_id = 4;
+   */
+  classScheduleId: bigint;
+
+  /**
+   * @generated from field: int64 attendance_id = 5;
+   */
+  attendanceId: bigint;
+
+  /**
+   * @generated from field: string student_name = 6;
+   */
+  studentName: string;
+
+  /**
+   * @generated from field: string parent_name = 7;
    */
   parentName: string;
 
   /**
-   * @generated from field: string phone = 5;
+   * @generated from field: string phone = 8;
    */
   phone: string;
 
   /**
-   * @generated from field: string message = 6;
+   * @generated from field: string message = 9;
    */
   message: string;
 
   /**
-   * "pending", "sent", "failed"
-   *
-   * @generated from field: string status = 7;
+   * @generated from field: whatsapp.v1.WhatsappMessageStatus status = 10;
    */
-  status: string;
+  status: WhatsappMessageStatus;
 
   /**
-   * @generated from field: string error = 8;
+   * @generated from field: string error = 11;
    */
   error: string;
 
   /**
-   * @generated from field: google.protobuf.Timestamp sent_at = 9;
+   * @generated from field: google.protobuf.Timestamp sent_at = 12;
    */
   sentAt?: Timestamp;
 };
@@ -167,6 +180,50 @@ export type WhatsappMessage = Message<"whatsapp.v1.WhatsappMessage"> & {
  */
 export const WhatsappMessageSchema: GenMessage<WhatsappMessage> = /*@__PURE__*/
   messageDesc(file_whatsapp_v1_whatsapp, 5);
+
+/**
+ * @generated from message whatsapp.v1.ListMessagesRequest
+ */
+export type ListMessagesRequest = Message<"whatsapp.v1.ListMessagesRequest"> & {
+  /**
+   * @generated from field: int32 page = 2;
+   */
+  page: number;
+
+  /**
+   * @generated from field: int32 page_size = 3;
+   */
+  pageSize: number;
+};
+
+/**
+ * Describes the message whatsapp.v1.ListMessagesRequest.
+ * Use `create(ListMessagesRequestSchema)` to create a new message.
+ */
+export const ListMessagesRequestSchema: GenMessage<ListMessagesRequest> = /*@__PURE__*/
+  messageDesc(file_whatsapp_v1_whatsapp, 6);
+
+/**
+ * @generated from message whatsapp.v1.ListMessagesResponse
+ */
+export type ListMessagesResponse = Message<"whatsapp.v1.ListMessagesResponse"> & {
+  /**
+   * @generated from field: repeated whatsapp.v1.WhatsappMessage messages = 1;
+   */
+  messages: WhatsappMessage[];
+
+  /**
+   * @generated from field: int32 total = 2;
+   */
+  total: number;
+};
+
+/**
+ * Describes the message whatsapp.v1.ListMessagesResponse.
+ * Use `create(ListMessagesResponseSchema)` to create a new message.
+ */
+export const ListMessagesResponseSchema: GenMessage<ListMessagesResponse> = /*@__PURE__*/
+  messageDesc(file_whatsapp_v1_whatsapp, 7);
 
 /**
  * @generated from message whatsapp.v1.WhatsappConfig
@@ -198,7 +255,7 @@ export type WhatsappConfig = Message<"whatsapp.v1.WhatsappConfig"> & {
  * Use `create(WhatsappConfigSchema)` to create a new message.
  */
 export const WhatsappConfigSchema: GenMessage<WhatsappConfig> = /*@__PURE__*/
-  messageDesc(file_whatsapp_v1_whatsapp, 6);
+  messageDesc(file_whatsapp_v1_whatsapp, 8);
 
 /**
  * @generated from message whatsapp.v1.SendAttendanceAlertsRequest
@@ -239,7 +296,7 @@ export type SendAttendanceAlertsRequest = Message<"whatsapp.v1.SendAttendanceAle
  * Use `create(SendAttendanceAlertsRequestSchema)` to create a new message.
  */
 export const SendAttendanceAlertsRequestSchema: GenMessage<SendAttendanceAlertsRequest> = /*@__PURE__*/
-  messageDesc(file_whatsapp_v1_whatsapp, 7);
+  messageDesc(file_whatsapp_v1_whatsapp, 9);
 
 /**
  * @generated from message whatsapp.v1.SendAttendanceAlertsResponse
@@ -270,7 +327,7 @@ export type SendAttendanceAlertsResponse = Message<"whatsapp.v1.SendAttendanceAl
  * Use `create(SendAttendanceAlertsResponseSchema)` to create a new message.
  */
 export const SendAttendanceAlertsResponseSchema: GenMessage<SendAttendanceAlertsResponse> = /*@__PURE__*/
-  messageDesc(file_whatsapp_v1_whatsapp, 8);
+  messageDesc(file_whatsapp_v1_whatsapp, 10);
 
 /**
  * @generated from message whatsapp.v1.SendMessageRequest
@@ -292,7 +349,7 @@ export type SendMessageRequest = Message<"whatsapp.v1.SendMessageRequest"> & {
  * Use `create(SendMessageRequestSchema)` to create a new message.
  */
 export const SendMessageRequestSchema: GenMessage<SendMessageRequest> = /*@__PURE__*/
-  messageDesc(file_whatsapp_v1_whatsapp, 9);
+  messageDesc(file_whatsapp_v1_whatsapp, 11);
 
 /**
  * @generated from message whatsapp.v1.SendMessageResponse
@@ -314,45 +371,6 @@ export type SendMessageResponse = Message<"whatsapp.v1.SendMessageResponse"> & {
  * Use `create(SendMessageResponseSchema)` to create a new message.
  */
 export const SendMessageResponseSchema: GenMessage<SendMessageResponse> = /*@__PURE__*/
-  messageDesc(file_whatsapp_v1_whatsapp, 10);
-
-/**
- * @generated from message whatsapp.v1.ListMessagesRequest
- */
-export type ListMessagesRequest = Message<"whatsapp.v1.ListMessagesRequest"> & {
-  /**
-   * @generated from field: google.protobuf.Timestamp from = 1;
-   */
-  from?: Timestamp;
-
-  /**
-   * @generated from field: google.protobuf.Timestamp to = 2;
-   */
-  to?: Timestamp;
-};
-
-/**
- * Describes the message whatsapp.v1.ListMessagesRequest.
- * Use `create(ListMessagesRequestSchema)` to create a new message.
- */
-export const ListMessagesRequestSchema: GenMessage<ListMessagesRequest> = /*@__PURE__*/
-  messageDesc(file_whatsapp_v1_whatsapp, 11);
-
-/**
- * @generated from message whatsapp.v1.ListMessagesResponse
- */
-export type ListMessagesResponse = Message<"whatsapp.v1.ListMessagesResponse"> & {
-  /**
-   * @generated from field: repeated whatsapp.v1.WhatsappMessage messages = 1;
-   */
-  messages: WhatsappMessage[];
-};
-
-/**
- * Describes the message whatsapp.v1.ListMessagesResponse.
- * Use `create(ListMessagesResponseSchema)` to create a new message.
- */
-export const ListMessagesResponseSchema: GenMessage<ListMessagesResponse> = /*@__PURE__*/
   messageDesc(file_whatsapp_v1_whatsapp, 12);
 
 /**
@@ -418,6 +436,34 @@ export type SaveConfigResponse = Message<"whatsapp.v1.SaveConfigResponse"> & {
  */
 export const SaveConfigResponseSchema: GenMessage<SaveConfigResponse> = /*@__PURE__*/
   messageDesc(file_whatsapp_v1_whatsapp, 16);
+
+/**
+ * ── Shared types ──────────────────────────────────────────────────────────────
+ *
+ * @generated from enum whatsapp.v1.WhatsappMessageStatus
+ */
+export enum WhatsappMessageStatus {
+  /**
+   * @generated from enum value: WHATSAPP_MESSAGE_STATUS_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: WHATSAPP_MESSAGE_STATUS_PENDING = 1;
+   */
+  PENDING = 1,
+
+  /**
+   * @generated from enum value: WHATSAPP_MESSAGE_STATUS_SENT = 2;
+   */
+  SENT = 2,
+}
+
+/**
+ * Describes the enum whatsapp.v1.WhatsappMessageStatus.
+ */
+export const WhatsappMessageStatusSchema: GenEnum<WhatsappMessageStatus> = /*@__PURE__*/
+  enumDesc(file_whatsapp_v1_whatsapp, 0);
 
 /**
  * @generated from service whatsapp.v1.WhatsappService

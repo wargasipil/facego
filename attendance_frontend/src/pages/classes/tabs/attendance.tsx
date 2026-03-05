@@ -131,7 +131,7 @@ export function AttendanceTab({ classId, className, active, schedules = [] }: Pr
   const [notifyAllOpen, setNotifyAllOpen]     = useState(false)
   const [notifying, setNotifying]             = useState(false)
   const [notifyingOne, setNotifyingOne]       = useState<bigint | null>(null)
-  const [notifyMsg, setNotifyMsg]             = useState<string | null>(null)
+  const [notifyMsg, setNotifyMsg]             = useState<{ text: string; ok: boolean } | null>(null)
 
   const absentRecords = useMemo(
     () => records.filter(r => r.status === AttendanceStatus.ABSENT),
@@ -143,42 +143,36 @@ export function AttendanceTab({ classId, className, active, schedules = [] }: Pr
     setNotifying(true)
     setNotifyMsg(null)
     try {
-      const [y, m, d] = attendanceDate.split('-').map(Number)
       await notifierService.notifyParent({
-        meta: {
-          classId:         classId,
-          classScheduleId: scheduleFilter,
-          day:             timestampFromDate(new Date(y, m - 1, d, 0, 0, 0)),
-        },
+        meta: { classId, classScheduleId: scheduleFilter },
         type: { case: 'all', value: {} },
       })
-      setNotifyMsg(`Notification sent to all absent parents.`)
+      setNotifyMsg({ text: 'Notification sent to all absent parents.', ok: true })
     } catch (err) {
-      setNotifyMsg((err as Error).message ?? 'Failed to send notifications.')
+      setNotifyMsg({ text: (err as Error).message ?? 'Failed to send notifications.', ok: false })
     } finally {
       setNotifying(false)
     }
   }
 
-  const handleNotifyOne = async (userId: bigint) => {
+  const handleNotifyOne = async (attendanceId: bigint, userId: bigint) => {
+    if (scheduleFilter === 0n) {
+      setNotifyMsg({ text: 'Please select a schedule before sending a notification.', ok: false })
+      return
+    }
     setNotifyingOne(userId)
     setNotifyMsg(null)
     try {
-      const [y, m, d] = attendanceDate.split('-').map(Number)
       await notifierService.notifyParent({
-        meta: {
-          classId:         classId,
-          classScheduleId: scheduleFilter,
-          day:             timestampFromDate(new Date(y, m - 1, d, 0, 0, 0)),
-        },
-        type: { case: 'student', value: { studentIds: [userId] } },
+        meta: { classId, classScheduleId: scheduleFilter },
+        type: { case: 'students', value: { student: [{ attendanceId, studentId: userId }] } },
       })
       setRecords(prev => prev.map(r =>
         r.userId === userId ? { ...r, notifyStatus: NotifyStatus.PENDING } : r
       ))
-      setNotifyMsg(`Notification sent to parent.`)
+      setNotifyMsg({ text: 'Notification sent to parent.', ok: true })
     } catch (err) {
-      setNotifyMsg((err as Error).message ?? 'Failed to send notification.')
+      setNotifyMsg({ text: (err as Error).message ?? 'Failed to send notification.', ok: false })
     } finally {
       setNotifyingOne(null)
     }
@@ -340,7 +334,13 @@ export function AttendanceTab({ classId, className, active, schedules = [] }: Pr
             <Button
               size="sm" variant="solid" colorPalette="orange"
               loading={notifying}
-              onClick={() => setNotifyAllOpen(true)}
+              onClick={() => {
+                if (scheduleFilter === 0n) {
+                  setNotifyMsg({ text: 'Please select a schedule before sending notifications.', ok: false })
+                  return
+                }
+                setNotifyAllOpen(true)
+              }}
             >
               <FiBell /> Notify All Absent ({absentRecords.length})
             </Button>
@@ -376,10 +376,12 @@ export function AttendanceTab({ classId, className, active, schedules = [] }: Pr
       )}
       {notifyMsg && (
         <Box
-          bg="green.50" border="1px solid" borderColor="green.200"
+          bg={notifyMsg.ok ? 'green.50' : 'orange.50'}
+          border="1px solid"
+          borderColor={notifyMsg.ok ? 'green.200' : 'orange.200'}
           borderRadius="md" px={3} py={2} mb={4}
         >
-          <Text color="green.700" fontSize="sm">{notifyMsg}</Text>
+          <Text color={notifyMsg.ok ? 'green.700' : 'orange.700'} fontSize="sm">{notifyMsg.text}</Text>
         </Box>
       )}
 
@@ -442,7 +444,7 @@ export function AttendanceTab({ classId, className, active, schedules = [] }: Pr
                         <Button
                           size="xs" variant="outline" colorPalette="orange"
                           loading={notifyingOne === r.userId}
-                          onClick={() => handleNotifyOne(r.userId)}
+                          onClick={() => handleNotifyOne(r.id, r.userId)}
                         >
                           <FiBell /> Notify Parent
                         </Button>

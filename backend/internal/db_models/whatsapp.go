@@ -1,17 +1,25 @@
 package db_models
 
-import "time"
+import (
+	"time"
+
+	whatsappv1 "github.com/wargasipil/facego/gen/whatsapp/v1"
+)
 
 type WhatsappMessage struct {
-	ID         int64     `gorm:"primaryKey;column:id;autoIncrement"`
-	UserID     int64     `gorm:"column:user_id;not null;index"`
-	Name       string    `gorm:"column:name;not null;default:''"`
-	ParentName string    `gorm:"column:parent_name;not null;default:''"`
-	Phone      string    `gorm:"column:phone;not null"`
-	Message    string    `gorm:"column:message;not null"`
-	Status     string    `gorm:"column:status;not null;default:'pending'"`
-	Error      string    `gorm:"column:error;not null;default:''"`
-	SentAt     time.Time `gorm:"column:sent_at;autoCreateTime"`
+	ID              int64 `gorm:"primaryKey;column:id;autoIncrement"`
+	StudentID       int64 `gorm:"column:user_id;not null;index"`
+	ClassID         int64
+	ClassScheduleID int64
+	AttendanceID    int64
+
+	Phone       string
+	StudentName string
+	ParentName  string
+	Status      whatsappv1.WhatsappMessageStatus
+	Message     string
+	Error       string
+	SentAt      time.Time `gorm:"column:sent_at;autoCreateTime"`
 }
 
 func (WhatsappMessage) TableName() string { return "whatsapp_messages" }

@@ -28,7 +28,8 @@
       "Bash(python -c \":*)",
       "Bash(ls d:/research/facego/backend_python/*.py d:/research/facego/backend_python/screens/*.py)",
       "Bash(find . -type f -name \"*.go\" -path \"*/backend/internal/services/*\" -exec basename {} ;)",
-      "Bash(buf lint protos/notifiers/v1/notifier.proto)"
+      "Bash(buf lint protos/notifiers/v1/notifier.proto)",
+      "Bash(go install github.com/google/wire/cmd/wire@latest)"
     ]
   }
 }

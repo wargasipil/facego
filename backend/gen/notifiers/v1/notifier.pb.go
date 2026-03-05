@@ -10,7 +10,6 @@ import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -27,7 +26,6 @@ type NotifyMeta struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	ClassId         int64                  `protobuf:"varint,1,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
 	ClassScheduleId int64                  `protobuf:"varint,2,opt,name=class_schedule_id,json=classScheduleId,proto3" json:"class_schedule_id,omitempty"`
-	Day             *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=day,proto3" json:"day,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -76,13 +74,6 @@ func (x *NotifyMeta) GetClassScheduleId() int64 {
 	return 0
 }
 
-func (x *NotifyMeta) GetDay() *timestamppb.Timestamp {
-	if x != nil {
-		return x.Day
-	}
-	return nil
-}
-
 type NotifyAll struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -121,7 +112,8 @@ func (*NotifyAll) Descriptor() ([]byte, []int) {
 
 type NotifyStudent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	StudentIds    []int64                `protobuf:"varint,1,rep,packed,name=student_ids,json=studentIds,proto3" json:"student_ids,omitempty"`
+	AttendanceId  int64                  `protobuf:"varint,1,opt,name=attendance_id,json=attendanceId,proto3" json:"attendance_id,omitempty"`
+	StudentId     int64                  `protobuf:"varint,2,opt,name=student_id,json=studentId,proto3" json:"student_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -156,9 +148,60 @@ func (*NotifyStudent) Descriptor() ([]byte, []int) {
 	return file_notifiers_v1_notifier_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *NotifyStudent) GetStudentIds() []int64 {
+func (x *NotifyStudent) GetAttendanceId() int64 {
 	if x != nil {
-		return x.StudentIds
+		return x.AttendanceId
+	}
+	return 0
+}
+
+func (x *NotifyStudent) GetStudentId() int64 {
+	if x != nil {
+		return x.StudentId
+	}
+	return 0
+}
+
+type NotifyStudents struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Student       []*NotifyStudent       `protobuf:"bytes,3,rep,name=student,proto3" json:"student,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NotifyStudents) Reset() {
+	*x = NotifyStudents{}
+	mi := &file_notifiers_v1_notifier_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NotifyStudents) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NotifyStudents) ProtoMessage() {}
+
+func (x *NotifyStudents) ProtoReflect() protoreflect.Message {
+	mi := &file_notifiers_v1_notifier_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NotifyStudents.ProtoReflect.Descriptor instead.
+func (*NotifyStudents) Descriptor() ([]byte, []int) {
+	return file_notifiers_v1_notifier_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *NotifyStudents) GetStudent() []*NotifyStudent {
+	if x != nil {
+		return x.Student
 	}
 	return nil
 }
@@ -169,7 +212,7 @@ type NotifyParentRequest struct {
 	// Types that are valid to be assigned to Type:
 	//
 	//	*NotifyParentRequest_All
-	//	*NotifyParentRequest_Student
+	//	*NotifyParentRequest_Students
 	Type          isNotifyParentRequest_Type `protobuf_oneof:"type"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -177,7 +220,7 @@ type NotifyParentRequest struct {
 
 func (x *NotifyParentRequest) Reset() {
 	*x = NotifyParentRequest{}
-	mi := &file_notifiers_v1_notifier_proto_msgTypes[3]
+	mi := &file_notifiers_v1_notifier_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -189,7 +232,7 @@ func (x *NotifyParentRequest) String() string {
 func (*NotifyParentRequest) ProtoMessage() {}
 
 func (x *NotifyParentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_notifiers_v1_notifier_proto_msgTypes[3]
+	mi := &file_notifiers_v1_notifier_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -202,7 +245,7 @@ func (x *NotifyParentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NotifyParentRequest.ProtoReflect.Descriptor instead.
 func (*NotifyParentRequest) Descriptor() ([]byte, []int) {
-	return file_notifiers_v1_notifier_proto_rawDescGZIP(), []int{3}
+	return file_notifiers_v1_notifier_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *NotifyParentRequest) GetMeta() *NotifyMeta {
@@ -228,10 +271,10 @@ func (x *NotifyParentRequest) GetAll() *NotifyAll {
 	return nil
 }
 
-func (x *NotifyParentRequest) GetStudent() *NotifyStudent {
+func (x *NotifyParentRequest) GetStudents() *NotifyStudents {
 	if x != nil {
-		if x, ok := x.Type.(*NotifyParentRequest_Student); ok {
-			return x.Student
+		if x, ok := x.Type.(*NotifyParentRequest_Students); ok {
+			return x.Students
 		}
 	}
 	return nil
@@ -245,13 +288,13 @@ type NotifyParentRequest_All struct {
 	All *NotifyAll `protobuf:"bytes,2,opt,name=all,proto3,oneof"`
 }
 
-type NotifyParentRequest_Student struct {
-	Student *NotifyStudent `protobuf:"bytes,3,opt,name=student,proto3,oneof"`
+type NotifyParentRequest_Students struct {
+	Students *NotifyStudents `protobuf:"bytes,3,opt,name=students,proto3,oneof"`
 }
 
 func (*NotifyParentRequest_All) isNotifyParentRequest_Type() {}
 
-func (*NotifyParentRequest_Student) isNotifyParentRequest_Type() {}
+func (*NotifyParentRequest_Students) isNotifyParentRequest_Type() {}
 
 type NotifyParentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -261,7 +304,7 @@ type NotifyParentResponse struct {
 
 func (x *NotifyParentResponse) Reset() {
 	*x = NotifyParentResponse{}
-	mi := &file_notifiers_v1_notifier_proto_msgTypes[4]
+	mi := &file_notifiers_v1_notifier_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -273,7 +316,7 @@ func (x *NotifyParentResponse) String() string {
 func (*NotifyParentResponse) ProtoMessage() {}
 
 func (x *NotifyParentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_notifiers_v1_notifier_proto_msgTypes[4]
+	mi := &file_notifiers_v1_notifier_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -286,27 +329,30 @@ func (x *NotifyParentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NotifyParentResponse.ProtoReflect.Descriptor instead.
 func (*NotifyParentResponse) Descriptor() ([]byte, []int) {
-	return file_notifiers_v1_notifier_proto_rawDescGZIP(), []int{4}
+	return file_notifiers_v1_notifier_proto_rawDescGZIP(), []int{5}
 }
 
 var File_notifiers_v1_notifier_proto protoreflect.FileDescriptor
 
 const file_notifiers_v1_notifier_proto_rawDesc = "" +
 	"\n" +
-	"\x1bnotifiers/v1/notifier.proto\x12\fnotifiers.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bbuf/validate/validate.proto\"\x9b\x01\n" +
+	"\x1bnotifiers/v1/notifier.proto\x12\fnotifiers.v1\x1a\x1bbuf/validate/validate.proto\"e\n" +
 	"\n" +
 	"NotifyMeta\x12\"\n" +
 	"\bclass_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aclassId\x123\n" +
-	"\x11class_schedule_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02(\x00R\x0fclassScheduleId\x124\n" +
-	"\x03day\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\x03day\"\v\n" +
-	"\tNotifyAll\"@\n" +
-	"\rNotifyStudent\x12/\n" +
-	"\vstudent_ids\x18\x01 \x03(\x03B\x0e\xbaH\v\x92\x01\b\b\x01\"\x04\"\x02 \x00R\n" +
-	"studentIds\"\xc0\x01\n" +
+	"\x11class_schedule_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x0fclassScheduleId\"\v\n" +
+	"\tNotifyAll\"e\n" +
+	"\rNotifyStudent\x12,\n" +
+	"\rattendance_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\fattendanceId\x12&\n" +
+	"\n" +
+	"student_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\tstudentId\"S\n" +
+	"\x0eNotifyStudents\x12A\n" +
+	"\astudent\x18\x03 \x03(\v2\x1b.notifiers.v1.NotifyStudentB\n" +
+	"\xbaH\a\x92\x01\x04\b\x01\x10dR\astudent\"\xc3\x01\n" +
 	"\x13NotifyParentRequest\x124\n" +
 	"\x04meta\x18\x01 \x01(\v2\x18.notifiers.v1.NotifyMetaB\x06\xbaH\x03\xc8\x01\x01R\x04meta\x12+\n" +
-	"\x03all\x18\x02 \x01(\v2\x17.notifiers.v1.NotifyAllH\x00R\x03all\x127\n" +
-	"\astudent\x18\x03 \x01(\v2\x1b.notifiers.v1.NotifyStudentH\x00R\astudentB\r\n" +
+	"\x03all\x18\x02 \x01(\v2\x17.notifiers.v1.NotifyAllH\x00R\x03all\x12:\n" +
+	"\bstudents\x18\x03 \x01(\v2\x1c.notifiers.v1.NotifyStudentsH\x00R\bstudentsB\r\n" +
 	"\x04type\x12\x05\xbaH\x02\b\x01\"\x16\n" +
 	"\x14NotifyParentResponse2h\n" +
 	"\x0fNotifierService\x12U\n" +
@@ -325,22 +371,22 @@ func file_notifiers_v1_notifier_proto_rawDescGZIP() []byte {
 	return file_notifiers_v1_notifier_proto_rawDescData
 }
 
-var file_notifiers_v1_notifier_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_notifiers_v1_notifier_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_notifiers_v1_notifier_proto_goTypes = []any{
-	(*NotifyMeta)(nil),            // 0: notifiers.v1.NotifyMeta
-	(*NotifyAll)(nil),             // 1: notifiers.v1.NotifyAll
-	(*NotifyStudent)(nil),         // 2: notifiers.v1.NotifyStudent
-	(*NotifyParentRequest)(nil),   // 3: notifiers.v1.NotifyParentRequest
-	(*NotifyParentResponse)(nil),  // 4: notifiers.v1.NotifyParentResponse
-	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
+	(*NotifyMeta)(nil),           // 0: notifiers.v1.NotifyMeta
+	(*NotifyAll)(nil),            // 1: notifiers.v1.NotifyAll
+	(*NotifyStudent)(nil),        // 2: notifiers.v1.NotifyStudent
+	(*NotifyStudents)(nil),       // 3: notifiers.v1.NotifyStudents
+	(*NotifyParentRequest)(nil),  // 4: notifiers.v1.NotifyParentRequest
+	(*NotifyParentResponse)(nil), // 5: notifiers.v1.NotifyParentResponse
 }
 var file_notifiers_v1_notifier_proto_depIdxs = []int32{
-	5, // 0: notifiers.v1.NotifyMeta.day:type_name -> google.protobuf.Timestamp
+	2, // 0: notifiers.v1.NotifyStudents.student:type_name -> notifiers.v1.NotifyStudent
 	0, // 1: notifiers.v1.NotifyParentRequest.meta:type_name -> notifiers.v1.NotifyMeta
 	1, // 2: notifiers.v1.NotifyParentRequest.all:type_name -> notifiers.v1.NotifyAll
-	2, // 3: notifiers.v1.NotifyParentRequest.student:type_name -> notifiers.v1.NotifyStudent
-	3, // 4: notifiers.v1.NotifierService.NotifyParent:input_type -> notifiers.v1.NotifyParentRequest
-	4, // 5: notifiers.v1.NotifierService.NotifyParent:output_type -> notifiers.v1.NotifyParentResponse
+	3, // 3: notifiers.v1.NotifyParentRequest.students:type_name -> notifiers.v1.NotifyStudents
+	4, // 4: notifiers.v1.NotifierService.NotifyParent:input_type -> notifiers.v1.NotifyParentRequest
+	5, // 5: notifiers.v1.NotifierService.NotifyParent:output_type -> notifiers.v1.NotifyParentResponse
 	5, // [5:6] is the sub-list for method output_type
 	4, // [4:5] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -353,9 +399,9 @@ func file_notifiers_v1_notifier_proto_init() {
 	if File_notifiers_v1_notifier_proto != nil {
 		return
 	}
-	file_notifiers_v1_notifier_proto_msgTypes[3].OneofWrappers = []any{
+	file_notifiers_v1_notifier_proto_msgTypes[4].OneofWrappers = []any{
 		(*NotifyParentRequest_All)(nil),
-		(*NotifyParentRequest_Student)(nil),
+		(*NotifyParentRequest_Students)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -363,7 +409,7 @@ func file_notifiers_v1_notifier_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_notifiers_v1_notifier_proto_rawDesc), len(file_notifiers_v1_notifier_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

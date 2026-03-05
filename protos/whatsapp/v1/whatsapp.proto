@@ -41,17 +41,39 @@ message StatusResponse {
 }
 
 // ── Shared types ──────────────────────────────────────────────────────────────
+enum WhatsappMessageStatus {
+  WHATSAPP_MESSAGE_STATUS_UNSPECIFIED = 0;
+  WHATSAPP_MESSAGE_STATUS_PENDING = 1;
+  WHATSAPP_MESSAGE_STATUS_SENT = 2;
+}
 
 message WhatsappMessage {
   int64 id = 1;
-  int64 user_id = 2;
-  string name = 3;
-  string parent_name = 4;
-  string phone = 5;
-  string message = 6;
-  string status = 7; // "pending", "sent", "failed"
-  string error = 8;
-  google.protobuf.Timestamp sent_at = 9;
+  int64 student_id = 2;
+  int64 class_id = 3;
+  int64 class_schedule_id = 4;
+  int64 attendance_id = 5;
+  string student_name = 6;
+  string parent_name = 7;
+  string phone = 8;
+  string message = 9;
+  WhatsappMessageStatus status = 10;
+  string error = 11;
+  google.protobuf.Timestamp sent_at = 12;
+}
+
+// ── ListMessages ──────────────────────────────────────────────────────────────
+
+message ListMessagesRequest {
+  int32 page = 2 [(buf.validate.field).int32.gte = 0];
+  int32 page_size = 3 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 200
+  }];
+}
+message ListMessagesResponse {
+  repeated WhatsappMessage messages = 1;
+  int32 total = 2;
 }
 
 message WhatsappConfig {
@@ -85,16 +107,6 @@ message SendMessageRequest {
 message SendMessageResponse {
   bool success = 1;
   string error = 2;
-}
-
-// ── ListMessages ──────────────────────────────────────────────────────────────
-
-message ListMessagesRequest {
-  google.protobuf.Timestamp from = 1;
-  google.protobuf.Timestamp to = 2;
-}
-message ListMessagesResponse {
-  repeated WhatsappMessage messages = 1;
 }
 
 // ── GetConfig / SaveConfig ────────────────────────────────────────────────────

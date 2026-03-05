@@ -4,8 +4,6 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
-import type { Timestamp } from "@bufbuild/protobuf/wkt";
-import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -13,7 +11,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file notifiers/v1/notifier.proto.
  */
 export const file_notifiers_v1_notifier: GenFile = /*@__PURE__*/
-  fileDesc("Chtub3RpZmllcnMvdjEvbm90aWZpZXIucHJvdG8SDG5vdGlmaWVycy52MSJ8CgpOb3RpZnlNZXRhEhkKCGNsYXNzX2lkGAEgASgDQge6SAQiAiAAEiIKEWNsYXNzX3NjaGVkdWxlX2lkGAIgASgDQge6SAQiAigAEi8KA2RheRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCBrpIA8gBASILCglOb3RpZnlBbGwiNAoNTm90aWZ5U3R1ZGVudBIjCgtzdHVkZW50X2lkcxgBIAMoA0IOukgLkgEICAEiBCICIAAirAEKE05vdGlmeVBhcmVudFJlcXVlc3QSLgoEbWV0YRgBIAEoCzIYLm5vdGlmaWVycy52MS5Ob3RpZnlNZXRhQga6SAPIAQESJgoDYWxsGAIgASgLMhcubm90aWZpZXJzLnYxLk5vdGlmeUFsbEgAEi4KB3N0dWRlbnQYAyABKAsyGy5ub3RpZmllcnMudjEuTm90aWZ5U3R1ZGVudEgAQg0KBHR5cGUSBbpIAggBIhYKFE5vdGlmeVBhcmVudFJlc3BvbnNlMmgKD05vdGlmaWVyU2VydmljZRJVCgxOb3RpZnlQYXJlbnQSIS5ub3RpZmllcnMudjEuTm90aWZ5UGFyZW50UmVxdWVzdBoiLm5vdGlmaWVycy52MS5Ob3RpZnlQYXJlbnRSZXNwb25zZUKtAQoQY29tLm5vdGlmaWVycy52MUINTm90aWZpZXJQcm90b1ABWjlnaXRodWIuY29tL3dhcmdhc2lwaWwvZmFjZWdvL2dlbi9ub3RpZmllcnMvdjE7bm90aWZpZXJzdjGiAgNOWFiqAgxOb3RpZmllcnMuVjHKAgxOb3RpZmllcnNcVjHiAhhOb3RpZmllcnNcVjFcR1BCTWV0YWRhdGHqAg1Ob3RpZmllcnM6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_buf_validate_validate]);
+  fileDesc("Chtub3RpZmllcnMvdjEvbm90aWZpZXIucHJvdG8SDG5vdGlmaWVycy52MSJLCgpOb3RpZnlNZXRhEhkKCGNsYXNzX2lkGAEgASgDQge6SAQiAiAAEiIKEWNsYXNzX3NjaGVkdWxlX2lkGAIgASgDQge6SAQiAiAAIgsKCU5vdGlmeUFsbCJMCg1Ob3RpZnlTdHVkZW50Eh4KDWF0dGVuZGFuY2VfaWQYASABKANCB7pIBCICIAASGwoKc3R1ZGVudF9pZBgCIAEoA0IHukgEIgIgACJKCg5Ob3RpZnlTdHVkZW50cxI4CgdzdHVkZW50GAMgAygLMhsubm90aWZpZXJzLnYxLk5vdGlmeVN0dWRlbnRCCrpIB5IBBAgBEGQirgEKE05vdGlmeVBhcmVudFJlcXVlc3QSLgoEbWV0YRgBIAEoCzIYLm5vdGlmaWVycy52MS5Ob3RpZnlNZXRhQga6SAPIAQESJgoDYWxsGAIgASgLMhcubm90aWZpZXJzLnYxLk5vdGlmeUFsbEgAEjAKCHN0dWRlbnRzGAMgASgLMhwubm90aWZpZXJzLnYxLk5vdGlmeVN0dWRlbnRzSABCDQoEdHlwZRIFukgCCAEiFgoUTm90aWZ5UGFyZW50UmVzcG9uc2UyaAoPTm90aWZpZXJTZXJ2aWNlElUKDE5vdGlmeVBhcmVudBIhLm5vdGlmaWVycy52MS5Ob3RpZnlQYXJlbnRSZXF1ZXN0GiIubm90aWZpZXJzLnYxLk5vdGlmeVBhcmVudFJlc3BvbnNlQq0BChBjb20ubm90aWZpZXJzLnYxQg1Ob3RpZmllclByb3RvUAFaOWdpdGh1Yi5jb20vd2FyZ2FzaXBpbC9mYWNlZ28vZ2VuL25vdGlmaWVycy92MTtub3RpZmllcnN2MaICA05YWKoCDE5vdGlmaWVycy5WMcoCDE5vdGlmaWVyc1xWMeICGE5vdGlmaWVyc1xWMVxHUEJNZXRhZGF0YeoCDU5vdGlmaWVyczo6VjFiBnByb3RvMw", [file_buf_validate_validate]);
 
 /**
  * @generated from message notifiers.v1.NotifyMeta
@@ -28,11 +26,6 @@ export type NotifyMeta = Message<"notifiers.v1.NotifyMeta"> & {
    * @generated from field: int64 class_schedule_id = 2;
    */
   classScheduleId: bigint;
-
-  /**
-   * @generated from field: google.protobuf.Timestamp day = 3;
-   */
-  day?: Timestamp;
 };
 
 /**
@@ -60,9 +53,14 @@ export const NotifyAllSchema: GenMessage<NotifyAll> = /*@__PURE__*/
  */
 export type NotifyStudent = Message<"notifiers.v1.NotifyStudent"> & {
   /**
-   * @generated from field: repeated int64 student_ids = 1;
+   * @generated from field: int64 attendance_id = 1;
    */
-  studentIds: bigint[];
+  attendanceId: bigint;
+
+  /**
+   * @generated from field: int64 student_id = 2;
+   */
+  studentId: bigint;
 };
 
 /**
@@ -71,6 +69,23 @@ export type NotifyStudent = Message<"notifiers.v1.NotifyStudent"> & {
  */
 export const NotifyStudentSchema: GenMessage<NotifyStudent> = /*@__PURE__*/
   messageDesc(file_notifiers_v1_notifier, 2);
+
+/**
+ * @generated from message notifiers.v1.NotifyStudents
+ */
+export type NotifyStudents = Message<"notifiers.v1.NotifyStudents"> & {
+  /**
+   * @generated from field: repeated notifiers.v1.NotifyStudent student = 3;
+   */
+  student: NotifyStudent[];
+};
+
+/**
+ * Describes the message notifiers.v1.NotifyStudents.
+ * Use `create(NotifyStudentsSchema)` to create a new message.
+ */
+export const NotifyStudentsSchema: GenMessage<NotifyStudents> = /*@__PURE__*/
+  messageDesc(file_notifiers_v1_notifier, 3);
 
 /**
  * @generated from message notifiers.v1.NotifyParentRequest
@@ -92,10 +107,10 @@ export type NotifyParentRequest = Message<"notifiers.v1.NotifyParentRequest"> & 
     case: "all";
   } | {
     /**
-     * @generated from field: notifiers.v1.NotifyStudent student = 3;
+     * @generated from field: notifiers.v1.NotifyStudents students = 3;
      */
-    value: NotifyStudent;
-    case: "student";
+    value: NotifyStudents;
+    case: "students";
   } | { case: undefined; value?: undefined };
 };
 
@@ -104,7 +119,7 @@ export type NotifyParentRequest = Message<"notifiers.v1.NotifyParentRequest"> & 
  * Use `create(NotifyParentRequestSchema)` to create a new message.
  */
 export const NotifyParentRequestSchema: GenMessage<NotifyParentRequest> = /*@__PURE__*/
-  messageDesc(file_notifiers_v1_notifier, 3);
+  messageDesc(file_notifiers_v1_notifier, 4);
 
 /**
  * @generated from message notifiers.v1.NotifyParentResponse
@@ -117,7 +132,7 @@ export type NotifyParentResponse = Message<"notifiers.v1.NotifyParentResponse"> 
  * Use `create(NotifyParentResponseSchema)` to create a new message.
  */
 export const NotifyParentResponseSchema: GenMessage<NotifyParentResponse> = /*@__PURE__*/
-  messageDesc(file_notifiers_v1_notifier, 4);
+  messageDesc(file_notifiers_v1_notifier, 5);
 
 /**
  * @generated from service notifiers.v1.NotifierService
