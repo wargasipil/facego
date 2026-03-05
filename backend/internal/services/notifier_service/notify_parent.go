@@ -32,7 +32,7 @@ func (s *Service) NotifyParent(
 	return connect.NewResponse(&notifiersv1.NotifyParentResponse{}), err
 }
 
-func (s *Service) notifyAll(ctx context.Context, msg *notifiersv1.NotifyAll) error {
+func (s *Service) notifyAll(_ context.Context, _ *notifiersv1.NotifyAll) error {
 
 	return errors.New("not implemented")
 }

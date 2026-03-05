@@ -44,7 +44,8 @@ func initApp() (App, error) {
 	}
 	notifierServiceHandler := notifier_service.NewService(db)
 	apiRunner := NewApiRunner(db, appConfig, authServiceHandler, gradeServiceHandler, studyProgramServiceHandler, classServiceHandler, userServiceHandler, teacherServiceHandler, service, faceEmbeddingServiceHandler, whatsappServiceHandler, notifierServiceHandler)
-	appRunnerFunc := NewAppRunner(apiRunner)
+	notifierRunnerFunc := notifier_service.NewNotifierRunner(whatsappServiceHandler)
+	appRunnerFunc := NewAppRunner(apiRunner, notifierRunnerFunc)
 	autoMigrateFunc := NewAutoMigrate(appConfig, db)
 	seedFunc := NewSeed(db, appConfig, authServiceHandler, userServiceHandler, classServiceHandler)
 	app := NewApp(appRunnerFunc, autoMigrateFunc, seedFunc)

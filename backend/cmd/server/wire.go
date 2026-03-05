@@ -35,6 +35,7 @@ func initApp() (App, error) {
 		face_embedding_service.NewService,
 		whatsapp_service.NewService,
 		notifier_service.NewService,
+		notifier_service.NewNotifierRunner,
 		NewApiRunner,
 		NewAppRunner,
 		NewAutoMigrate,

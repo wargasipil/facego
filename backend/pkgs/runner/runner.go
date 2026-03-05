@@ -28,7 +28,7 @@ func (w *RunnerContext) Run(handler RunnerFunc) {
 	}()
 }
 
-func (w *RunnerContext) RunPeriodic(interval time.Duration, handler func(wctx *RunnerContext) error) {
+func (w *RunnerContext) RunPeriodic(interval time.Duration, handler RunnerFunc) {
 
 	go func() {
 		var err error
