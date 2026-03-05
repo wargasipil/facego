@@ -9,6 +9,7 @@ import (
 	"github.com/urfave/cli/v3"
 	authv1 "github.com/wargasipil/facego/gen/auth/v1"
 	classesv1 "github.com/wargasipil/facego/gen/classes/v1"
+	classesv1connect "github.com/wargasipil/facego/gen/classes/v1/classesv1connect"
 	usersv1 "github.com/wargasipil/facego/gen/users/v1"
 	db_models "github.com/wargasipil/facego/internal/db_models"
 	"github.com/wargasipil/facego/internal/services/auth_service"
@@ -217,9 +218,9 @@ func seed(ctx context.Context, cmd *cli.Command) error {
 		jwtSecret = "change-me-in-production"
 	}
 
-	authSvc  := auth_service.New(db, jwtSecret)
-	userSvc  := user_service.New(db, cfg.Storage.UploadsDir)
-	classSvc := class_service.New(db)
+	authSvc  := auth_service.NewService(db, jwtSecret)
+	userSvc  := user_service.NewService(db, cfg.Storage.UploadsDir)
+	classSvc := class_service.NewService(db)
 
 	// ── Accounts ──────────────────────────────────────────────────────────────
 	slog.Info("seeding accounts...")
@@ -283,6 +284,15 @@ func seed(ctx context.Context, cmd *cli.Command) error {
 		slog.Info("classes seeded", "created", created, "skipped", skipped)
 	}
 
+	// ── Schedules ─────────────────────────────────────────────────────────────
+	var classIDs []uint
+	db.Model(&db_models.Class{}).Pluck("id", &classIDs)
+	if len(classIDs) > 0 {
+		seedWeeklySchedules(ctx, db, classSvc, classIDs)
+	} else {
+		slog.Warn("no classes found, skipping schedule seed")
+	}
+
 	// ── Students ──────────────────────────────────────────────────────────────
 	slog.Info("seeding students...", "total", len(seedStudents))
 	created, skipped := 0, 0
@@ -337,4 +347,93 @@ func ensureTeacher(db *gorm.DB, teacherID, name, subject, email, phone string) i
 	}
 	slog.Info("teacher created", "teacher_id", teacherID, "id", rec.ID)
 	return int64(rec.ID)
+}
+
+// ── Schedules ─────────────────────────────────────────────────────────────────
+
+var weeklySubjects = []string{
+	"Matematika",
+	"Bahasa Indonesia",
+	"Bahasa Inggris",
+	"Fisika",
+	"Kimia",
+	"Biologi",
+	"IPS",
+	"PKn",
+	"Olahraga",
+	"Seni Budaya",
+	"Prakarya",
+	"BK",
+}
+
+type schedSlot struct {
+	dayOfWeek  int32
+	startTime  string
+	endTime    string
+	subjectIdx int
+}
+
+// scheduleTemplate defines 19 weekly slots (4 per day Mon–Thu, 3 on Fri).
+// subjectIdx is an index into weeklySubjects, rotated per class so each class
+// has a slightly different subject distribution.
+var scheduleTemplate = []schedSlot{
+	// Senin (1)
+	{1, "07:00", "08:30", 0},
+	{1, "08:30", "10:00", 1},
+	{1, "10:15", "11:45", 2},
+	{1, "13:00", "14:30", 3},
+	// Selasa (2)
+	{2, "07:00", "08:30", 4},
+	{2, "08:30", "10:00", 5},
+	{2, "10:15", "11:45", 6},
+	{2, "13:00", "14:30", 7},
+	// Rabu (3)
+	{3, "07:00", "08:30", 0},
+	{3, "08:30", "10:00", 4},
+	{3, "10:15", "11:45", 1},
+	{3, "13:00", "14:30", 5},
+	// Kamis (4)
+	{4, "07:00", "08:30", 3},
+	{4, "08:30", "10:00", 2},
+	{4, "10:15", "11:45", 9},
+	{4, "13:00", "14:30", 6},
+	// Jumat (5) — shorter day
+	{5, "07:00", "08:00", 8},
+	{5, "08:00", "09:00", 10},
+	{5, "09:15", "10:15", 11},
+}
+
+// seedWeeklySchedules inserts a weekly schedule for every class in classIDs.
+// If a class already has any schedule rows it is skipped (idempotent).
+func seedWeeklySchedules(ctx context.Context, db *gorm.DB, svc classesv1connect.ClassServiceHandler, classIDs []uint) {
+	slog.Info("seeding weekly schedules...", "classes", len(classIDs))
+	totalSlots, skippedClasses := 0, 0
+	n := len(weeklySubjects)
+	for i, classID := range classIDs {
+		var count int64
+		db.Model(&db_models.ClassSchedule{}).Where("class_id = ?", classID).Count(&count)
+		if count > 0 {
+			skippedClasses++
+			continue
+		}
+		room := fmt.Sprintf("R.%d", 101+i)
+		offset := i % n
+		for _, slot := range scheduleTemplate {
+			subj := weeklySubjects[(slot.subjectIdx+offset)%n]
+			_, err := svc.CreateSchedule(ctx, connect.NewRequest(&classesv1.CreateScheduleRequest{
+				ClassId:   int64(classID),
+				DayOfWeek: slot.dayOfWeek,
+				StartTime: slot.startTime,
+				EndTime:   slot.endTime,
+				Subject:   subj,
+				Room:      room,
+			}))
+			if err != nil {
+				slog.Warn("schedule insert error", "class_id", classID, "err", err)
+			} else {
+				totalSlots++
+			}
+		}
+	}
+	slog.Info("schedules seeded", "slots_created", totalSlots, "classes_skipped", skippedClasses)
 }

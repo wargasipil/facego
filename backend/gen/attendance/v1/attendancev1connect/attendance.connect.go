@@ -51,6 +51,9 @@ const (
 	// AttendanceServiceDeleteAttendanceProcedure is the fully-qualified name of the AttendanceService's
 	// DeleteAttendance RPC.
 	AttendanceServiceDeleteAttendanceProcedure = "/attendance.v1.AttendanceService/DeleteAttendance"
+	// AttendanceServiceAttendancePushLogProcedure is the fully-qualified name of the
+	// AttendanceService's AttendancePushLog RPC.
+	AttendanceServiceAttendancePushLogProcedure = "/attendance.v1.AttendanceService/AttendancePushLog"
 )
 
 // AttendanceServiceClient is a client for the attendance.v1.AttendanceService service.
@@ -67,6 +70,8 @@ type AttendanceServiceClient interface {
 	CreateAttendance(context.Context, *connect.Request[v1.CreateAttendanceRequest]) (*connect.Response[v1.CreateAttendanceResponse], error)
 	// Delete an attendance record.
 	DeleteAttendance(context.Context, *connect.Request[v1.DeleteAttendanceRequest]) (*connect.Response[v1.DeleteAttendanceResponse], error)
+	// Push a raw face-detection event from the Python client; backend handles dedup + storage.
+	AttendancePushLog(context.Context, *connect.Request[v1.AttendancePushLogRequest]) (*connect.Response[v1.AttendancePushLogResponse], error)
 }
 
 // NewAttendanceServiceClient constructs a client for the attendance.v1.AttendanceService service.
@@ -116,6 +121,12 @@ func NewAttendanceServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(attendanceServiceMethods.ByName("DeleteAttendance")),
 			connect.WithClientOptions(opts...),
 		),
+		attendancePushLog: connect.NewClient[v1.AttendancePushLogRequest, v1.AttendancePushLogResponse](
+			httpClient,
+			baseURL+AttendanceServiceAttendancePushLogProcedure,
+			connect.WithSchema(attendanceServiceMethods.ByName("AttendancePushLog")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -127,6 +138,7 @@ type attendanceServiceClient struct {
 	watchAttendance    *connect.Client[v1.WatchAttendanceRequest, v1.WatchAttendanceResponse]
 	createAttendance   *connect.Client[v1.CreateAttendanceRequest, v1.CreateAttendanceResponse]
 	deleteAttendance   *connect.Client[v1.DeleteAttendanceRequest, v1.DeleteAttendanceResponse]
+	attendancePushLog  *connect.Client[v1.AttendancePushLogRequest, v1.AttendancePushLogResponse]
 }
 
 // RecordAttendance calls attendance.v1.AttendanceService.RecordAttendance.
@@ -159,6 +171,11 @@ func (c *attendanceServiceClient) DeleteAttendance(ctx context.Context, req *con
 	return c.deleteAttendance.CallUnary(ctx, req)
 }
 
+// AttendancePushLog calls attendance.v1.AttendanceService.AttendancePushLog.
+func (c *attendanceServiceClient) AttendancePushLog(ctx context.Context, req *connect.Request[v1.AttendancePushLogRequest]) (*connect.Response[v1.AttendancePushLogResponse], error) {
+	return c.attendancePushLog.CallUnary(ctx, req)
+}
+
 // AttendanceServiceHandler is an implementation of the attendance.v1.AttendanceService service.
 type AttendanceServiceHandler interface {
 	// Submit a webcam frame; backend performs face recognition and records attendance.
@@ -173,6 +190,8 @@ type AttendanceServiceHandler interface {
 	CreateAttendance(context.Context, *connect.Request[v1.CreateAttendanceRequest]) (*connect.Response[v1.CreateAttendanceResponse], error)
 	// Delete an attendance record.
 	DeleteAttendance(context.Context, *connect.Request[v1.DeleteAttendanceRequest]) (*connect.Response[v1.DeleteAttendanceResponse], error)
+	// Push a raw face-detection event from the Python client; backend handles dedup + storage.
+	AttendancePushLog(context.Context, *connect.Request[v1.AttendancePushLogRequest]) (*connect.Response[v1.AttendancePushLogResponse], error)
 }
 
 // NewAttendanceServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -218,6 +237,12 @@ func NewAttendanceServiceHandler(svc AttendanceServiceHandler, opts ...connect.H
 		connect.WithSchema(attendanceServiceMethods.ByName("DeleteAttendance")),
 		connect.WithHandlerOptions(opts...),
 	)
+	attendanceServiceAttendancePushLogHandler := connect.NewUnaryHandler(
+		AttendanceServiceAttendancePushLogProcedure,
+		svc.AttendancePushLog,
+		connect.WithSchema(attendanceServiceMethods.ByName("AttendancePushLog")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/attendance.v1.AttendanceService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AttendanceServiceRecordAttendanceProcedure:
@@ -232,6 +257,8 @@ func NewAttendanceServiceHandler(svc AttendanceServiceHandler, opts ...connect.H
 			attendanceServiceCreateAttendanceHandler.ServeHTTP(w, r)
 		case AttendanceServiceDeleteAttendanceProcedure:
 			attendanceServiceDeleteAttendanceHandler.ServeHTTP(w, r)
+		case AttendanceServiceAttendancePushLogProcedure:
+			attendanceServiceAttendancePushLogHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -263,4 +290,8 @@ func (UnimplementedAttendanceServiceHandler) CreateAttendance(context.Context, *
 
 func (UnimplementedAttendanceServiceHandler) DeleteAttendance(context.Context, *connect.Request[v1.DeleteAttendanceRequest]) (*connect.Response[v1.DeleteAttendanceResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("attendance.v1.AttendanceService.DeleteAttendance is not implemented"))
+}
+
+func (UnimplementedAttendanceServiceHandler) AttendancePushLog(context.Context, *connect.Request[v1.AttendancePushLogRequest]) (*connect.Response[v1.AttendancePushLogResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("attendance.v1.AttendanceService.AttendancePushLog is not implemented"))
 }

@@ -7,6 +7,7 @@ import (
 
 	"connectrpc.com/connect"
 	classesv1 "github.com/wargasipil/facego/gen/classes/v1"
+	classesv1connect "github.com/wargasipil/facego/gen/classes/v1/classesv1connect"
 	db_models "github.com/wargasipil/facego/internal/db_models"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
@@ -100,18 +101,26 @@ type Service struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *Service {
+func NewService(db *gorm.DB) classesv1connect.ClassServiceHandler {
 	return &Service{db: db}
 }
 
+// parseScheduleTime parses an "HH:MM" string into time.Time (date part is zero).
+// Returns zero time on malformed input.
+func parseScheduleTime(s string) time.Time {
+	t, _ := time.ParseInLocation("15:04", s, time.Local)
+	return t
+}
+
 // scheduleToProto converts a DB ClassSchedule model to its proto representation.
+// StartTime and EndTime are formatted back to "HH:MM" strings.
 func scheduleToProto(m db_models.ClassSchedule) *classesv1.ClassSchedule {
 	return &classesv1.ClassSchedule{
-		Id:        int64(m.ID),
-		ClassId:   int64(m.ClassID),
+		Id:        m.ID,
+		ClassId:   m.ClassID,
 		DayOfWeek: m.DayOfWeek,
-		StartTime: m.StartTime,
-		EndTime:   m.EndTime,
+		StartTime: m.StartTime.Format("15:04"),
+		EndTime:   m.EndTime.Format("15:04"),
 		Subject:   m.Subject,
 		Room:      m.Room,
 	}

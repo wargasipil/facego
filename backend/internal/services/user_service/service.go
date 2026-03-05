@@ -10,6 +10,7 @@ import (
 
 	"connectrpc.com/connect"
 	usersv1 "github.com/wargasipil/facego/gen/users/v1"
+	usersv1connect "github.com/wargasipil/facego/gen/users/v1/usersv1connect"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
@@ -74,7 +75,7 @@ type Service struct {
 	uploadsDir string
 }
 
-func New(db *gorm.DB, uploadsDir string) *Service {
+func NewService(db *gorm.DB, uploadsDir string) usersv1connect.UserServiceHandler {
 	return &Service{db: db, uploadsDir: uploadsDir}
 }
 

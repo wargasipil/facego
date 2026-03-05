@@ -55,7 +55,7 @@ func connectCode(err error) connect.Code {
 
 func TestListGrades_ReturnsAllGrades(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectQuery(`SELECT`).
 		WillReturnRows(sqlmock.NewRows(gradeColumns()).
@@ -77,7 +77,7 @@ func TestListGrades_ReturnsAllGrades(t *testing.T) {
 
 func TestListGrades_EmptyResult(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectQuery(`SELECT`).
 		WillReturnRows(sqlmock.NewRows(gradeColumns()))
@@ -90,7 +90,7 @@ func TestListGrades_EmptyResult(t *testing.T) {
 
 func TestListGrades_DBError(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectQuery(`SELECT`).WillReturnError(errors.New("connection reset"))
 
@@ -103,7 +103,7 @@ func TestListGrades_DBError(t *testing.T) {
 
 func TestGetGrade_Found(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectQuery(`SELECT`).
 		WithArgs(int64(1)).
@@ -122,7 +122,7 @@ func TestGetGrade_Found(t *testing.T) {
 
 func TestGetGrade_NotFound(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectQuery(`SELECT`).
 		WithArgs(int64(99)).
@@ -138,7 +138,7 @@ func TestGetGrade_NotFound(t *testing.T) {
 
 func TestCreateGrade_Success(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	// INSERT
 	mock.ExpectBegin()
@@ -166,7 +166,7 @@ func TestCreateGrade_Success(t *testing.T) {
 
 func TestCreateGrade_InsertError(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectQuery(`INSERT INTO "grades"`).
@@ -186,7 +186,7 @@ func TestCreateGrade_InsertError(t *testing.T) {
 
 func TestUpdateGrade_Success(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	// UPDATE
 	mock.ExpectBegin()
@@ -213,7 +213,7 @@ func TestUpdateGrade_Success(t *testing.T) {
 
 func TestUpdateGrade_NotFound(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE "grades"`).
@@ -232,7 +232,7 @@ func TestUpdateGrade_NotFound(t *testing.T) {
 
 func TestUpdateGrade_DBError(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE "grades"`).
@@ -252,7 +252,7 @@ func TestUpdateGrade_DBError(t *testing.T) {
 
 func TestDeleteGrade_Success(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM "grades"`).
@@ -267,7 +267,7 @@ func TestDeleteGrade_Success(t *testing.T) {
 
 func TestDeleteGrade_NotFound(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM "grades"`).
@@ -283,7 +283,7 @@ func TestDeleteGrade_NotFound(t *testing.T) {
 
 func TestDeleteGrade_DBError(t *testing.T) {
 	db, mock := newMockDB(t)
-	svc := grade_service.New(db)
+	svc := grade_service.NewService(db)
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM "grades"`).

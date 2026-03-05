@@ -14,6 +14,7 @@ import TeacherPage     from './pages/TeacherPage'
 import SettingsPage    from './pages/SettingsPage'
 import RolePage        from './pages/RolePage'
 import WhatsappPage   from './pages/WhatsappPage'
+import TemplatePage   from './pages/TemplatePage'
 import LoginPage       from './pages/LoginPage'
 
 function AdminOnly({ children }: { children: React.ReactNode }) {
@@ -47,7 +48,8 @@ function ProtectedRoutes() {
         <Route path="/classes"          element={<ClassPage />} />
         <Route path="/classes/:id"      element={<ClassDetailPage />} />
         <Route path="/teachers" element={<TeacherPage />} />
-        <Route path="/whatsapp" element={<WhatsappPage />} />
+        <Route path="/whatsapp"  element={<WhatsappPage />} />
+        <Route path="/template" element={<TemplatePage />} />
         <Route path="/roles"    element={<AdminOnly><RolePage /></AdminOnly>} />
         <Route path="/settings" element={<AdminOnly><SettingsPage /></AdminOnly>} />
       </Route>

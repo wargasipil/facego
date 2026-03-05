@@ -35,9 +35,6 @@ func (s *Service) ListAttendance(
 	}
 
 	records := make([]*attendancev1.AttendanceRecord, 0, len(rows))
-	for _, r := range rows {
-		records = append(records, r.toProto())
-	}
 
 	return connect.NewResponse(&attendancev1.ListAttendanceResponse{
 		Records: records,

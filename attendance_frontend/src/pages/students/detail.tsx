@@ -40,12 +40,10 @@ import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 const STATUS_COLOR: Record<number, string> = {
   [AttendanceStatus.PRESENT]: 'green',
   [AttendanceStatus.ABSENT]:  'red',
-  [AttendanceStatus.LATE]:    'orange',
 }
 const STATUS_LABEL: Record<number, string> = {
   [AttendanceStatus.PRESENT]: 'Present',
   [AttendanceStatus.ABSENT]:  'Absent',
-  [AttendanceStatus.LATE]:    'Late',
 }
 
 function formatDate(ts?: { seconds: bigint }) {
@@ -113,7 +111,6 @@ export default function StudentDetailPage() {
     total:   records.length,
     present: records.filter(r => r.status === AttendanceStatus.PRESENT).length,
     absent:  records.filter(r => r.status === AttendanceStatus.ABSENT).length,
-    late:    records.filter(r => r.status === AttendanceStatus.LATE).length,
   }
 
   const pct = (n: number) =>
@@ -195,13 +192,6 @@ export default function StudentDetailPage() {
           </Box>
           <Box bg="white" p={4} borderRadius="lg" shadow="sm">
             <StatRoot>
-              <StatLabel color="orange.500">Late</StatLabel>
-              <StatValueText color="orange.500">{summary.late}</StatValueText>
-              <StatHelpText>{pct(summary.late)}</StatHelpText>
-            </StatRoot>
-          </Box>
-          <Box bg="white" p={4} borderRadius="lg" shadow="sm">
-            <StatRoot>
               <StatLabel color="red.500">Absent</StatLabel>
               <StatValueText color="red.500">{summary.absent}</StatValueText>
               <StatHelpText>{pct(summary.absent)}</StatHelpText>
@@ -236,20 +226,18 @@ export default function StudentDetailPage() {
                     <TableColumnHeader>Date</TableColumnHeader>
                     <TableColumnHeader>Status</TableColumnHeader>
                     <TableColumnHeader>Check-in Time</TableColumnHeader>
-                    <TableColumnHeader>Notes</TableColumnHeader>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {records.map(r => (
                     <TableRow key={String(r.id)}>
-                      <TableCell fontWeight="medium" fontSize="sm">{formatDate(r.timestamp)}</TableCell>
+                      <TableCell fontWeight="medium" fontSize="sm">{formatDate(r.checkInTime)}</TableCell>
                       <TableCell>
                         <Badge colorPalette={STATUS_COLOR[r.status] ?? 'gray'}>
                           {STATUS_LABEL[r.status] ?? 'Unknown'}
                         </Badge>
                       </TableCell>
-                      <TableCell color="gray.500" fontSize="sm">{formatTime(r.timestamp)}</TableCell>
-                      <TableCell color="gray.400" fontSize="xs">{r.notes || '—'}</TableCell>
+                      <TableCell color="gray.500" fontSize="sm">{formatTime(r.checkInTime)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

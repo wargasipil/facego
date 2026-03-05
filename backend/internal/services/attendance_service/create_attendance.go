@@ -20,10 +20,12 @@ func (s *Service) CreateAttendance(
 	}
 
 	model := db_models.Attendance{
-		UserID:      req.Msg.UserId,
-		Status:      statusStr(req.Msg.Status),
-		CheckInTime: checkIn,
-		Notes:       req.Msg.Notes,
+		UserID:          req.Msg.UserId,
+		ClassID:         req.Msg.ClassId,
+		ClassScheduleID: req.Msg.ClassScheduleId,
+		Status:          req.Msg.Status,
+		CheckInTime:     checkIn,
+		Notes:           req.Msg.Notes,
 	}
 	if err := s.db.WithContext(ctx).Create(&model).Error; err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
@@ -41,7 +43,5 @@ func (s *Service) CreateAttendance(
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("user not found"))
 	}
 
-	return connect.NewResponse(&attendancev1.CreateAttendanceResponse{
-		Record: row.toProto(),
-	}), nil
+	return connect.NewResponse(&attendancev1.CreateAttendanceResponse{}), nil
 }

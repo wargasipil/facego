@@ -41,7 +41,7 @@ interface Props {
   onSchedulesChange: (ss: ClassSchedule[]) => void
 }
 
-export function ClassScheduleTab({ classId, schedules, onSchedulesChange }: Props) {
+export function ScheduleTab({ classId, schedules, onSchedulesChange }: Props) {
   const [dialogOpen, setDialogOpen]       = useState(false)
   const [editing, setEditing]             = useState<ClassSchedule | null>(null)
   const [form, setForm]                   = useState(EMPTY_SCHEDULE_FORM)

@@ -12,12 +12,12 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Service) SendTestMessage(
+func (s *Service) SendMessage(
 	ctx context.Context,
-	req *connect.Request[whatsappv1.SendTestMessageRequest],
-) (*connect.Response[whatsappv1.SendTestMessageResponse], error) {
+	req *connect.Request[whatsappv1.SendMessageRequest],
+) (*connect.Response[whatsappv1.SendMessageResponse], error) {
 	if !s.wa.IsConnected() || s.wa.Store.ID == nil {
-		return connect.NewResponse(&whatsappv1.SendTestMessageResponse{
+		return connect.NewResponse(&whatsappv1.SendMessageResponse{
 			Success: false,
 			Error:   "WhatsApp is not connected",
 		}), nil
@@ -26,7 +26,7 @@ func (s *Service) SendTestMessage(
 	phone := strings.TrimPrefix(req.Msg.Phone, "+")
 	jid, err := types.ParseJID(phone + "@s.whatsapp.net")
 	if err != nil {
-		return connect.NewResponse(&whatsappv1.SendTestMessageResponse{
+		return connect.NewResponse(&whatsappv1.SendMessageResponse{
 			Success: false,
 			Error:   fmt.Sprintf("invalid phone number: %v", err),
 		}), nil
@@ -36,11 +36,11 @@ func (s *Service) SendTestMessage(
 		Conversation: proto.String(req.Msg.Message),
 	})
 	if err != nil {
-		return connect.NewResponse(&whatsappv1.SendTestMessageResponse{
+		return connect.NewResponse(&whatsappv1.SendMessageResponse{
 			Success: false,
 			Error:   err.Error(),
 		}), nil
 	}
 
-	return connect.NewResponse(&whatsappv1.SendTestMessageResponse{Success: true}), nil
+	return connect.NewResponse(&whatsappv1.SendMessageResponse{Success: true}), nil
 }

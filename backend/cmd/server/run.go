@@ -9,22 +9,28 @@ import (
 	"connectrpc.com/grpcreflect"
 	"github.com/rs/cors"
 	"github.com/urfave/cli/v3"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	attendancev1connect "github.com/wargasipil/facego/gen/attendance/v1/attendancev1connect"
 	authv1connect "github.com/wargasipil/facego/gen/auth/v1/authv1connect"
 	classesv1connect "github.com/wargasipil/facego/gen/classes/v1/classesv1connect"
+	facesv1connect "github.com/wargasipil/facego/gen/faces/v1/facesv1connect"
 	"github.com/wargasipil/facego/gen/grades/v1/gradesv1connect"
 	studyprogramsv1connect "github.com/wargasipil/facego/gen/study_programs/v1/study_programsv1connect"
 	teachersv1connect "github.com/wargasipil/facego/gen/teachers/v1/teachersv1connect"
 	usersv1connect "github.com/wargasipil/facego/gen/users/v1/usersv1connect"
+	notifiersv1connect "github.com/wargasipil/facego/gen/notifiers/v1/notifiersv1connect"
 	whatsappv1connect "github.com/wargasipil/facego/gen/whatsapp/v1/whatsappv1connect"
 	"github.com/wargasipil/facego/internal/interceptors"
 	"github.com/wargasipil/facego/internal/services/attendance_service"
 	"github.com/wargasipil/facego/internal/services/auth_service"
 	"github.com/wargasipil/facego/internal/services/class_service"
+	face_embedding_service "github.com/wargasipil/facego/internal/services/face_embedding_service"
 	"github.com/wargasipil/facego/internal/services/grade_service"
 	"github.com/wargasipil/facego/internal/services/study_program_service"
 	"github.com/wargasipil/facego/internal/services/teacher_service"
 	"github.com/wargasipil/facego/internal/services/user_service"
+	"github.com/wargasipil/facego/internal/services/notifier_service"
 	"github.com/wargasipil/facego/internal/services/whatsapp_service"
 )
 
@@ -40,17 +46,19 @@ func run(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	// Services
-	authSvc          := auth_service.New(db, jwtSecret)
-	gradeSvc         := grade_service.New(db)
-	studyProgramSvc  := study_program_service.New(db)
-	classSvc         := class_service.New(db)
-	userSvc          := user_service.New(db, cfg.Storage.UploadsDir)
-	teacherSvc       := teacher_service.New(db)
-	attendanceSvc    := attendance_service.New(db)
-	whatsappSvc, err := whatsapp_service.New(db)
+	authSvc          := auth_service.NewService(db, jwtSecret)
+	gradeSvc         := grade_service.NewService(db)
+	studyProgramSvc  := study_program_service.NewService(db)
+	classSvc         := class_service.NewService(db)
+	userSvc          := user_service.NewService(db, cfg.Storage.UploadsDir)
+	teacherSvc       := teacher_service.NewService(db)
+	attendanceSvc    := attendance_service.NewService(db)
+	faceSvc          := face_embedding_service.NewService(db)
+	whatsappSvc, err := whatsapp_service.NewService(db)
 	if err != nil {
 		return err
 	}
+	notifierSvc := notifier_service.NewService(db)
 
 	// Interceptors
 	validateOpt := connect.WithInterceptors(interceptors.Validate())
@@ -73,6 +81,8 @@ func run(ctx context.Context, cmd *cli.Command) error {
 	mux.Handle(teachersv1connect.NewTeacherServiceHandler(teacherSvc, authOpts))
 	mux.Handle(attendancev1connect.NewAttendanceServiceHandler(attendanceSvc, authOpts))
 	mux.Handle(whatsappv1connect.NewWhatsappServiceHandler(whatsappSvc, authOpts))
+	mux.Handle(facesv1connect.NewFaceEmbeddingServiceHandler(faceSvc, authOpts))
+	mux.Handle(notifiersv1connect.NewNotifierServiceHandler(notifierSvc, authOpts))
 
 	_ = validateOpt // kept for reference if needed
 
@@ -91,12 +101,19 @@ func run(ctx context.Context, cmd *cli.Command) error {
 		teachersv1connect.TeacherServiceName,
 		attendancev1connect.AttendanceServiceName,
 		whatsappv1connect.WhatsappServiceName,
+		facesv1connect.FaceEmbeddingServiceName,
+		notifiersv1connect.NotifierServiceName,
 	)
 	mux.Handle(grpcreflect.NewHandlerV1(reflector))
 	mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 
+	// Background: convert unprocessed DetectionLog rows → Attendance records.
+	attendanceSvc.StartProcessor(ctx)
+
 	addr := cfg.Server.Addr()
 	slog.Info("starting FaceGo server", "addr", addr)
 
-	return http.ListenAndServe(addr, cors.AllowAll().Handler(mux))
+	// h2c enables gRPC (plaintext HTTP/2) alongside Connect and gRPC-Web
+	handler := h2c.NewHandler(cors.AllowAll().Handler(mux), &http2.Server{})
+	return http.ListenAndServe(addr, handler)
 }

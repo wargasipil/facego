@@ -62,12 +62,10 @@ import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 const STATUS_COLOR: Record<number, string> = {
   [AttendanceStatus.PRESENT]: 'green',
   [AttendanceStatus.ABSENT]:  'red',
-  [AttendanceStatus.LATE]:    'orange',
 }
 const STATUS_LABEL: Record<number, string> = {
   [AttendanceStatus.PRESENT]: 'Present',
   [AttendanceStatus.ABSENT]:  'Absent',
-  [AttendanceStatus.LATE]:    'Late',
 }
 
 function formatTime(ts?: { seconds: bigint }) {
@@ -107,8 +105,8 @@ export default function AttendancePage() {
   const [error, setError]             = useState<string | null>(null)
   const [search, setSearch]           = useState('')
   const [dateFilter, setDateFilter]   = useState(todayIso())
-  const [classFilter, setClassFilter] = useState('')
-  const [classes, setClasses]         = useState<string[]>([])
+  const [classFilter, setClassFilter] = useState<bigint>(0n)
+  const [classes, setClasses]         = useState<{ id: bigint; name: string }[]>([])
 
   // ── selection ──
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -134,7 +132,7 @@ export default function AttendancePage() {
   // ── load classes + students once ──
   useEffect(() => {
     classService.listClasses({})
-      .then(r => setClasses(r.classes.map(c => c.name)))
+      .then(r => setClasses(r.classes.map(c => ({ id: c.id, name: c.name }))))
       .catch(() => {})
     userService.listUsers({ filter: {} })
       .then(r => setStudents(r.users))
@@ -151,8 +149,12 @@ export default function AttendancePage() {
       const [y, m, d] = dateFilter.split('-').map(Number)
       const dayStart = new Date(Date.UTC(y, m - 1, d, 0, 0, 0))
       const resp = await attendanceService.getDailyAttendance({
-        date:        timestampFromDate(dayStart),
-        classFilter: classFilter,
+        filter: {
+          classId: classFilter,
+          date:    timestampFromDate(dayStart),
+          q:       search,
+        },
+        pageSize: 200,
       })
       setRecords(resp.records)
     } catch (err: unknown) {
@@ -160,19 +162,16 @@ export default function AttendancePage() {
     } finally {
       setLoading(false)
     }
-  }, [dateFilter, classFilter])
+  }, [dateFilter, classFilter, search])
 
   useEffect(() => { fetchRecords() }, [fetchRecords])
 
   // ── derived ──
-  const filtered = records.filter(r =>
-    r.name.toLowerCase().includes(search.toLowerCase()) ||
-    r.studentId.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = records
 
-  // Only late/absent records can be notified
+  // Only absent records can be notified
   const notifiableInView = filtered.filter(
-    r => r.status === AttendanceStatus.LATE || r.status === AttendanceStatus.ABSENT
+    r => r.status === AttendanceStatus.ABSENT
   )
   const allNotifiableSelected =
     notifiableInView.length > 0 &&
@@ -182,7 +181,6 @@ export default function AttendancePage() {
     total:   records.length,
     present: records.filter(r => r.status === AttendanceStatus.PRESENT).length,
     absent:  records.filter(r => r.status === AttendanceStatus.ABSENT).length,
-    late:    records.filter(r => r.status === AttendanceStatus.LATE).length,
   }
 
   const pct = (n: number) =>
@@ -219,9 +217,8 @@ export default function AttendancePage() {
       const dayStart = new Date(Date.UTC(y, m - 1, d, 0, 0, 0))
       const r = await whatsappService.sendAttendanceAlerts({
         date:         timestampFromDate(dayStart),
-        notifyLate:   true,
         notifyAbsent: true,
-        classFilter,
+        classFilter: classes.find(c => c.id === classFilter)?.name ?? '',
         userIds:      [...selected].map(id => BigInt(id)),
       })
       setNotifyResult({ queued: r.queued, skipped: r.skipped })
@@ -304,13 +301,6 @@ export default function AttendancePage() {
           </Box>
           <Box bg="white" p={4} borderRadius="lg" shadow="sm">
             <StatRoot>
-              <StatLabel color="orange.500">Late</StatLabel>
-              <StatValueText color="orange.500">{summary.late}</StatValueText>
-              <StatHelpText>{pct(summary.late)}</StatHelpText>
-            </StatRoot>
-          </Box>
-          <Box bg="white" p={4} borderRadius="lg" shadow="sm">
-            <StatRoot>
               <StatLabel color="red.500">Absent</StatLabel>
               <StatValueText color="red.500">{summary.absent}</StatValueText>
               <StatHelpText>{pct(summary.absent)}</StatHelpText>
@@ -377,8 +367,8 @@ export default function AttendancePage() {
             <HStack gap={1}>
               <Box color="gray.400"><FiFilter size={14} /></Box>
               <select
-                value={classFilter}
-                onChange={e => setClassFilter(e.target.value)}
+                value={String(classFilter)}
+                onChange={e => setClassFilter(BigInt(e.target.value))}
                 style={{
                   padding: '4px 8px',
                   borderRadius: '6px',
@@ -388,8 +378,8 @@ export default function AttendancePage() {
                   height: '32px',
                 }}
               >
-                <option value="">All classes</option>
-                {classes.map(c => <option key={c} value={c}>{c}</option>)}
+                <option value="0">All classes</option>
+                {classes.map(c => <option key={String(c.id)} value={String(c.id)}>{c.name}</option>)}
               </select>
             </HStack>
 
@@ -452,32 +442,29 @@ export default function AttendancePage() {
                           type="checkbox"
                           checked={allNotifiableSelected}
                           onChange={toggleAllNotifiable}
-                          title="Select all late/absent"
+                          title="Select all absent"
                           style={{ cursor: 'pointer' }}
                         />
                       )}
                     </TableColumnHeader>
                     <TableColumnHeader>Student</TableColumnHeader>
                     <TableColumnHeader>ID</TableColumnHeader>
-                    <TableColumnHeader>Class</TableColumnHeader>
                     <TableColumnHeader>Status</TableColumnHeader>
-                    <TableColumnHeader>First Seen</TableColumnHeader>
-                    <TableColumnHeader>Last Seen</TableColumnHeader>
-                    <TableColumnHeader>Notes</TableColumnHeader>
+                    <TableColumnHeader>Check-in</TableColumnHeader>
                     <TableColumnHeader textAlign="right">Actions</TableColumnHeader>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9}>
+                      <TableCell colSpan={6}>
                         <Center py={8} color="gray.400">
                           {search ? 'No matching records.' : 'No attendance records for this day.'}
                         </Center>
                       </TableCell>
                     </TableRow>
                   ) : filtered.map(r => {
-                    const isNotifiable = r.status === AttendanceStatus.LATE || r.status === AttendanceStatus.ABSENT
+                    const isNotifiable = r.status === AttendanceStatus.ABSENT
                     const isChecked    = selected.has(String(r.userId))
                     return (
                       <TableRow
@@ -500,26 +487,21 @@ export default function AttendancePage() {
                         <TableCell>
                           <HStack gap={3}>
                             <AvatarRoot size="sm">
-                              {r.photoUrl && <AvatarImage src={r.photoUrl} />}
-                              <AvatarFallback>{r.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                              {r.student?.photoUrl && <AvatarImage src={r.student.photoUrl} />}
+                              <AvatarFallback>{(r.student?.name ?? '').split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
                             </AvatarRoot>
-                            <Text fontWeight="medium" fontSize="sm">{r.name}</Text>
+                            <Text fontWeight="medium" fontSize="sm">{r.student?.name ?? '—'}</Text>
                           </HStack>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" size="sm">{r.studentId}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge colorPalette="purple" variant="subtle" size="sm">{r.className}</Badge>
+                          <Badge variant="outline" size="sm">{r.student?.studentId || '—'}</Badge>
                         </TableCell>
                         <TableCell>
                           <Badge colorPalette={STATUS_COLOR[r.status] ?? 'gray'} textTransform="capitalize">
                             {STATUS_LABEL[r.status] ?? 'Unknown'}
                           </Badge>
                         </TableCell>
-                        <TableCell color="gray.500" fontSize="sm">{formatTime(r.timestamp)}</TableCell>
-                        <TableCell color="gray.500" fontSize="sm">{formatTime(r.lastSeen)}</TableCell>
-                        <TableCell color="gray.400" fontSize="xs">{r.notes || '—'}</TableCell>
+                        <TableCell color="gray.500" fontSize="sm">{formatTime(r.checkInTime)}</TableCell>
                         <TableCell onClick={e => e.stopPropagation()}>
                           <HStack justify="flex-end">
                             <IconButton
@@ -578,7 +560,6 @@ export default function AttendancePage() {
                       style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '14px', background: 'white' }}
                     >
                       <option value={String(AttendanceStatus.PRESENT)}>Present</option>
-                      <option value={String(AttendanceStatus.LATE)}>Late</option>
                       <option value={String(AttendanceStatus.ABSENT)}>Absent</option>
                     </select>
                   </Field.Root>
@@ -631,7 +612,7 @@ export default function AttendancePage() {
             <DialogBody>
               <Text>
                 Delete the attendance record for{' '}
-                <Text as="span" fontWeight="bold">{deleteTarget?.name}</Text>? This cannot be undone.
+                <Text as="span" fontWeight="bold">{deleteTarget?.student?.name}</Text>? This cannot be undone.
               </Text>
             </DialogBody>
             <DialogFooter>

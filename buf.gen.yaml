@@ -14,6 +14,19 @@ plugins:
     include_imports: true
     opt: target=ts
 
+  # ── Python (gRPC) ──────────────────────────────────────────────────────────
+  - remote: buf.build/protocolbuffers/python
+    out: backend_python/gen
+    include_imports: true
+
+  - remote: buf.build/protocolbuffers/pyi
+    out: backend_python/gen
+    include_imports: true
+
+  - remote: buf.build/grpc/python
+    out: backend_python/gen
+    include_imports: true
+
 managed:
   enabled: true
   override:

@@ -21,6 +21,7 @@ import {
   FiUserCheck,
   FiShield,
   FiMessageSquare,
+  FiFileText,
 } from 'react-icons/fi'
 import { NavLink, useLocation, Outlet, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
@@ -65,6 +66,7 @@ const NAV_GROUPS: NavGroup[] = [
     group: 'Notifications',
     items: [
       { label: 'WhatsApp', path: '/whatsapp', icon: <FiMessageSquare size={18} />, allowedRoles: ['admin', 'teacher'] },
+      { label: 'Template',  path: '/template', icon: <FiFileText size={18} />,      allowedRoles: ['admin', 'teacher'] },
     ],
   },
   {

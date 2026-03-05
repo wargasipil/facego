@@ -33,23 +33,25 @@ import {
   DialogBody,
   DialogFooter,
 } from '@chakra-ui/react'
-import { FiClipboard, FiDownload, FiUpload } from 'react-icons/fi'
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { type AttendanceRecord, AttendanceStatus } from '../../../gen/attendance/v1/attendance_pb'
+import { FiClipboard, FiDownload, FiUpload, FiSearch, FiBell } from 'react-icons/fi'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import { type AttendanceRecord, AttendanceStatus, NotifyStatus } from '../../../gen/attendance/v1/attendance_pb'
+import { type ClassSchedule } from '../../../gen/classes/v1/classes_pb'
 import { attendanceService } from '../../../services/attendance_service'
+import { notifierService } from '../../../services/notifier_service'
 import { timestampFromDate } from '@bufbuild/protobuf/wkt'
+import { ScheduleSelector } from '../../../components/ScheduleSelector'
+import { ClassPagination } from '../components/ClassPagination'
 
 const STATUS_LABEL: Record<AttendanceStatus, string> = {
   [AttendanceStatus.UNSPECIFIED]: 'Unknown',
   [AttendanceStatus.PRESENT]:     'Present',
   [AttendanceStatus.ABSENT]:      'Absent',
-  [AttendanceStatus.LATE]:        'Late',
 }
 const STATUS_COLOR: Record<AttendanceStatus, string> = {
   [AttendanceStatus.UNSPECIFIED]: 'gray',
   [AttendanceStatus.PRESENT]:     'green',
   [AttendanceStatus.ABSENT]:      'red',
-  [AttendanceStatus.LATE]:        'orange',
 }
 
 function todayIso() {
@@ -58,11 +60,6 @@ function todayIso() {
 
 const formatTime = (ts?: { seconds: bigint }) =>
   ts ? new Date(Number(ts.seconds) * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '—'
-
-interface Props {
-  className: string
-  active: boolean
-}
 
 // ── CSV helpers ───────────────────────────────────────────────────────────────
 
@@ -103,7 +100,6 @@ function parseStatus(s: string): AttendanceStatus {
   switch (s.toLowerCase()) {
     case 'present': return AttendanceStatus.PRESENT
     case 'absent':  return AttendanceStatus.ABSENT
-    case 'late':    return AttendanceStatus.LATE
     default:        return AttendanceStatus.PRESENT
   }
 }
@@ -112,11 +108,81 @@ interface ImportRow { name: string; studentId: string; userId: string; status: s
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function ClassAttendanceTab({ className, active }: Props) {
+interface Props {
+  classId: bigint
+  className: string
+  active: boolean
+  schedules?: ClassSchedule[]
+}
+
+export function AttendanceTab({ classId, className, active, schedules = [] }: Props) {
   const [attendanceDate, setAttendanceDate] = useState(todayIso())
+  const [scheduleFilter, setScheduleFilter] = useState<bigint>(0n)
+  const [search, setSearch]                 = useState('')
   const [records, setRecords]               = useState<AttendanceRecord[]>([])
-  const [summary, setSummary]               = useState<{ total: number; present: number; absent: number; late: number } | null>(null)
   const [loading, setLoading]               = useState(false)
+
+  // ── pagination ──
+  const [page, setPage]         = useState(1)
+  const [pageSize, setPageSize] = useState(20)
+  const [total, setTotal]       = useState(0)
+
+  // ── notify ──
+  const [notifyAllOpen, setNotifyAllOpen]     = useState(false)
+  const [notifying, setNotifying]             = useState(false)
+  const [notifyingOne, setNotifyingOne]       = useState<bigint | null>(null)
+  const [notifyMsg, setNotifyMsg]             = useState<string | null>(null)
+
+  const absentRecords = useMemo(
+    () => records.filter(r => r.status === AttendanceStatus.ABSENT),
+    [records]
+  )
+
+  const handleNotifyAll = async () => {
+    setNotifyAllOpen(false)
+    setNotifying(true)
+    setNotifyMsg(null)
+    try {
+      const [y, m, d] = attendanceDate.split('-').map(Number)
+      await notifierService.notifyParent({
+        meta: {
+          classId:         classId,
+          classScheduleId: scheduleFilter,
+          day:             timestampFromDate(new Date(y, m - 1, d, 0, 0, 0)),
+        },
+        type: { case: 'all', value: {} },
+      })
+      setNotifyMsg(`Notification sent to all absent parents.`)
+    } catch (err) {
+      setNotifyMsg((err as Error).message ?? 'Failed to send notifications.')
+    } finally {
+      setNotifying(false)
+    }
+  }
+
+  const handleNotifyOne = async (userId: bigint) => {
+    setNotifyingOne(userId)
+    setNotifyMsg(null)
+    try {
+      const [y, m, d] = attendanceDate.split('-').map(Number)
+      await notifierService.notifyParent({
+        meta: {
+          classId:         classId,
+          classScheduleId: scheduleFilter,
+          day:             timestampFromDate(new Date(y, m - 1, d, 0, 0, 0)),
+        },
+        type: { case: 'student', value: { studentIds: [userId] } },
+      })
+      setRecords(prev => prev.map(r =>
+        r.userId === userId ? { ...r, notifyStatus: NotifyStatus.PENDING } : r
+      ))
+      setNotifyMsg(`Notification sent to parent.`)
+    } catch (err) {
+      setNotifyMsg((err as Error).message ?? 'Failed to send notification.')
+    } finally {
+      setNotifyingOne(null)
+    }
+  }
 
   // ── import / export ──
   const fileInputRef                          = useRef<HTMLInputElement>(null)
@@ -125,11 +191,23 @@ export function ClassAttendanceTab({ className, active }: Props) {
   const [importLoading, setImportLoading]     = useState(false)
   const [importError, setImportError]         = useState<string | null>(null)
 
+  const totalPages  = Math.max(1, Math.ceil(total / pageSize))
+  const rangeStart  = total === 0 ? 0 : (page - 1) * pageSize + 1
+  const rangeEnd    = Math.min(page * pageSize, total)
+  const pageNumbers = useMemo(() => {
+    const delta = 2
+    const start = Math.max(1, page - delta)
+    const end   = Math.min(totalPages, page + delta)
+    const nums: number[] = []
+    for (let i = start; i <= end; i++) nums.push(i)
+    return nums
+  }, [page, totalPages])
+
   const handleExport = () => {
     if (records.length === 0) return
-    const header = 'Name,Student ID,User ID,Status,Notes'
+    const header = 'Name,Student ID,User ID,Status'
     const rows = records.map(r =>
-      [r.name, r.studentId, String(r.userId), STATUS_LABEL[r.status] ?? 'Present', r.notes]
+      [r.student?.name ?? '', r.student?.studentId ?? '', String(r.userId), STATUS_LABEL[r.status] ?? 'Present']
         .map(escapeCSV).join(',')
     )
     const csv  = [header, ...rows].join('\n')
@@ -182,7 +260,7 @@ export function ClassAttendanceTab({ className, active }: Props) {
         })
       ))
       setImportOpen(false)
-      load(attendanceDate)
+      load(attendanceDate, scheduleFilter, search, 1, pageSize)
     } catch (err) {
       setImportError((err as Error).message ?? 'Import failed.')
     } finally {
@@ -190,30 +268,37 @@ export function ClassAttendanceTab({ className, active }: Props) {
     }
   }
 
-  const load = useCallback(async (date: string) => {
+  const load = useCallback(async (date: string, schedId: bigint, q: string, p: number, ps: number) => {
     setLoading(true)
     try {
       const [y, m, d] = date.split('-').map(Number)
       const r = await attendanceService.getDailyAttendance({
-        date:        timestampFromDate(new Date(y, m - 1, d, 0, 0, 0)),
-        classFilter: className,
+        filter: {
+          classId:    classId,
+          scheduleId: schedId,
+          date:       timestampFromDate(new Date(y, m - 1, d, 0, 0, 0)),
+          q,
+        },
+        page:     p,
+        pageSize: ps,
       })
       setRecords(r.records)
-      setSummary(r.summary
-        ? { total: r.summary.total, present: r.summary.present, absent: r.summary.absent, late: r.summary.late }
-        : null
-      )
+      setTotal(r.total)
     } catch {
       setRecords([])
-      setSummary(null)
+      setTotal(0)
     } finally {
       setLoading(false)
     }
-  }, [className])
+  }, [classId])
 
   useEffect(() => {
-    if (active) load(attendanceDate)
-  }, [active, attendanceDate, load])
+    if (active) load(attendanceDate, scheduleFilter, search, page, pageSize)
+  }, [active, attendanceDate, scheduleFilter, search, page, pageSize, load])
+
+  const handleDateChange     = (d: string)  => { setAttendanceDate(d); setPage(1) }
+  const handleScheduleChange = (id: bigint) => { setScheduleFilter(id); setPage(1) }
+  const handleSearchChange   = (q: string)  => { setSearch(q); setPage(1) }
 
   return (
     <>
@@ -221,7 +306,7 @@ export function ClassAttendanceTab({ className, active }: Props) {
       <Flex align="center" justify="space-between" mb={4}>
         <HStack gap={2}>
           <FiClipboard size={15} />
-          <Heading size="sm">Attendance Log</Heading>
+          <Heading size="sm">Attendance</Heading>
         </HStack>
         <HStack gap={2}>
           <Input
@@ -229,8 +314,37 @@ export function ClassAttendanceTab({ className, active }: Props) {
             size="sm"
             w="160px"
             value={attendanceDate}
-            onChange={e => setAttendanceDate(e.target.value)}
+            onChange={e => handleDateChange(e.target.value)}
           />
+          {schedules.length > 0 && (
+            <ScheduleSelector
+              schedules={schedules}
+              value={scheduleFilter}
+              onChange={handleScheduleChange}
+            />
+          )}
+          <Box position="relative" display="flex" alignItems="center">
+            <Box position="absolute" left={2} color="gray.400" pointerEvents="none" zIndex={1}>
+              <FiSearch size={13} />
+            </Box>
+            <Input
+              size="sm"
+              pl="28px"
+              w="180px"
+              placeholder="Search student…"
+              value={search}
+              onChange={e => handleSearchChange(e.target.value)}
+            />
+          </Box>
+          {absentRecords.length > 0 && (
+            <Button
+              size="sm" variant="solid" colorPalette="orange"
+              loading={notifying}
+              onClick={() => setNotifyAllOpen(true)}
+            >
+              <FiBell /> Notify All Absent ({absentRecords.length})
+            </Button>
+          )}
           <Button
             size="sm" variant="outline" colorPalette="gray"
             disabled={records.length === 0}
@@ -255,13 +369,18 @@ export function ClassAttendanceTab({ className, active }: Props) {
       </Flex>
       <Separator mb={4} />
 
-      {summary && (
-        <HStack gap={3} mb={4}>
-          <Badge colorPalette="gray"   variant="subtle" px={3} py={1}>Total: {summary.total}</Badge>
-          <Badge colorPalette="green"  variant="subtle" px={3} py={1}>Present: {summary.present}</Badge>
-          <Badge colorPalette="red"    variant="subtle" px={3} py={1}>Absent: {summary.absent}</Badge>
-          <Badge colorPalette="orange" variant="subtle" px={3} py={1}>Late: {summary.late}</Badge>
+      {total > 0 && (
+        <HStack gap={3} mb={notifyMsg ? 2 : 4}>
+          <Badge colorPalette="gray" variant="subtle" px={3} py={1}>Total: {total}</Badge>
         </HStack>
+      )}
+      {notifyMsg && (
+        <Box
+          bg="green.50" border="1px solid" borderColor="green.200"
+          borderRadius="md" px={3} py={2} mb={4}
+        >
+          <Text color="green.700" fontSize="sm">{notifyMsg}</Text>
+        </Box>
       )}
 
       {loading ? (
@@ -283,8 +402,7 @@ export function ClassAttendanceTab({ className, active }: Props) {
                 <TableColumnHeader fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Student ID</TableColumnHeader>
                 <TableColumnHeader fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Status</TableColumnHeader>
                 <TableColumnHeader fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Check-in</TableColumnHeader>
-                <TableColumnHeader fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Last Seen</TableColumnHeader>
-                <TableColumnHeader pe={5} fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Notes</TableColumnHeader>
+                <TableColumnHeader pe={5} w="1px" whiteSpace="nowrap"></TableColumnHeader>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -293,32 +411,88 @@ export function ClassAttendanceTab({ className, active }: Props) {
                   <TableCell ps={5} py={3}>
                     <HStack gap={3}>
                       <AvatarRoot size="sm" borderRadius="md">
-                        {r.photoUrl && <AvatarImage src={r.photoUrl} />}
+                        {r.student?.photoUrl && <AvatarImage src={r.student.photoUrl} />}
                         <AvatarFallback bg="blue.100" color="blue.700" fontWeight="semibold" fontSize="xs">
-                          {r.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          {(r.student?.name ?? '').split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                         </AvatarFallback>
                       </AvatarRoot>
-                      <Text fontWeight="medium" fontSize="sm">{r.name}</Text>
+                      <Text fontWeight="medium" fontSize="sm">{r.student?.name ?? '—'}</Text>
                     </HStack>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" size="sm" fontFamily="mono">{r.studentId || '—'}</Badge>
+                    <Badge variant="outline" size="sm" fontFamily="mono">{r.student?.studentId || '—'}</Badge>
                   </TableCell>
                   <TableCell>
                     <Badge colorPalette={STATUS_COLOR[r.status] ?? 'gray'} variant="subtle" size="sm">
                       {STATUS_LABEL[r.status] ?? 'Unknown'}
                     </Badge>
                   </TableCell>
-                  <TableCell fontSize="xs" color="gray.600">{formatTime(r.timestamp)}</TableCell>
-                  <TableCell fontSize="xs" color="gray.400">{r.lastSeen ? formatTime(r.lastSeen) : '—'}</TableCell>
-                  <TableCell pe={5} fontSize="xs" color="gray.500">{r.notes || '—'}</TableCell>
+                  <TableCell fontSize="xs" color="gray.600">{formatTime(r.checkInTime)}</TableCell>
+                  <TableCell pe={5} py={2} w="1px" whiteSpace="nowrap" textAlign="right">
+                    {r.status === AttendanceStatus.ABSENT && (
+                      r.notifyStatus === NotifyStatus.NOTIFIED ? (
+                        <Badge colorPalette="green" variant="subtle" size="sm" gap={1}>
+                          <FiBell size={10} /> Notified
+                        </Badge>
+                      ) : r.notifyStatus === NotifyStatus.PENDING ? (
+                        <Badge colorPalette="yellow" variant="subtle" size="sm" gap={1}>
+                          <FiBell size={10} /> Pending
+                        </Badge>
+                      ) : (
+                        <Button
+                          size="xs" variant="outline" colorPalette="orange"
+                          loading={notifyingOne === r.userId}
+                          onClick={() => handleNotifyOne(r.userId)}
+                        >
+                          <FiBell /> Notify Parent
+                        </Button>
+                      )
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </TableRoot>
         </TableScrollArea>
       )}
+
+      <ClassPagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        totalPages={totalPages}
+        rangeStart={rangeStart}
+        rangeEnd={rangeEnd}
+        pageNumbers={pageNumbers}
+        onPageChange={setPage}
+        onPageSizeChange={s => { setPageSize(s); setPage(1) }}
+      />
     </Box>
+
+    {/* Notify All confirm dialog */}
+    <DialogRoot open={notifyAllOpen} onOpenChange={d => { if (!d.open) setNotifyAllOpen(false) }}>
+      <DialogBackdrop />
+      <DialogPositioner>
+        <DialogContent maxW="400px">
+          <DialogHeader>
+            <DialogTitle>Notify All Absent Parents</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <Text fontSize="sm">
+              Send WhatsApp notifications to parents of{' '}
+              <Text as="span" fontWeight="semibold">{absentRecords.length} absent student(s)</Text>
+              {' '}on <Text as="span" fontWeight="semibold">{attendanceDate}</Text>?
+            </Text>
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setNotifyAllOpen(false)}>Cancel</Button>
+            <Button colorPalette="orange" size="sm" onClick={handleNotifyAll}>
+              <FiBell /> Yes, Notify
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </DialogPositioner>
+    </DialogRoot>
 
     {/* Import preview dialog */}
     <DialogRoot open={importOpen} onOpenChange={d => { if (!d.open) setImportOpen(false) }}>
@@ -344,7 +518,7 @@ export function ClassAttendanceTab({ className, active }: Props) {
                         <TableColumnHeader ps={3} fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Name</TableColumnHeader>
                         <TableColumnHeader fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Student ID</TableColumnHeader>
                         <TableColumnHeader fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Status</TableColumnHeader>
-                        <TableColumnHeader pe={3} fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Notes</TableColumnHeader>
+                        <TableColumnHeader pe={3} fontWeight="semibold" color="gray.500" fontSize="xs" textTransform="uppercase" letterSpacing="wide">Status</TableColumnHeader>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -352,7 +526,7 @@ export function ClassAttendanceTab({ className, active }: Props) {
                         <TableRow key={i} opacity={r.valid ? 1 : 0.4}>
                           <TableCell ps={3} fontSize="sm">{r.name || '—'}</TableCell>
                           <TableCell fontSize="xs" fontFamily="mono">{r.studentId || '—'}</TableCell>
-                          <TableCell>
+                          <TableCell pe={3}>
                             <Badge
                               colorPalette={STATUS_COLOR[parseStatus(r.status)] ?? 'gray'}
                               variant="subtle" size="sm"
@@ -360,7 +534,6 @@ export function ClassAttendanceTab({ className, active }: Props) {
                               {r.status || 'Present'}
                             </Badge>
                           </TableCell>
-                          <TableCell pe={3} fontSize="xs" color="gray.500">{r.notes || '—'}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

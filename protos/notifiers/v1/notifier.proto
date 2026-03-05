@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package notifiers.v1;
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+service NotifierService {
+  rpc NotifyParent(NotifyParentRequest) returns (NotifyParentResponse);
+}
+
+message NotifyMeta {
+  int64 class_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 class_schedule_id = 2 [(buf.validate.field).int64.gte = 0];
+  google.protobuf.Timestamp day = 3 [(buf.validate.field).required = true];
+}
+
+message NotifyAll {}
+message NotifyStudent {
+  repeated int64 student_ids = 1 [(buf.validate.field).repeated = {
+    min_items: 1,
+    items: { int64: { gt: 0 } }
+  }];
+}
+
+message NotifyParentRequest {
+  NotifyMeta meta = 1 [(buf.validate.field).required = true];
+  oneof type {
+    option (buf.validate.oneof).required = true;
+    NotifyAll all = 2;
+    NotifyStudent student = 3;
+  }
+}
+
+message NotifyParentResponse {}

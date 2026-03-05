@@ -27,4 +27,4 @@ build/
 outputs/
 data/
 pgdata/
-clickhouse_data/
+clickhouse_data/backend_python/gen/

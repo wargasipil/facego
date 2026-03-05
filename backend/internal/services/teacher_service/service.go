@@ -7,6 +7,7 @@ import (
 
 	"connectrpc.com/connect"
 	teachersv1 "github.com/wargasipil/facego/gen/teachers/v1"
+	teachersv1connect "github.com/wargasipil/facego/gen/teachers/v1/teachersv1connect"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
@@ -62,7 +63,7 @@ type Service struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *Service {
+func NewService(db *gorm.DB) teachersv1connect.TeacherServiceHandler {
 	return &Service{db: db}
 }
 

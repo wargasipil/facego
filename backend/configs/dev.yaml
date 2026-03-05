@@ -10,6 +10,13 @@ database:
   database: "facego"
   ssl_mode: "disable"
 
+clickhouse:
+  host: "localhost"
+  port: "9000"
+  username: "facego"
+  password: "facego_secret"
+  database: "facego"
+
 log:
   level: "debug"
 
