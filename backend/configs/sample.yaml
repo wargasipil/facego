@@ -1,13 +1,13 @@
 server:
-  host: "0.0.0.0"
+  host: "localhost"
   port: "8080"
 
 database:
-  host: "localhost"
+  host: "db.wtsshtlowdegadpzkjnl.supabase.co"
   port: "5432"
-  username: "your_db_user"
-  password: "your_db_password"
-  database: "your_db_name"
+  username: "postgres"
+  password: "facego_secret123"
+  database: "postgres"
   ssl_mode: "disable"
 
 log:
@@ -17,5 +17,5 @@ storage:
   uploads_dir: "uploads"
 
 auth:
-  jwt_secret: "replace-with-a-long-random-secret"
-  admin_seed_password: "change-me-on-first-run"
+  jwt_secret: "sample"
+  admin_seed_password: "admin123"

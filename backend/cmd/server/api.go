@@ -93,6 +93,9 @@ func NewApiRunner(
 		mux.Handle(grpcreflect.NewHandlerV1(reflector))
 		mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 
+		// registering frontend
+		mux.Handle("/", NewFrontendhandler())
+
 		// Background: convert unprocessed DetectionLog rows → Attendance records.
 		attendanceSvc.StartProcessor(wctx)
 

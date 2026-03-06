@@ -8,7 +8,7 @@ import {
   Badge,
 } from '@chakra-ui/react'
 import {
-  FiClipboard,
+  FiHome,
   FiUsers,
   FiBook,
   FiLayers,
@@ -44,7 +44,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     group: 'Overview',
     items: [
-      { label: 'Attendance', path: '/', icon: <FiClipboard size={18} /> },
+      { label: 'Home', path: '/', icon: <FiHome size={18} /> },
     ],
   },
   {

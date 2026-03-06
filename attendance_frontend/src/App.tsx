@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Flex, Spinner } from '@chakra-ui/react'
 import Layout from './components/Layout'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import HomePage                from './pages/HomePage'
 import AttendancePage          from './pages/AttendancePage'
 import StudentListPage         from './pages/students/list'
 import RegisterStudentPage     from './pages/students/register'
@@ -39,7 +40,8 @@ function ProtectedRoutes() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/"                              element={<AttendancePage />} />
+        <Route path="/"                              element={<HomePage />} />
+        <Route path="/attendance"                    element={<AttendancePage />} />
         <Route path="/students"                      element={<StudentListPage />} />
         <Route path="/students/register"             element={<RegisterStudentPage />} />
         <Route path="/students/:id/attendance"       element={<StudentAttendancePage />} />
