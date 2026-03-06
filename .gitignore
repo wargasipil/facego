@@ -28,3 +28,4 @@ outputs/
 data/
 pgdata/
 clickhouse_data/backend_python/gen/
+dist/*
