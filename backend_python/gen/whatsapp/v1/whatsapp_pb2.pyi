@@ -16,9 +16,11 @@ class WhatsappMessageStatus(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     WHATSAPP_MESSAGE_STATUS_UNSPECIFIED: _ClassVar[WhatsappMessageStatus]
     WHATSAPP_MESSAGE_STATUS_PENDING: _ClassVar[WhatsappMessageStatus]
     WHATSAPP_MESSAGE_STATUS_SENT: _ClassVar[WhatsappMessageStatus]
+    WHATSAPP_MESSAGE_STATUS_ERROR: _ClassVar[WhatsappMessageStatus]
 WHATSAPP_MESSAGE_STATUS_UNSPECIFIED: WhatsappMessageStatus
 WHATSAPP_MESSAGE_STATUS_PENDING: WhatsappMessageStatus
 WHATSAPP_MESSAGE_STATUS_SENT: WhatsappMessageStatus
+WHATSAPP_MESSAGE_STATUS_ERROR: WhatsappMessageStatus
 
 class WStreamRequest(_message.Message):
     __slots__ = ()
@@ -51,7 +53,7 @@ class StatusResponse(_message.Message):
     def __init__(self, connected: _Optional[bool] = ..., phone_number: _Optional[str] = ...) -> None: ...
 
 class WhatsappMessage(_message.Message):
-    __slots__ = ("id", "student_id", "class_id", "class_schedule_id", "attendance_id", "student_name", "parent_name", "phone", "message", "status", "error", "sent_at")
+    __slots__ = ("id", "student_id", "class_id", "class_schedule_id", "attendance_id", "student_name", "parent_name", "phone", "message", "status", "error", "sent_at", "created_at")
     ID_FIELD_NUMBER: _ClassVar[int]
     STUDENT_ID_FIELD_NUMBER: _ClassVar[int]
     CLASS_ID_FIELD_NUMBER: _ClassVar[int]
@@ -64,6 +66,7 @@ class WhatsappMessage(_message.Message):
     STATUS_FIELD_NUMBER: _ClassVar[int]
     ERROR_FIELD_NUMBER: _ClassVar[int]
     SENT_AT_FIELD_NUMBER: _ClassVar[int]
+    CREATED_AT_FIELD_NUMBER: _ClassVar[int]
     id: int
     student_id: int
     class_id: int
@@ -76,7 +79,8 @@ class WhatsappMessage(_message.Message):
     status: WhatsappMessageStatus
     error: str
     sent_at: _timestamp_pb2.Timestamp
-    def __init__(self, id: _Optional[int] = ..., student_id: _Optional[int] = ..., class_id: _Optional[int] = ..., class_schedule_id: _Optional[int] = ..., attendance_id: _Optional[int] = ..., student_name: _Optional[str] = ..., parent_name: _Optional[str] = ..., phone: _Optional[str] = ..., message: _Optional[str] = ..., status: _Optional[_Union[WhatsappMessageStatus, str]] = ..., error: _Optional[str] = ..., sent_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ...) -> None: ...
+    created_at: _timestamp_pb2.Timestamp
+    def __init__(self, id: _Optional[int] = ..., student_id: _Optional[int] = ..., class_id: _Optional[int] = ..., class_schedule_id: _Optional[int] = ..., attendance_id: _Optional[int] = ..., student_name: _Optional[str] = ..., parent_name: _Optional[str] = ..., phone: _Optional[str] = ..., message: _Optional[str] = ..., status: _Optional[_Union[WhatsappMessageStatus, str]] = ..., error: _Optional[str] = ..., sent_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., created_at: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ...) -> None: ...
 
 class ListMessagesRequest(_message.Message):
     __slots__ = ("page", "page_size")

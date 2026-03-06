@@ -45,6 +45,7 @@ enum WhatsappMessageStatus {
   WHATSAPP_MESSAGE_STATUS_UNSPECIFIED = 0;
   WHATSAPP_MESSAGE_STATUS_PENDING = 1;
   WHATSAPP_MESSAGE_STATUS_SENT = 2;
+  WHATSAPP_MESSAGE_STATUS_ERROR = 3;
 }
 
 message WhatsappMessage {
@@ -60,6 +61,7 @@ message WhatsappMessage {
   WhatsappMessageStatus status = 10;
   string error = 11;
   google.protobuf.Timestamp sent_at = 12;
+  google.protobuf.Timestamp created_at = 13;
 }
 
 // ── ListMessages ──────────────────────────────────────────────────────────────

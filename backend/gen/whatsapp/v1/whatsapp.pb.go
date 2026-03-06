@@ -30,6 +30,7 @@ const (
 	WhatsappMessageStatus_WHATSAPP_MESSAGE_STATUS_UNSPECIFIED WhatsappMessageStatus = 0
 	WhatsappMessageStatus_WHATSAPP_MESSAGE_STATUS_PENDING     WhatsappMessageStatus = 1
 	WhatsappMessageStatus_WHATSAPP_MESSAGE_STATUS_SENT        WhatsappMessageStatus = 2
+	WhatsappMessageStatus_WHATSAPP_MESSAGE_STATUS_ERROR       WhatsappMessageStatus = 3
 )
 
 // Enum value maps for WhatsappMessageStatus.
@@ -38,11 +39,13 @@ var (
 		0: "WHATSAPP_MESSAGE_STATUS_UNSPECIFIED",
 		1: "WHATSAPP_MESSAGE_STATUS_PENDING",
 		2: "WHATSAPP_MESSAGE_STATUS_SENT",
+		3: "WHATSAPP_MESSAGE_STATUS_ERROR",
 	}
 	WhatsappMessageStatus_value = map[string]int32{
 		"WHATSAPP_MESSAGE_STATUS_UNSPECIFIED": 0,
 		"WHATSAPP_MESSAGE_STATUS_PENDING":     1,
 		"WHATSAPP_MESSAGE_STATUS_SENT":        2,
+		"WHATSAPP_MESSAGE_STATUS_ERROR":       3,
 	}
 )
 
@@ -337,6 +340,7 @@ type WhatsappMessage struct {
 	Status          WhatsappMessageStatus  `protobuf:"varint,10,opt,name=status,proto3,enum=whatsapp.v1.WhatsappMessageStatus" json:"status,omitempty"`
 	Error           string                 `protobuf:"bytes,11,opt,name=error,proto3" json:"error,omitempty"`
 	SentAt          *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=sent_at,json=sentAt,proto3" json:"sent_at,omitempty"`
+	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -451,6 +455,13 @@ func (x *WhatsappMessage) GetError() string {
 func (x *WhatsappMessage) GetSentAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.SentAt
+	}
+	return nil
+}
+
+func (x *WhatsappMessage) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
 	}
 	return nil
 }
@@ -1051,7 +1062,7 @@ const file_whatsapp_v1_whatsapp_proto_rawDesc = "" +
 	"\rStatusRequest\"Q\n" +
 	"\x0eStatusResponse\x12\x1c\n" +
 	"\tconnected\x18\x01 \x01(\bR\tconnected\x12!\n" +
-	"\fphone_number\x18\x02 \x01(\tR\vphoneNumber\"\xa7\x03\n" +
+	"\fphone_number\x18\x02 \x01(\tR\vphoneNumber\"\xe2\x03\n" +
 	"\x0fWhatsappMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -1067,7 +1078,9 @@ const file_whatsapp_v1_whatsapp_proto_rawDesc = "" +
 	"\x06status\x18\n" +
 	" \x01(\x0e2\".whatsapp.v1.WhatsappMessageStatusR\x06status\x12\x14\n" +
 	"\x05error\x18\v \x01(\tR\x05error\x123\n" +
-	"\asent_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\x06sentAt\"[\n" +
+	"\asent_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\x06sentAt\x129\n" +
+	"\n" +
+	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"[\n" +
 	"\x13ListMessagesRequest\x12\x1b\n" +
 	"\x04page\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x04page\x12'\n" +
 	"\tpage_size\x18\x03 \x01(\x05B\n" +
@@ -1104,11 +1117,12 @@ const file_whatsapp_v1_whatsapp_proto_rawDesc = "" +
 	"\x11SaveConfigRequest\x12;\n" +
 	"\x06config\x18\x01 \x01(\v2\x1b.whatsapp.v1.WhatsappConfigB\x06\xbaH\x03\xc8\x01\x01R\x06config\"I\n" +
 	"\x12SaveConfigResponse\x123\n" +
-	"\x06config\x18\x01 \x01(\v2\x1b.whatsapp.v1.WhatsappConfigR\x06config*\x87\x01\n" +
+	"\x06config\x18\x01 \x01(\v2\x1b.whatsapp.v1.WhatsappConfigR\x06config*\xaa\x01\n" +
 	"\x15WhatsappMessageStatus\x12'\n" +
 	"#WHATSAPP_MESSAGE_STATUS_UNSPECIFIED\x10\x00\x12#\n" +
 	"\x1fWHATSAPP_MESSAGE_STATUS_PENDING\x10\x01\x12 \n" +
-	"\x1cWHATSAPP_MESSAGE_STATUS_SENT\x10\x022\xcb\x04\n" +
+	"\x1cWHATSAPP_MESSAGE_STATUS_SENT\x10\x02\x12!\n" +
+	"\x1dWHATSAPP_MESSAGE_STATUS_ERROR\x10\x032\xcb\x04\n" +
 	"\x0fWhatsappService\x12A\n" +
 	"\x06Status\x12\x1a.whatsapp.v1.StatusRequest\x1a\x1b.whatsapp.v1.StatusResponse\x12F\n" +
 	"\aWStream\x12\x1b.whatsapp.v1.WStreamRequest\x1a\x1c.whatsapp.v1.WStreamResponse0\x01\x12k\n" +
@@ -1159,31 +1173,32 @@ var file_whatsapp_v1_whatsapp_proto_depIdxs = []int32{
 	2,  // 0: whatsapp.v1.WStreamResponse.need_login:type_name -> whatsapp.v1.NeedLogin
 	0,  // 1: whatsapp.v1.WhatsappMessage.status:type_name -> whatsapp.v1.WhatsappMessageStatus
 	18, // 2: whatsapp.v1.WhatsappMessage.sent_at:type_name -> google.protobuf.Timestamp
-	6,  // 3: whatsapp.v1.ListMessagesResponse.messages:type_name -> whatsapp.v1.WhatsappMessage
-	18, // 4: whatsapp.v1.SendAttendanceAlertsRequest.date:type_name -> google.protobuf.Timestamp
-	6,  // 5: whatsapp.v1.SendAttendanceAlertsResponse.messages:type_name -> whatsapp.v1.WhatsappMessage
-	9,  // 6: whatsapp.v1.GetConfigResponse.config:type_name -> whatsapp.v1.WhatsappConfig
-	9,  // 7: whatsapp.v1.SaveConfigRequest.config:type_name -> whatsapp.v1.WhatsappConfig
-	9,  // 8: whatsapp.v1.SaveConfigResponse.config:type_name -> whatsapp.v1.WhatsappConfig
-	4,  // 9: whatsapp.v1.WhatsappService.Status:input_type -> whatsapp.v1.StatusRequest
-	1,  // 10: whatsapp.v1.WhatsappService.WStream:input_type -> whatsapp.v1.WStreamRequest
-	10, // 11: whatsapp.v1.WhatsappService.SendAttendanceAlerts:input_type -> whatsapp.v1.SendAttendanceAlertsRequest
-	12, // 12: whatsapp.v1.WhatsappService.SendMessage:input_type -> whatsapp.v1.SendMessageRequest
-	7,  // 13: whatsapp.v1.WhatsappService.ListMessages:input_type -> whatsapp.v1.ListMessagesRequest
-	14, // 14: whatsapp.v1.WhatsappService.GetConfig:input_type -> whatsapp.v1.GetConfigRequest
-	16, // 15: whatsapp.v1.WhatsappService.SaveConfig:input_type -> whatsapp.v1.SaveConfigRequest
-	5,  // 16: whatsapp.v1.WhatsappService.Status:output_type -> whatsapp.v1.StatusResponse
-	3,  // 17: whatsapp.v1.WhatsappService.WStream:output_type -> whatsapp.v1.WStreamResponse
-	11, // 18: whatsapp.v1.WhatsappService.SendAttendanceAlerts:output_type -> whatsapp.v1.SendAttendanceAlertsResponse
-	13, // 19: whatsapp.v1.WhatsappService.SendMessage:output_type -> whatsapp.v1.SendMessageResponse
-	8,  // 20: whatsapp.v1.WhatsappService.ListMessages:output_type -> whatsapp.v1.ListMessagesResponse
-	15, // 21: whatsapp.v1.WhatsappService.GetConfig:output_type -> whatsapp.v1.GetConfigResponse
-	17, // 22: whatsapp.v1.WhatsappService.SaveConfig:output_type -> whatsapp.v1.SaveConfigResponse
-	16, // [16:23] is the sub-list for method output_type
-	9,  // [9:16] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	18, // 3: whatsapp.v1.WhatsappMessage.created_at:type_name -> google.protobuf.Timestamp
+	6,  // 4: whatsapp.v1.ListMessagesResponse.messages:type_name -> whatsapp.v1.WhatsappMessage
+	18, // 5: whatsapp.v1.SendAttendanceAlertsRequest.date:type_name -> google.protobuf.Timestamp
+	6,  // 6: whatsapp.v1.SendAttendanceAlertsResponse.messages:type_name -> whatsapp.v1.WhatsappMessage
+	9,  // 7: whatsapp.v1.GetConfigResponse.config:type_name -> whatsapp.v1.WhatsappConfig
+	9,  // 8: whatsapp.v1.SaveConfigRequest.config:type_name -> whatsapp.v1.WhatsappConfig
+	9,  // 9: whatsapp.v1.SaveConfigResponse.config:type_name -> whatsapp.v1.WhatsappConfig
+	4,  // 10: whatsapp.v1.WhatsappService.Status:input_type -> whatsapp.v1.StatusRequest
+	1,  // 11: whatsapp.v1.WhatsappService.WStream:input_type -> whatsapp.v1.WStreamRequest
+	10, // 12: whatsapp.v1.WhatsappService.SendAttendanceAlerts:input_type -> whatsapp.v1.SendAttendanceAlertsRequest
+	12, // 13: whatsapp.v1.WhatsappService.SendMessage:input_type -> whatsapp.v1.SendMessageRequest
+	7,  // 14: whatsapp.v1.WhatsappService.ListMessages:input_type -> whatsapp.v1.ListMessagesRequest
+	14, // 15: whatsapp.v1.WhatsappService.GetConfig:input_type -> whatsapp.v1.GetConfigRequest
+	16, // 16: whatsapp.v1.WhatsappService.SaveConfig:input_type -> whatsapp.v1.SaveConfigRequest
+	5,  // 17: whatsapp.v1.WhatsappService.Status:output_type -> whatsapp.v1.StatusResponse
+	3,  // 18: whatsapp.v1.WhatsappService.WStream:output_type -> whatsapp.v1.WStreamResponse
+	11, // 19: whatsapp.v1.WhatsappService.SendAttendanceAlerts:output_type -> whatsapp.v1.SendAttendanceAlertsResponse
+	13, // 20: whatsapp.v1.WhatsappService.SendMessage:output_type -> whatsapp.v1.SendMessageResponse
+	8,  // 21: whatsapp.v1.WhatsappService.ListMessages:output_type -> whatsapp.v1.ListMessagesResponse
+	15, // 22: whatsapp.v1.WhatsappService.GetConfig:output_type -> whatsapp.v1.GetConfigResponse
+	17, // 23: whatsapp.v1.WhatsappService.SaveConfig:output_type -> whatsapp.v1.SaveConfigResponse
+	17, // [17:24] is the sub-list for method output_type
+	10, // [10:17] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_whatsapp_v1_whatsapp_proto_init() }

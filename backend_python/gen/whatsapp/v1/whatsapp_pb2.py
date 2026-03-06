@@ -26,7 +26,7 @@ from buf.validate import validate_pb2 as buf_dot_validate_dot_validate__pb2
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1awhatsapp/v1/whatsapp.proto\x12\x0bwhatsapp.v1\x1a\x1b\x62uf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x10\n\x0eWStreamRequest\"\x1f\n\tNeedLogin\x12\x12\n\x04\x63ode\x18\x01 \x01(\tR\x04\x63ode\"x\n\x0fWStreamResponse\x12\x37\n\nneed_login\x18\x01 \x01(\x0b\x32\x16.whatsapp.v1.NeedLoginH\x00R\tneedLogin\x12\'\n\x0esync_completed\x18\x02 \x01(\x08H\x00R\rsyncCompletedB\x03\n\x01\x65\"\x0f\n\rStatusRequest\"Q\n\x0eStatusResponse\x12\x1c\n\tconnected\x18\x01 \x01(\x08R\tconnected\x12!\n\x0cphone_number\x18\x02 \x01(\tR\x0bphoneNumber\"\xa7\x03\n\x0fWhatsappMessage\x12\x0e\n\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n\nstudent_id\x18\x02 \x01(\x03R\tstudentId\x12\x19\n\x08\x63lass_id\x18\x03 \x01(\x03R\x07\x63lassId\x12*\n\x11\x63lass_schedule_id\x18\x04 \x01(\x03R\x0f\x63lassScheduleId\x12#\n\rattendance_id\x18\x05 \x01(\x03R\x0c\x61ttendanceId\x12!\n\x0cstudent_name\x18\x06 \x01(\tR\x0bstudentName\x12\x1f\n\x0bparent_name\x18\x07 \x01(\tR\nparentName\x12\x14\n\x05phone\x18\x08 \x01(\tR\x05phone\x12\x18\n\x07message\x18\t \x01(\tR\x07message\x12:\n\x06status\x18\n \x01(\x0e\x32\".whatsapp.v1.WhatsappMessageStatusR\x06status\x12\x14\n\x05\x65rror\x18\x0b \x01(\tR\x05\x65rror\x12\x33\n\x07sent_at\x18\x0c \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x06sentAt\"[\n\x13ListMessagesRequest\x12\x1b\n\x04page\x18\x02 \x01(\x05\x42\x07\xbaH\x04\x1a\x02(\x00R\x04page\x12\'\n\tpage_size\x18\x03 \x01(\x05\x42\n\xbaH\x07\x1a\x05\x18\xc8\x01(\x00R\x08pageSize\"f\n\x14ListMessagesResponse\x12\x38\n\x08messages\x18\x01 \x03(\x0b\x32\x1c.whatsapp.v1.WhatsappMessageR\x08messages\x12\x14\n\x05total\x18\x02 \x01(\x05R\x05total\"\xb7\x01\n\x0eWhatsappConfig\x12\x18\n\x07\x65nabled\x18\x01 \x01(\x08R\x07\x65nabled\x12\x32\n\x15late_message_template\x18\x02 \x01(\tR\x13lateMessageTemplate\x12\x36\n\x17\x61\x62sent_message_template\x18\x03 \x01(\tR\x15\x61\x62sentMessageTemplate\x12\x1f\n\x0bsender_name\x18\x04 \x01(\tR\nsenderName\"\xd1\x01\n\x1bSendAttendanceAlertsRequest\x12.\n\x04\x64\x61te\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x04\x64\x61te\x12\x1f\n\x0bnotify_late\x18\x02 \x01(\x08R\nnotifyLate\x12#\n\rnotify_absent\x18\x03 \x01(\x08R\x0cnotifyAbsent\x12!\n\x0c\x63lass_filter\x18\x04 \x01(\tR\x0b\x63lassFilter\x12\x19\n\x08user_ids\x18\x05 \x03(\x03R\x07userIds\"\x8a\x01\n\x1cSendAttendanceAlertsResponse\x12\x16\n\x06queued\x18\x01 \x01(\x05R\x06queued\x12\x18\n\x07skipped\x18\x02 \x01(\x05R\x07skipped\x12\x38\n\x08messages\x18\x03 \x03(\x0b\x32\x1c.whatsapp.v1.WhatsappMessageR\x08messages\"V\n\x12SendMessageRequest\x12\x1d\n\x05phone\x18\x01 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\x05phone\x12!\n\x07message\x18\x02 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\x07message\"E\n\x13SendMessageResponse\x12\x18\n\x07success\x18\x01 \x01(\x08R\x07success\x12\x14\n\x05\x65rror\x18\x02 \x01(\tR\x05\x65rror\"\x12\n\x10GetConfigRequest\"H\n\x11GetConfigResponse\x12\x33\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x1b.whatsapp.v1.WhatsappConfigR\x06\x63onfig\"P\n\x11SaveConfigRequest\x12;\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x1b.whatsapp.v1.WhatsappConfigB\x06\xbaH\x03\xc8\x01\x01R\x06\x63onfig\"I\n\x12SaveConfigResponse\x12\x33\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x1b.whatsapp.v1.WhatsappConfigR\x06\x63onfig*\x87\x01\n\x15WhatsappMessageStatus\x12\'\n#WHATSAPP_MESSAGE_STATUS_UNSPECIFIED\x10\x00\x12#\n\x1fWHATSAPP_MESSAGE_STATUS_PENDING\x10\x01\x12 \n\x1cWHATSAPP_MESSAGE_STATUS_SENT\x10\x02\x32\xcb\x04\n\x0fWhatsappService\x12\x41\n\x06Status\x12\x1a.whatsapp.v1.StatusRequest\x1a\x1b.whatsapp.v1.StatusResponse\x12\x46\n\x07WStream\x12\x1b.whatsapp.v1.WStreamRequest\x1a\x1c.whatsapp.v1.WStreamResponse0\x01\x12k\n\x14SendAttendanceAlerts\x12(.whatsapp.v1.SendAttendanceAlertsRequest\x1a).whatsapp.v1.SendAttendanceAlertsResponse\x12P\n\x0bSendMessage\x12\x1f.whatsapp.v1.SendMessageRequest\x1a .whatsapp.v1.SendMessageResponse\x12S\n\x0cListMessages\x12 .whatsapp.v1.ListMessagesRequest\x1a!.whatsapp.v1.ListMessagesResponse\x12J\n\tGetConfig\x12\x1d.whatsapp.v1.GetConfigRequest\x1a\x1e.whatsapp.v1.GetConfigResponse\x12M\n\nSaveConfig\x12\x1e.whatsapp.v1.SaveConfigRequest\x1a\x1f.whatsapp.v1.SaveConfigResponseB\xa6\x01\n\x0f\x63om.whatsapp.v1B\rWhatsappProtoP\x01Z7github.com/wargasipil/facego/gen/whatsapp/v1;whatsappv1\xa2\x02\x03WXX\xaa\x02\x0bWhatsapp.V1\xca\x02\x0bWhatsapp\\V1\xe2\x02\x17Whatsapp\\V1\\GPBMetadata\xea\x02\x0cWhatsapp::V1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1awhatsapp/v1/whatsapp.proto\x12\x0bwhatsapp.v1\x1a\x1b\x62uf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x10\n\x0eWStreamRequest\"\x1f\n\tNeedLogin\x12\x12\n\x04\x63ode\x18\x01 \x01(\tR\x04\x63ode\"x\n\x0fWStreamResponse\x12\x37\n\nneed_login\x18\x01 \x01(\x0b\x32\x16.whatsapp.v1.NeedLoginH\x00R\tneedLogin\x12\'\n\x0esync_completed\x18\x02 \x01(\x08H\x00R\rsyncCompletedB\x03\n\x01\x65\"\x0f\n\rStatusRequest\"Q\n\x0eStatusResponse\x12\x1c\n\tconnected\x18\x01 \x01(\x08R\tconnected\x12!\n\x0cphone_number\x18\x02 \x01(\tR\x0bphoneNumber\"\xe2\x03\n\x0fWhatsappMessage\x12\x0e\n\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n\nstudent_id\x18\x02 \x01(\x03R\tstudentId\x12\x19\n\x08\x63lass_id\x18\x03 \x01(\x03R\x07\x63lassId\x12*\n\x11\x63lass_schedule_id\x18\x04 \x01(\x03R\x0f\x63lassScheduleId\x12#\n\rattendance_id\x18\x05 \x01(\x03R\x0c\x61ttendanceId\x12!\n\x0cstudent_name\x18\x06 \x01(\tR\x0bstudentName\x12\x1f\n\x0bparent_name\x18\x07 \x01(\tR\nparentName\x12\x14\n\x05phone\x18\x08 \x01(\tR\x05phone\x12\x18\n\x07message\x18\t \x01(\tR\x07message\x12:\n\x06status\x18\n \x01(\x0e\x32\".whatsapp.v1.WhatsappMessageStatusR\x06status\x12\x14\n\x05\x65rror\x18\x0b \x01(\tR\x05\x65rror\x12\x33\n\x07sent_at\x18\x0c \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x06sentAt\x12\x39\n\ncreated_at\x18\r \x01(\x0b\x32\x1a.google.protobuf.TimestampR\tcreatedAt\"[\n\x13ListMessagesRequest\x12\x1b\n\x04page\x18\x02 \x01(\x05\x42\x07\xbaH\x04\x1a\x02(\x00R\x04page\x12\'\n\tpage_size\x18\x03 \x01(\x05\x42\n\xbaH\x07\x1a\x05\x18\xc8\x01(\x00R\x08pageSize\"f\n\x14ListMessagesResponse\x12\x38\n\x08messages\x18\x01 \x03(\x0b\x32\x1c.whatsapp.v1.WhatsappMessageR\x08messages\x12\x14\n\x05total\x18\x02 \x01(\x05R\x05total\"\xb7\x01\n\x0eWhatsappConfig\x12\x18\n\x07\x65nabled\x18\x01 \x01(\x08R\x07\x65nabled\x12\x32\n\x15late_message_template\x18\x02 \x01(\tR\x13lateMessageTemplate\x12\x36\n\x17\x61\x62sent_message_template\x18\x03 \x01(\tR\x15\x61\x62sentMessageTemplate\x12\x1f\n\x0bsender_name\x18\x04 \x01(\tR\nsenderName\"\xd1\x01\n\x1bSendAttendanceAlertsRequest\x12.\n\x04\x64\x61te\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x04\x64\x61te\x12\x1f\n\x0bnotify_late\x18\x02 \x01(\x08R\nnotifyLate\x12#\n\rnotify_absent\x18\x03 \x01(\x08R\x0cnotifyAbsent\x12!\n\x0c\x63lass_filter\x18\x04 \x01(\tR\x0b\x63lassFilter\x12\x19\n\x08user_ids\x18\x05 \x03(\x03R\x07userIds\"\x8a\x01\n\x1cSendAttendanceAlertsResponse\x12\x16\n\x06queued\x18\x01 \x01(\x05R\x06queued\x12\x18\n\x07skipped\x18\x02 \x01(\x05R\x07skipped\x12\x38\n\x08messages\x18\x03 \x03(\x0b\x32\x1c.whatsapp.v1.WhatsappMessageR\x08messages\"V\n\x12SendMessageRequest\x12\x1d\n\x05phone\x18\x01 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\x05phone\x12!\n\x07message\x18\x02 \x01(\tB\x07\xbaH\x04r\x02\x10\x01R\x07message\"E\n\x13SendMessageResponse\x12\x18\n\x07success\x18\x01 \x01(\x08R\x07success\x12\x14\n\x05\x65rror\x18\x02 \x01(\tR\x05\x65rror\"\x12\n\x10GetConfigRequest\"H\n\x11GetConfigResponse\x12\x33\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x1b.whatsapp.v1.WhatsappConfigR\x06\x63onfig\"P\n\x11SaveConfigRequest\x12;\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x1b.whatsapp.v1.WhatsappConfigB\x06\xbaH\x03\xc8\x01\x01R\x06\x63onfig\"I\n\x12SaveConfigResponse\x12\x33\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x1b.whatsapp.v1.WhatsappConfigR\x06\x63onfig*\xaa\x01\n\x15WhatsappMessageStatus\x12\'\n#WHATSAPP_MESSAGE_STATUS_UNSPECIFIED\x10\x00\x12#\n\x1fWHATSAPP_MESSAGE_STATUS_PENDING\x10\x01\x12 \n\x1cWHATSAPP_MESSAGE_STATUS_SENT\x10\x02\x12!\n\x1dWHATSAPP_MESSAGE_STATUS_ERROR\x10\x03\x32\xcb\x04\n\x0fWhatsappService\x12\x41\n\x06Status\x12\x1a.whatsapp.v1.StatusRequest\x1a\x1b.whatsapp.v1.StatusResponse\x12\x46\n\x07WStream\x12\x1b.whatsapp.v1.WStreamRequest\x1a\x1c.whatsapp.v1.WStreamResponse0\x01\x12k\n\x14SendAttendanceAlerts\x12(.whatsapp.v1.SendAttendanceAlertsRequest\x1a).whatsapp.v1.SendAttendanceAlertsResponse\x12P\n\x0bSendMessage\x12\x1f.whatsapp.v1.SendMessageRequest\x1a .whatsapp.v1.SendMessageResponse\x12S\n\x0cListMessages\x12 .whatsapp.v1.ListMessagesRequest\x1a!.whatsapp.v1.ListMessagesResponse\x12J\n\tGetConfig\x12\x1d.whatsapp.v1.GetConfigRequest\x1a\x1e.whatsapp.v1.GetConfigResponse\x12M\n\nSaveConfig\x12\x1e.whatsapp.v1.SaveConfigRequest\x1a\x1f.whatsapp.v1.SaveConfigResponseB\xa6\x01\n\x0f\x63om.whatsapp.v1B\rWhatsappProtoP\x01Z7github.com/wargasipil/facego/gen/whatsapp/v1;whatsappv1\xa2\x02\x03WXX\xaa\x02\x0bWhatsapp.V1\xca\x02\x0bWhatsapp\\V1\xe2\x02\x17Whatsapp\\V1\\GPBMetadata\xea\x02\x0cWhatsapp::V1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -44,8 +44,8 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_SENDMESSAGEREQUEST'].fields_by_name['message']._serialized_options = b'\272H\004r\002\020\001'
   _globals['_SAVECONFIGREQUEST'].fields_by_name['config']._loaded_options = None
   _globals['_SAVECONFIGREQUEST'].fields_by_name['config']._serialized_options = b'\272H\003\310\001\001'
-  _globals['_WHATSAPPMESSAGESTATUS']._serialized_start=1951
-  _globals['_WHATSAPPMESSAGESTATUS']._serialized_end=2086
+  _globals['_WHATSAPPMESSAGESTATUS']._serialized_start=2010
+  _globals['_WHATSAPPMESSAGESTATUS']._serialized_end=2180
   _globals['_WSTREAMREQUEST']._serialized_start=105
   _globals['_WSTREAMREQUEST']._serialized_end=121
   _globals['_NEEDLOGIN']._serialized_start=123
@@ -57,29 +57,29 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_STATUSRESPONSE']._serialized_start=295
   _globals['_STATUSRESPONSE']._serialized_end=376
   _globals['_WHATSAPPMESSAGE']._serialized_start=379
-  _globals['_WHATSAPPMESSAGE']._serialized_end=802
-  _globals['_LISTMESSAGESREQUEST']._serialized_start=804
-  _globals['_LISTMESSAGESREQUEST']._serialized_end=895
-  _globals['_LISTMESSAGESRESPONSE']._serialized_start=897
-  _globals['_LISTMESSAGESRESPONSE']._serialized_end=999
-  _globals['_WHATSAPPCONFIG']._serialized_start=1002
-  _globals['_WHATSAPPCONFIG']._serialized_end=1185
-  _globals['_SENDATTENDANCEALERTSREQUEST']._serialized_start=1188
-  _globals['_SENDATTENDANCEALERTSREQUEST']._serialized_end=1397
-  _globals['_SENDATTENDANCEALERTSRESPONSE']._serialized_start=1400
-  _globals['_SENDATTENDANCEALERTSRESPONSE']._serialized_end=1538
-  _globals['_SENDMESSAGEREQUEST']._serialized_start=1540
-  _globals['_SENDMESSAGEREQUEST']._serialized_end=1626
-  _globals['_SENDMESSAGERESPONSE']._serialized_start=1628
-  _globals['_SENDMESSAGERESPONSE']._serialized_end=1697
-  _globals['_GETCONFIGREQUEST']._serialized_start=1699
-  _globals['_GETCONFIGREQUEST']._serialized_end=1717
-  _globals['_GETCONFIGRESPONSE']._serialized_start=1719
-  _globals['_GETCONFIGRESPONSE']._serialized_end=1791
-  _globals['_SAVECONFIGREQUEST']._serialized_start=1793
-  _globals['_SAVECONFIGREQUEST']._serialized_end=1873
-  _globals['_SAVECONFIGRESPONSE']._serialized_start=1875
-  _globals['_SAVECONFIGRESPONSE']._serialized_end=1948
-  _globals['_WHATSAPPSERVICE']._serialized_start=2089
-  _globals['_WHATSAPPSERVICE']._serialized_end=2676
+  _globals['_WHATSAPPMESSAGE']._serialized_end=861
+  _globals['_LISTMESSAGESREQUEST']._serialized_start=863
+  _globals['_LISTMESSAGESREQUEST']._serialized_end=954
+  _globals['_LISTMESSAGESRESPONSE']._serialized_start=956
+  _globals['_LISTMESSAGESRESPONSE']._serialized_end=1058
+  _globals['_WHATSAPPCONFIG']._serialized_start=1061
+  _globals['_WHATSAPPCONFIG']._serialized_end=1244
+  _globals['_SENDATTENDANCEALERTSREQUEST']._serialized_start=1247
+  _globals['_SENDATTENDANCEALERTSREQUEST']._serialized_end=1456
+  _globals['_SENDATTENDANCEALERTSRESPONSE']._serialized_start=1459
+  _globals['_SENDATTENDANCEALERTSRESPONSE']._serialized_end=1597
+  _globals['_SENDMESSAGEREQUEST']._serialized_start=1599
+  _globals['_SENDMESSAGEREQUEST']._serialized_end=1685
+  _globals['_SENDMESSAGERESPONSE']._serialized_start=1687
+  _globals['_SENDMESSAGERESPONSE']._serialized_end=1756
+  _globals['_GETCONFIGREQUEST']._serialized_start=1758
+  _globals['_GETCONFIGREQUEST']._serialized_end=1776
+  _globals['_GETCONFIGRESPONSE']._serialized_start=1778
+  _globals['_GETCONFIGRESPONSE']._serialized_end=1850
+  _globals['_SAVECONFIGREQUEST']._serialized_start=1852
+  _globals['_SAVECONFIGREQUEST']._serialized_end=1932
+  _globals['_SAVECONFIGRESPONSE']._serialized_start=1934
+  _globals['_SAVECONFIGRESPONSE']._serialized_end=2007
+  _globals['_WHATSAPPSERVICE']._serialized_start=2183
+  _globals['_WHATSAPPSERVICE']._serialized_end=2770
 # @@protoc_insertion_point(module_scope)

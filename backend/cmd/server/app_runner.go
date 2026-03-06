@@ -18,7 +18,7 @@ func NewAppRunner(
 	return func(ctx context.Context, c *cli.Command) error {
 		// create runner
 		rctx := runner.NewRunnerContext(ctx)
-		rctx.RunPeriodic(time.Second*5, runner.RunnerFunc(notifierRunner))
+		rctx.RunPeriodic(time.Minute, runner.RunnerFunc(notifierRunner))
 		rctx.Run(runner.RunnerFunc(apiRunner))
 
 		<-rctx.Done()

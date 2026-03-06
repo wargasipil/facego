@@ -19,7 +19,8 @@ type WhatsappMessage struct {
 	Status      whatsappv1.WhatsappMessageStatus
 	Message     string
 	Error       string
-	SentAt      time.Time `gorm:"column:sent_at;autoCreateTime"`
+	SentAt      time.Time
+	CreatedAt   time.Time `gorm:"autoCreateTime"`
 }
 
 func (WhatsappMessage) TableName() string { return "whatsapp_messages" }

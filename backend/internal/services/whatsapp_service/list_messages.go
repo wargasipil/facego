@@ -84,6 +84,7 @@ func (s *Service) ListMessages(
 						Status:          data.Status,
 						Error:           data.Error,
 						SentAt:          timestamppb.New(data.SentAt),
+						CreatedAt:       timestamppb.New(data.CreatedAt),
 					})
 				}
 

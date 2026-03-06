@@ -30,7 +30,7 @@ import { whatsappService } from '../services/whatsapp_service'
 
 type StreamState = 'connecting' | 'need_login' | 'connected' | 'error'
 
-function fmtSentAt(ts?: { seconds: bigint }) {
+function fmtTs(ts?: { seconds: bigint }) {
   if (!ts) return '—'
   return new Date(Number(ts.seconds) * 1000).toLocaleString([], {
     month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -294,6 +294,7 @@ export default function WhatsappPage() {
                       <TableColumnHeader>Message</TableColumnHeader>
                       <TableColumnHeader>Status</TableColumnHeader>
                       <TableColumnHeader>Sent At</TableColumnHeader>
+                      <TableColumnHeader>Created At</TableColumnHeader>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -310,7 +311,8 @@ export default function WhatsappPage() {
                             {statusLabel(m.status)}
                           </Badge>
                         </TableCell>
-                        <TableCell fontSize="xs" color="gray.500">{fmtSentAt(m.sentAt)}</TableCell>
+                        <TableCell fontSize="xs" color="gray.500">{fmtTs(m.sentAt)}</TableCell>
+                        <TableCell fontSize="xs" color="gray.500">{fmtTs(m.createdAt)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
