@@ -165,16 +165,100 @@ func (*UpsertFaceEmbeddingsResponse) Descriptor() ([]byte, []int) {
 	return file_faces_v1_faces_proto_rawDescGZIP(), []int{2}
 }
 
-// ListFaceEmbeddings — return every registered face (used on Python startup).
+// LoadFaceEmbeddings — return all face records with embeddings for in-browser recognition matcher.
+type LoadFaceEmbeddingsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoadFaceEmbeddingsRequest) Reset() {
+	*x = LoadFaceEmbeddingsRequest{}
+	mi := &file_faces_v1_faces_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoadFaceEmbeddingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoadFaceEmbeddingsRequest) ProtoMessage() {}
+
+func (x *LoadFaceEmbeddingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_faces_v1_faces_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoadFaceEmbeddingsRequest.ProtoReflect.Descriptor instead.
+func (*LoadFaceEmbeddingsRequest) Descriptor() ([]byte, []int) {
+	return file_faces_v1_faces_proto_rawDescGZIP(), []int{3}
+}
+
+type LoadFaceEmbeddingsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Records       []*FaceRecord          `protobuf:"bytes,1,rep,name=records,proto3" json:"records,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoadFaceEmbeddingsResponse) Reset() {
+	*x = LoadFaceEmbeddingsResponse{}
+	mi := &file_faces_v1_faces_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoadFaceEmbeddingsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoadFaceEmbeddingsResponse) ProtoMessage() {}
+
+func (x *LoadFaceEmbeddingsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_faces_v1_faces_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoadFaceEmbeddingsResponse.ProtoReflect.Descriptor instead.
+func (*LoadFaceEmbeddingsResponse) Descriptor() ([]byte, []int) {
+	return file_faces_v1_faces_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *LoadFaceEmbeddingsResponse) GetRecords() []*FaceRecord {
+	if x != nil {
+		return x.Records
+	}
+	return nil
+}
+
+// ListFaceEmbeddings — paginated list for the registered faces UI tab.
 type ListFaceEmbeddingsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Q             string                 `protobuf:"bytes,1,opt,name=q,proto3" json:"q,omitempty"`
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListFaceEmbeddingsRequest) Reset() {
 	*x = ListFaceEmbeddingsRequest{}
-	mi := &file_faces_v1_faces_proto_msgTypes[3]
+	mi := &file_faces_v1_faces_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -186,7 +270,7 @@ func (x *ListFaceEmbeddingsRequest) String() string {
 func (*ListFaceEmbeddingsRequest) ProtoMessage() {}
 
 func (x *ListFaceEmbeddingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_faces_v1_faces_proto_msgTypes[3]
+	mi := &file_faces_v1_faces_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -199,19 +283,41 @@ func (x *ListFaceEmbeddingsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFaceEmbeddingsRequest.ProtoReflect.Descriptor instead.
 func (*ListFaceEmbeddingsRequest) Descriptor() ([]byte, []int) {
-	return file_faces_v1_faces_proto_rawDescGZIP(), []int{3}
+	return file_faces_v1_faces_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ListFaceEmbeddingsRequest) GetQ() string {
+	if x != nil {
+		return x.Q
+	}
+	return ""
+}
+
+func (x *ListFaceEmbeddingsRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListFaceEmbeddingsRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
 }
 
 type ListFaceEmbeddingsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Records       []*FaceRecord          `protobuf:"bytes,1,rep,name=records,proto3" json:"records,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListFaceEmbeddingsResponse) Reset() {
 	*x = ListFaceEmbeddingsResponse{}
-	mi := &file_faces_v1_faces_proto_msgTypes[4]
+	mi := &file_faces_v1_faces_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -223,7 +329,7 @@ func (x *ListFaceEmbeddingsResponse) String() string {
 func (*ListFaceEmbeddingsResponse) ProtoMessage() {}
 
 func (x *ListFaceEmbeddingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_faces_v1_faces_proto_msgTypes[4]
+	mi := &file_faces_v1_faces_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -236,7 +342,7 @@ func (x *ListFaceEmbeddingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFaceEmbeddingsResponse.ProtoReflect.Descriptor instead.
 func (*ListFaceEmbeddingsResponse) Descriptor() ([]byte, []int) {
-	return file_faces_v1_faces_proto_rawDescGZIP(), []int{4}
+	return file_faces_v1_faces_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListFaceEmbeddingsResponse) GetRecords() []*FaceRecord {
@@ -244,6 +350,13 @@ func (x *ListFaceEmbeddingsResponse) GetRecords() []*FaceRecord {
 		return x.Records
 	}
 	return nil
+}
+
+func (x *ListFaceEmbeddingsResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
 }
 
 // DeleteFaceEmbeddings — remove a single student's face record by student_id (backend user ID).
@@ -256,7 +369,7 @@ type DeleteFaceEmbeddingsRequest struct {
 
 func (x *DeleteFaceEmbeddingsRequest) Reset() {
 	*x = DeleteFaceEmbeddingsRequest{}
-	mi := &file_faces_v1_faces_proto_msgTypes[5]
+	mi := &file_faces_v1_faces_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -268,7 +381,7 @@ func (x *DeleteFaceEmbeddingsRequest) String() string {
 func (*DeleteFaceEmbeddingsRequest) ProtoMessage() {}
 
 func (x *DeleteFaceEmbeddingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_faces_v1_faces_proto_msgTypes[5]
+	mi := &file_faces_v1_faces_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -281,7 +394,7 @@ func (x *DeleteFaceEmbeddingsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFaceEmbeddingsRequest.ProtoReflect.Descriptor instead.
 func (*DeleteFaceEmbeddingsRequest) Descriptor() ([]byte, []int) {
-	return file_faces_v1_faces_proto_rawDescGZIP(), []int{5}
+	return file_faces_v1_faces_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteFaceEmbeddingsRequest) GetStudentId() int64 {
@@ -299,7 +412,7 @@ type DeleteFaceEmbeddingsResponse struct {
 
 func (x *DeleteFaceEmbeddingsResponse) Reset() {
 	*x = DeleteFaceEmbeddingsResponse{}
-	mi := &file_faces_v1_faces_proto_msgTypes[6]
+	mi := &file_faces_v1_faces_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -311,7 +424,7 @@ func (x *DeleteFaceEmbeddingsResponse) String() string {
 func (*DeleteFaceEmbeddingsResponse) ProtoMessage() {}
 
 func (x *DeleteFaceEmbeddingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_faces_v1_faces_proto_msgTypes[6]
+	mi := &file_faces_v1_faces_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -324,7 +437,7 @@ func (x *DeleteFaceEmbeddingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFaceEmbeddingsResponse.ProtoReflect.Descriptor instead.
 func (*DeleteFaceEmbeddingsResponse) Descriptor() ([]byte, []int) {
-	return file_faces_v1_faces_proto_rawDescGZIP(), []int{6}
+	return file_faces_v1_faces_proto_rawDescGZIP(), []int{8}
 }
 
 // DeleteAllFaceEmbeddings — remove every face record (dangerous).
@@ -336,7 +449,7 @@ type DeleteAllFaceEmbeddingsRequest struct {
 
 func (x *DeleteAllFaceEmbeddingsRequest) Reset() {
 	*x = DeleteAllFaceEmbeddingsRequest{}
-	mi := &file_faces_v1_faces_proto_msgTypes[7]
+	mi := &file_faces_v1_faces_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -348,7 +461,7 @@ func (x *DeleteAllFaceEmbeddingsRequest) String() string {
 func (*DeleteAllFaceEmbeddingsRequest) ProtoMessage() {}
 
 func (x *DeleteAllFaceEmbeddingsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_faces_v1_faces_proto_msgTypes[7]
+	mi := &file_faces_v1_faces_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -361,7 +474,7 @@ func (x *DeleteAllFaceEmbeddingsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAllFaceEmbeddingsRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAllFaceEmbeddingsRequest) Descriptor() ([]byte, []int) {
-	return file_faces_v1_faces_proto_rawDescGZIP(), []int{7}
+	return file_faces_v1_faces_proto_rawDescGZIP(), []int{9}
 }
 
 type DeleteAllFaceEmbeddingsResponse struct {
@@ -372,7 +485,7 @@ type DeleteAllFaceEmbeddingsResponse struct {
 
 func (x *DeleteAllFaceEmbeddingsResponse) Reset() {
 	*x = DeleteAllFaceEmbeddingsResponse{}
-	mi := &file_faces_v1_faces_proto_msgTypes[8]
+	mi := &file_faces_v1_faces_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -384,7 +497,7 @@ func (x *DeleteAllFaceEmbeddingsResponse) String() string {
 func (*DeleteAllFaceEmbeddingsResponse) ProtoMessage() {}
 
 func (x *DeleteAllFaceEmbeddingsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_faces_v1_faces_proto_msgTypes[8]
+	mi := &file_faces_v1_faces_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,7 +510,7 @@ func (x *DeleteAllFaceEmbeddingsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAllFaceEmbeddingsResponse.ProtoReflect.Descriptor instead.
 func (*DeleteAllFaceEmbeddingsResponse) Descriptor() ([]byte, []int) {
-	return file_faces_v1_faces_proto_rawDescGZIP(), []int{8}
+	return file_faces_v1_faces_proto_rawDescGZIP(), []int{10}
 }
 
 var File_faces_v1_faces_proto protoreflect.FileDescriptor
@@ -416,18 +529,27 @@ const file_faces_v1_faces_proto_rawDesc = "" +
 	"\x1bUpsertFaceEmbeddingsRequest\x124\n" +
 	"\x06record\x18\x01 \x01(\v2\x14.faces.v1.FaceRecordB\x06\xbaH\x03\xc8\x01\x01R\x06record\"\x1e\n" +
 	"\x1cUpsertFaceEmbeddingsResponse\"\x1b\n" +
-	"\x19ListFaceEmbeddingsRequest\"L\n" +
+	"\x19LoadFaceEmbeddingsRequest\"L\n" +
+	"\x1aLoadFaceEmbeddingsResponse\x12.\n" +
+	"\arecords\x18\x01 \x03(\v2\x14.faces.v1.FaceRecordR\arecords\"o\n" +
+	"\x19ListFaceEmbeddingsRequest\x12\f\n" +
+	"\x01q\x18\x01 \x01(\tR\x01q\x12\x1b\n" +
+	"\x04page\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x04page\x12'\n" +
+	"\tpage_size\x18\x03 \x01(\x05B\n" +
+	"\xbaH\a\x1a\x05\x18\xc8\x01(\x00R\bpageSize\"b\n" +
 	"\x1aListFaceEmbeddingsResponse\x12.\n" +
-	"\arecords\x18\x01 \x03(\v2\x14.faces.v1.FaceRecordR\arecords\"E\n" +
+	"\arecords\x18\x01 \x03(\v2\x14.faces.v1.FaceRecordR\arecords\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"E\n" +
 	"\x1bDeleteFaceEmbeddingsRequest\x12&\n" +
 	"\n" +
 	"student_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\tstudentId\"\x1e\n" +
 	"\x1cDeleteFaceEmbeddingsResponse\" \n" +
 	"\x1eDeleteAllFaceEmbeddingsRequest\"!\n" +
-	"\x1fDeleteAllFaceEmbeddingsResponse2\xb5\x03\n" +
+	"\x1fDeleteAllFaceEmbeddingsResponse2\x96\x04\n" +
 	"\x14FaceEmbeddingService\x12e\n" +
 	"\x14UpsertFaceEmbeddings\x12%.faces.v1.UpsertFaceEmbeddingsRequest\x1a&.faces.v1.UpsertFaceEmbeddingsResponse\x12_\n" +
-	"\x12ListFaceEmbeddings\x12#.faces.v1.ListFaceEmbeddingsRequest\x1a$.faces.v1.ListFaceEmbeddingsResponse\x12e\n" +
+	"\x12ListFaceEmbeddings\x12#.faces.v1.ListFaceEmbeddingsRequest\x1a$.faces.v1.ListFaceEmbeddingsResponse\x12_\n" +
+	"\x12LoadFaceEmbeddings\x12#.faces.v1.LoadFaceEmbeddingsRequest\x1a$.faces.v1.LoadFaceEmbeddingsResponse\x12e\n" +
 	"\x14DeleteFaceEmbeddings\x12%.faces.v1.DeleteFaceEmbeddingsRequest\x1a&.faces.v1.DeleteFaceEmbeddingsResponse\x12n\n" +
 	"\x17DeleteAllFaceEmbeddings\x12(.faces.v1.DeleteAllFaceEmbeddingsRequest\x1a).faces.v1.DeleteAllFaceEmbeddingsResponseB\x8e\x01\n" +
 	"\fcom.faces.v1B\n" +
@@ -445,34 +567,39 @@ func file_faces_v1_faces_proto_rawDescGZIP() []byte {
 	return file_faces_v1_faces_proto_rawDescData
 }
 
-var file_faces_v1_faces_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_faces_v1_faces_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_faces_v1_faces_proto_goTypes = []any{
 	(*FaceRecord)(nil),                      // 0: faces.v1.FaceRecord
 	(*UpsertFaceEmbeddingsRequest)(nil),     // 1: faces.v1.UpsertFaceEmbeddingsRequest
 	(*UpsertFaceEmbeddingsResponse)(nil),    // 2: faces.v1.UpsertFaceEmbeddingsResponse
-	(*ListFaceEmbeddingsRequest)(nil),       // 3: faces.v1.ListFaceEmbeddingsRequest
-	(*ListFaceEmbeddingsResponse)(nil),      // 4: faces.v1.ListFaceEmbeddingsResponse
-	(*DeleteFaceEmbeddingsRequest)(nil),     // 5: faces.v1.DeleteFaceEmbeddingsRequest
-	(*DeleteFaceEmbeddingsResponse)(nil),    // 6: faces.v1.DeleteFaceEmbeddingsResponse
-	(*DeleteAllFaceEmbeddingsRequest)(nil),  // 7: faces.v1.DeleteAllFaceEmbeddingsRequest
-	(*DeleteAllFaceEmbeddingsResponse)(nil), // 8: faces.v1.DeleteAllFaceEmbeddingsResponse
+	(*LoadFaceEmbeddingsRequest)(nil),       // 3: faces.v1.LoadFaceEmbeddingsRequest
+	(*LoadFaceEmbeddingsResponse)(nil),      // 4: faces.v1.LoadFaceEmbeddingsResponse
+	(*ListFaceEmbeddingsRequest)(nil),       // 5: faces.v1.ListFaceEmbeddingsRequest
+	(*ListFaceEmbeddingsResponse)(nil),      // 6: faces.v1.ListFaceEmbeddingsResponse
+	(*DeleteFaceEmbeddingsRequest)(nil),     // 7: faces.v1.DeleteFaceEmbeddingsRequest
+	(*DeleteFaceEmbeddingsResponse)(nil),    // 8: faces.v1.DeleteFaceEmbeddingsResponse
+	(*DeleteAllFaceEmbeddingsRequest)(nil),  // 9: faces.v1.DeleteAllFaceEmbeddingsRequest
+	(*DeleteAllFaceEmbeddingsResponse)(nil), // 10: faces.v1.DeleteAllFaceEmbeddingsResponse
 }
 var file_faces_v1_faces_proto_depIdxs = []int32{
-	0, // 0: faces.v1.UpsertFaceEmbeddingsRequest.record:type_name -> faces.v1.FaceRecord
-	0, // 1: faces.v1.ListFaceEmbeddingsResponse.records:type_name -> faces.v1.FaceRecord
-	1, // 2: faces.v1.FaceEmbeddingService.UpsertFaceEmbeddings:input_type -> faces.v1.UpsertFaceEmbeddingsRequest
-	3, // 3: faces.v1.FaceEmbeddingService.ListFaceEmbeddings:input_type -> faces.v1.ListFaceEmbeddingsRequest
-	5, // 4: faces.v1.FaceEmbeddingService.DeleteFaceEmbeddings:input_type -> faces.v1.DeleteFaceEmbeddingsRequest
-	7, // 5: faces.v1.FaceEmbeddingService.DeleteAllFaceEmbeddings:input_type -> faces.v1.DeleteAllFaceEmbeddingsRequest
-	2, // 6: faces.v1.FaceEmbeddingService.UpsertFaceEmbeddings:output_type -> faces.v1.UpsertFaceEmbeddingsResponse
-	4, // 7: faces.v1.FaceEmbeddingService.ListFaceEmbeddings:output_type -> faces.v1.ListFaceEmbeddingsResponse
-	6, // 8: faces.v1.FaceEmbeddingService.DeleteFaceEmbeddings:output_type -> faces.v1.DeleteFaceEmbeddingsResponse
-	8, // 9: faces.v1.FaceEmbeddingService.DeleteAllFaceEmbeddings:output_type -> faces.v1.DeleteAllFaceEmbeddingsResponse
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0,  // 0: faces.v1.UpsertFaceEmbeddingsRequest.record:type_name -> faces.v1.FaceRecord
+	0,  // 1: faces.v1.LoadFaceEmbeddingsResponse.records:type_name -> faces.v1.FaceRecord
+	0,  // 2: faces.v1.ListFaceEmbeddingsResponse.records:type_name -> faces.v1.FaceRecord
+	1,  // 3: faces.v1.FaceEmbeddingService.UpsertFaceEmbeddings:input_type -> faces.v1.UpsertFaceEmbeddingsRequest
+	5,  // 4: faces.v1.FaceEmbeddingService.ListFaceEmbeddings:input_type -> faces.v1.ListFaceEmbeddingsRequest
+	3,  // 5: faces.v1.FaceEmbeddingService.LoadFaceEmbeddings:input_type -> faces.v1.LoadFaceEmbeddingsRequest
+	7,  // 6: faces.v1.FaceEmbeddingService.DeleteFaceEmbeddings:input_type -> faces.v1.DeleteFaceEmbeddingsRequest
+	9,  // 7: faces.v1.FaceEmbeddingService.DeleteAllFaceEmbeddings:input_type -> faces.v1.DeleteAllFaceEmbeddingsRequest
+	2,  // 8: faces.v1.FaceEmbeddingService.UpsertFaceEmbeddings:output_type -> faces.v1.UpsertFaceEmbeddingsResponse
+	6,  // 9: faces.v1.FaceEmbeddingService.ListFaceEmbeddings:output_type -> faces.v1.ListFaceEmbeddingsResponse
+	4,  // 10: faces.v1.FaceEmbeddingService.LoadFaceEmbeddings:output_type -> faces.v1.LoadFaceEmbeddingsResponse
+	8,  // 11: faces.v1.FaceEmbeddingService.DeleteFaceEmbeddings:output_type -> faces.v1.DeleteFaceEmbeddingsResponse
+	10, // 12: faces.v1.FaceEmbeddingService.DeleteAllFaceEmbeddings:output_type -> faces.v1.DeleteAllFaceEmbeddingsResponse
+	8,  // [8:13] is the sub-list for method output_type
+	3,  // [3:8] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_faces_v1_faces_proto_init() }
@@ -486,7 +613,7 @@ func file_faces_v1_faces_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_faces_v1_faces_proto_rawDesc), len(file_faces_v1_faces_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

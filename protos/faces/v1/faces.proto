@@ -5,18 +5,19 @@ package faces.v1;
 import "buf/validate/validate.proto";
 
 service FaceEmbeddingService {
-  rpc UpsertFaceEmbeddings(UpsertFaceEmbeddingsRequest)       returns (UpsertFaceEmbeddingsResponse);
-  rpc ListFaceEmbeddings(ListFaceEmbeddingsRequest)           returns (ListFaceEmbeddingsResponse);
-  rpc DeleteFaceEmbeddings(DeleteFaceEmbeddingsRequest)       returns (DeleteFaceEmbeddingsResponse);
+  rpc UpsertFaceEmbeddings(UpsertFaceEmbeddingsRequest) returns (UpsertFaceEmbeddingsResponse);
+  rpc ListFaceEmbeddings(ListFaceEmbeddingsRequest) returns (ListFaceEmbeddingsResponse);
+  rpc LoadFaceEmbeddings(LoadFaceEmbeddingsRequest) returns (LoadFaceEmbeddingsResponse);
+  rpc DeleteFaceEmbeddings(DeleteFaceEmbeddingsRequest) returns (DeleteFaceEmbeddingsResponse);
   rpc DeleteAllFaceEmbeddings(DeleteAllFaceEmbeddingsRequest) returns (DeleteAllFaceEmbeddingsResponse);
 }
 
 // FaceRecord holds all face embeddings for a single registered student.
 // student_id is the backend user ID (FK → users.id) used as the unique key.
 message FaceRecord {
-  int64  student_id      = 1 [(buf.validate.field).int64.gt = 0];
-  bytes  embeddings      = 2 [(buf.validate.field).bytes.min_len = 1];
-  int32  embedding_count = 3 [(buf.validate.field).int32.gt = 0];
+  int64 student_id = 1 [(buf.validate.field).int64.gt = 0];
+  bytes embeddings = 2 [(buf.validate.field).bytes.min_len = 1];
+  int32 embedding_count = 3 [(buf.validate.field).int32.gt = 0];
 }
 
 // UpsertFaceEmbeddings — create or replace the face record for a student.
@@ -25,10 +26,25 @@ message UpsertFaceEmbeddingsRequest {
 }
 message UpsertFaceEmbeddingsResponse {}
 
-// ListFaceEmbeddings — return every registered face (used on Python startup).
-message ListFaceEmbeddingsRequest {}
+// LoadFaceEmbeddings — return all face records with embeddings for in-browser recognition matcher.
+message LoadFaceEmbeddingsRequest {}
+message LoadFaceEmbeddingsResponse {
+  repeated FaceRecord records = 1;
+}
+
+// ListFaceEmbeddings — paginated list for the registered faces UI tab.
+message ListFaceEmbeddingsRequest {
+  string q = 1;
+  int32 page = 2 [(buf.validate.field).int32.gte = 0];
+  int32 page_size = 3 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 200
+  }];
+}
+
 message ListFaceEmbeddingsResponse {
   repeated FaceRecord records = 1;
+  int32 total = 2;
 }
 
 // DeleteFaceEmbeddings — remove a single student's face record by student_id (backend user ID).

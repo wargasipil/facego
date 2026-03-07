@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/binary"
 	"fmt"
 	"log/slog"
+	"math"
+	"math/rand"
 
 	"connectrpc.com/connect"
 	"github.com/urfave/cli/v3"
@@ -16,6 +19,7 @@ import (
 	"github.com/wargasipil/facego/internal/configs"
 	db_models "github.com/wargasipil/facego/internal/db_models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type SeedFunc cli.ActionFunc
@@ -125,6 +129,7 @@ func NewSeed(
 		}
 		slog.Info("students seeded", "created", created, "skipped", skipped)
 
+		seedFaceEmbeddings(db)
 		slog.Info("seed completed")
 		return nil
 	}
@@ -436,4 +441,64 @@ var seedStudents = []struct {
 	{"STU098", "Okky Pramana", "okky.pramana@student.sch.id", "Legiman Pramana", "+62 812 1111 0098", "legiman.pramana@gmail.com"},
 	{"STU099", "Prita Mahardhika", "prita.mahardhika@student.sch.id", "Gunadi Mahardhika", "+62 812 1111 0099", "gunadi.mahardhika@gmail.com"},
 	{"STU100", "Raka Daniswara", "raka.daniswara@student.sch.id", "Purnomo Daniswara", "+62 812 1111 0100", "purnomo.daniswara@gmail.com"},
+}
+
+// seedFaceEmbeddings inserts random face embeddings for the first 25 seed students.
+// Each student gets 3-5 random unit-normalized float32[128] descriptors packed as bytea.
+// Idempotent: skips students that already have a face_embeddings row.
+func seedFaceEmbeddings(db *gorm.DB) {
+	slog.Info("seeding face embeddings...")
+
+	// Collect target student IDs (first 25 seed students by student_id string)
+	var studentIDs []string
+	for i := 1; i <= 25; i++ {
+		studentIDs = append(studentIDs, fmt.Sprintf("STU%03d", i))
+	}
+
+	var users []db_models.User
+	if err := db.Where("student_id IN ?", studentIDs).Find(&users).Error; err != nil {
+		slog.Warn("seedFaceEmbeddings: fetch users error", "err", err)
+		return
+	}
+
+	inserted, skipped := 0, 0
+	for _, u := range users {
+		// Skip if already registered
+		var existing db_models.FaceEmbedding
+		if err := db.Where("student_id = ?", u.ID).First(&existing).Error; err == nil {
+			skipped++
+			continue
+		}
+
+		nSamples := 3 + rand.Intn(3) // 3, 4, or 5
+		buf := make([]byte, nSamples*128*4)
+		for s := 0; s < nSamples; s++ {
+			// Generate random unit-normalized float32[128] descriptor
+			desc := make([]float64, 128)
+			var norm float64
+			for j := range desc {
+				v := rand.NormFloat64()
+				desc[j] = v
+				norm += v * v
+			}
+			norm = math.Sqrt(norm)
+			base := s * 128 * 4
+			for j, v := range desc {
+				f := float32(v / norm)
+				binary.LittleEndian.PutUint32(buf[base+j*4:], math.Float32bits(f))
+			}
+		}
+
+		rec := db_models.FaceEmbedding{
+			StudentID:      int64(u.ID),
+			Embeddings:     buf,
+			EmbeddingCount: int32(nSamples),
+		}
+		if err := db.Clauses(clause.OnConflict{DoNothing: true}).Create(&rec).Error; err != nil {
+			slog.Warn("seedFaceEmbeddings: insert error", "student_id", u.StudentID, "err", err)
+			continue
+		}
+		inserted++
+	}
+	slog.Info("face embeddings seeded", "inserted", inserted, "skipped", skipped)
 }

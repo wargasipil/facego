@@ -3,6 +3,9 @@ import { Flex, Spinner } from '@chakra-ui/react'
 import Layout from './components/Layout'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import HomePage                from './pages/HomePage'
+import DetectionPage           from './pages/DetectionPage'
+import FacesPage               from './pages/faces'
+import MediaPipeTestPage        from './pages/MediaPipeTestPage'
 import AttendancePage          from './pages/AttendancePage'
 import StudentListPage         from './pages/students/list'
 import RegisterStudentPage     from './pages/students/register'
@@ -42,6 +45,9 @@ function ProtectedRoutes() {
       <Route element={<Layout />}>
         <Route path="/"                              element={<HomePage />} />
         <Route path="/attendance"                    element={<AttendancePage />} />
+        <Route path="/detection"                     element={<DetectionPage />} />
+        <Route path="/faces"                         element={<FacesPage />} />
+        <Route path="/mediapipe-test"                element={<MediaPipeTestPage />} />
         <Route path="/students"                      element={<StudentListPage />} />
         <Route path="/students/register"             element={<RegisterStudentPage />} />
         <Route path="/students/:id/attendance"       element={<StudentAttendancePage />} />

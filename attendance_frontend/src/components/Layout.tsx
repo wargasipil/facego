@@ -16,12 +16,15 @@ import {
   FiMenu,
   FiX,
   FiCamera,
+  FiEye,
+  FiZap,
   FiSettings,
   FiLogOut,
   FiUserCheck,
   FiShield,
   FiMessageSquare,
   FiFileText,
+  FiChevronDown,
 } from 'react-icons/fi'
 import { NavLink, useLocation, Outlet, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
@@ -45,6 +48,13 @@ const NAV_GROUPS: NavGroup[] = [
     group: 'Overview',
     items: [
       { label: 'Home', path: '/', icon: <FiHome size={18} /> },
+    ],
+  },
+  {
+    group: 'Detection',
+    items: [
+      { label: 'Faces',          path: '/faces',          icon: <FiEye    size={18} />, allowedRoles: ['admin', 'teacher'] },
+      { label: 'MediaPipe Test', path: '/mediapipe-test', icon: <FiZap    size={18} />, allowedRoles: ['admin', 'teacher'] },
     ],
   },
   {
@@ -93,6 +103,14 @@ export default function Layout() {
   const navigate      = useNavigate()
   const { logout, currentUser } = useAuth()
   const [collapsed, setCollapsed] = useState(false)
+  const [closedGroups, setClosedGroups] = useState<Set<string>>(new Set())
+
+  const toggleGroup = (group: string) =>
+    setClosedGroups(prev => {
+      const next = new Set(prev)
+      next.has(group) ? next.delete(group) : next.add(group)
+      return next
+    })
 
   const w = collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W
 
@@ -174,33 +192,54 @@ export default function Layout() {
 
         {/* Nav groups */}
         <VStack gap={0} align="stretch" p={2} flex={1} overflowY="auto">
-          {visibleGroups.map((group, gi) => (
-            <Box key={group.group} mt={gi === 0 ? 1 : 0}>
-              {!collapsed && (
-                <Text
-                  fontSize="10px"
-                  color="gray.400"
-                  fontWeight="bold"
-                  px={3}
-                  pt={gi === 0 ? 2 : 4}
-                  pb={1}
-                  textTransform="uppercase"
-                  letterSpacing="wider"
-                  whiteSpace="nowrap"
-                >
-                  {group.group}
-                </Text>
-              )}
-              {collapsed && gi > 0 && (
-                <Box mx={3} my={2} h="1px" bg="gray.100" />
-              )}
-              <VStack gap={0.5} align="stretch">
-                {group.items.map(item => (
-                  <SidebarLink key={item.path} item={item} collapsed={collapsed} />
-                ))}
-              </VStack>
-            </Box>
-          ))}
+          {visibleGroups.map((group, gi) => {
+            const isClosed = !collapsed && closedGroups.has(group.group)
+            return (
+              <Box key={group.group} mt={gi === 0 ? 1 : 0}>
+                {!collapsed && (
+                  <Flex
+                    as="button"
+                    w="full"
+                    align="center"
+                    justify="space-between"
+                    px={3}
+                    pt={gi === 0 ? 2 : 4}
+                    pb={1}
+                    onClick={() => toggleGroup(group.group)}
+                    cursor="pointer"
+                    _hover={{ color: 'gray.600' }}
+                    color="gray.400"
+                  >
+                    <Text
+                      fontSize="10px"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      letterSpacing="wider"
+                      whiteSpace="nowrap"
+                    >
+                      {group.group}
+                    </Text>
+                    <Box
+                      transition="transform 0.2s"
+                      style={{ transform: isClosed ? 'rotate(-90deg)' : 'rotate(0deg)' }}
+                    >
+                      <FiChevronDown size={12} />
+                    </Box>
+                  </Flex>
+                )}
+                {collapsed && gi > 0 && (
+                  <Box mx={3} my={2} h="1px" bg="gray.100" />
+                )}
+                {!isClosed && (
+                  <VStack gap={0.5} align="stretch">
+                    {group.items.map(item => (
+                      <SidebarLink key={item.path} item={item} collapsed={collapsed} />
+                    ))}
+                  </VStack>
+                )}
+              </Box>
+            )
+          })}
         </VStack>
 
         {/* User info + sign out */}

@@ -24,6 +24,11 @@ class FaceEmbeddingServiceStub(object):
                 request_serializer=faces_dot_v1_dot_faces__pb2.ListFaceEmbeddingsRequest.SerializeToString,
                 response_deserializer=faces_dot_v1_dot_faces__pb2.ListFaceEmbeddingsResponse.FromString,
                 _registered_method=True)
+        self.LoadFaceEmbeddings = channel.unary_unary(
+                '/faces.v1.FaceEmbeddingService/LoadFaceEmbeddings',
+                request_serializer=faces_dot_v1_dot_faces__pb2.LoadFaceEmbeddingsRequest.SerializeToString,
+                response_deserializer=faces_dot_v1_dot_faces__pb2.LoadFaceEmbeddingsResponse.FromString,
+                _registered_method=True)
         self.DeleteFaceEmbeddings = channel.unary_unary(
                 '/faces.v1.FaceEmbeddingService/DeleteFaceEmbeddings',
                 request_serializer=faces_dot_v1_dot_faces__pb2.DeleteFaceEmbeddingsRequest.SerializeToString,
@@ -46,6 +51,12 @@ class FaceEmbeddingServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ListFaceEmbeddings(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def LoadFaceEmbeddings(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -75,6 +86,11 @@ def add_FaceEmbeddingServiceServicer_to_server(servicer, server):
                     servicer.ListFaceEmbeddings,
                     request_deserializer=faces_dot_v1_dot_faces__pb2.ListFaceEmbeddingsRequest.FromString,
                     response_serializer=faces_dot_v1_dot_faces__pb2.ListFaceEmbeddingsResponse.SerializeToString,
+            ),
+            'LoadFaceEmbeddings': grpc.unary_unary_rpc_method_handler(
+                    servicer.LoadFaceEmbeddings,
+                    request_deserializer=faces_dot_v1_dot_faces__pb2.LoadFaceEmbeddingsRequest.FromString,
+                    response_serializer=faces_dot_v1_dot_faces__pb2.LoadFaceEmbeddingsResponse.SerializeToString,
             ),
             'DeleteFaceEmbeddings': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteFaceEmbeddings,
@@ -141,6 +157,33 @@ class FaceEmbeddingService(object):
             '/faces.v1.FaceEmbeddingService/ListFaceEmbeddings',
             faces_dot_v1_dot_faces__pb2.ListFaceEmbeddingsRequest.SerializeToString,
             faces_dot_v1_dot_faces__pb2.ListFaceEmbeddingsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def LoadFaceEmbeddings(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/faces.v1.FaceEmbeddingService/LoadFaceEmbeddings',
+            faces_dot_v1_dot_faces__pb2.LoadFaceEmbeddingsRequest.SerializeToString,
+            faces_dot_v1_dot_faces__pb2.LoadFaceEmbeddingsResponse.FromString,
             options,
             channel_credentials,
             insecure,

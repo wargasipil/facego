@@ -11,7 +11,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file faces/v1/faces.proto.
  */
 export const file_faces_v1_faces: GenFile = /*@__PURE__*/
-  fileDesc("ChRmYWNlcy92MS9mYWNlcy5wcm90bxIIZmFjZXMudjEiaAoKRmFjZVJlY29yZBIbCgpzdHVkZW50X2lkGAEgASgDQge6SAQiAiAAEhsKCmVtYmVkZGluZ3MYAiABKAxCB7pIBHoCEAESIAoPZW1iZWRkaW5nX2NvdW50GAMgASgFQge6SAQaAiAAIksKG1Vwc2VydEZhY2VFbWJlZGRpbmdzUmVxdWVzdBIsCgZyZWNvcmQYASABKAsyFC5mYWNlcy52MS5GYWNlUmVjb3JkQga6SAPIAQEiHgocVXBzZXJ0RmFjZUVtYmVkZGluZ3NSZXNwb25zZSIbChlMaXN0RmFjZUVtYmVkZGluZ3NSZXF1ZXN0IkMKGkxpc3RGYWNlRW1iZWRkaW5nc1Jlc3BvbnNlEiUKB3JlY29yZHMYASADKAsyFC5mYWNlcy52MS5GYWNlUmVjb3JkIjoKG0RlbGV0ZUZhY2VFbWJlZGRpbmdzUmVxdWVzdBIbCgpzdHVkZW50X2lkGAEgASgDQge6SAQiAiAAIh4KHERlbGV0ZUZhY2VFbWJlZGRpbmdzUmVzcG9uc2UiIAoeRGVsZXRlQWxsRmFjZUVtYmVkZGluZ3NSZXF1ZXN0IiEKH0RlbGV0ZUFsbEZhY2VFbWJlZGRpbmdzUmVzcG9uc2UytQMKFEZhY2VFbWJlZGRpbmdTZXJ2aWNlEmUKFFVwc2VydEZhY2VFbWJlZGRpbmdzEiUuZmFjZXMudjEuVXBzZXJ0RmFjZUVtYmVkZGluZ3NSZXF1ZXN0GiYuZmFjZXMudjEuVXBzZXJ0RmFjZUVtYmVkZGluZ3NSZXNwb25zZRJfChJMaXN0RmFjZUVtYmVkZGluZ3MSIy5mYWNlcy52MS5MaXN0RmFjZUVtYmVkZGluZ3NSZXF1ZXN0GiQuZmFjZXMudjEuTGlzdEZhY2VFbWJlZGRpbmdzUmVzcG9uc2USZQoURGVsZXRlRmFjZUVtYmVkZGluZ3MSJS5mYWNlcy52MS5EZWxldGVGYWNlRW1iZWRkaW5nc1JlcXVlc3QaJi5mYWNlcy52MS5EZWxldGVGYWNlRW1iZWRkaW5nc1Jlc3BvbnNlEm4KF0RlbGV0ZUFsbEZhY2VFbWJlZGRpbmdzEiguZmFjZXMudjEuRGVsZXRlQWxsRmFjZUVtYmVkZGluZ3NSZXF1ZXN0GikuZmFjZXMudjEuRGVsZXRlQWxsRmFjZUVtYmVkZGluZ3NSZXNwb25zZUKOAQoMY29tLmZhY2VzLnYxQgpGYWNlc1Byb3RvUAFaMWdpdGh1Yi5jb20vd2FyZ2FzaXBpbC9mYWNlZ28vZ2VuL2ZhY2VzL3YxO2ZhY2VzdjGiAgNGWFiqAghGYWNlcy5WMcoCCEZhY2VzXFYx4gIURmFjZXNcVjFcR1BCTWV0YWRhdGHqAglGYWNlczo6VjFiBnByb3RvMw", [file_buf_validate_validate]);
+  fileDesc("ChRmYWNlcy92MS9mYWNlcy5wcm90bxIIZmFjZXMudjEiaAoKRmFjZVJlY29yZBIbCgpzdHVkZW50X2lkGAEgASgDQge6SAQiAiAAEhsKCmVtYmVkZGluZ3MYAiABKAxCB7pIBHoCEAESIAoPZW1iZWRkaW5nX2NvdW50GAMgASgFQge6SAQaAiAAIksKG1Vwc2VydEZhY2VFbWJlZGRpbmdzUmVxdWVzdBIsCgZyZWNvcmQYASABKAsyFC5mYWNlcy52MS5GYWNlUmVjb3JkQga6SAPIAQEiHgocVXBzZXJ0RmFjZUVtYmVkZGluZ3NSZXNwb25zZSIbChlMb2FkRmFjZUVtYmVkZGluZ3NSZXF1ZXN0IkMKGkxvYWRGYWNlRW1iZWRkaW5nc1Jlc3BvbnNlEiUKB3JlY29yZHMYASADKAsyFC5mYWNlcy52MS5GYWNlUmVjb3JkIlwKGUxpc3RGYWNlRW1iZWRkaW5nc1JlcXVlc3QSCQoBcRgBIAEoCRIVCgRwYWdlGAIgASgFQge6SAQaAigAEh0KCXBhZ2Vfc2l6ZRgDIAEoBUIKukgHGgUYyAEoACJSChpMaXN0RmFjZUVtYmVkZGluZ3NSZXNwb25zZRIlCgdyZWNvcmRzGAEgAygLMhQuZmFjZXMudjEuRmFjZVJlY29yZBINCgV0b3RhbBgCIAEoBSI6ChtEZWxldGVGYWNlRW1iZWRkaW5nc1JlcXVlc3QSGwoKc3R1ZGVudF9pZBgBIAEoA0IHukgEIgIgACIeChxEZWxldGVGYWNlRW1iZWRkaW5nc1Jlc3BvbnNlIiAKHkRlbGV0ZUFsbEZhY2VFbWJlZGRpbmdzUmVxdWVzdCIhCh9EZWxldGVBbGxGYWNlRW1iZWRkaW5nc1Jlc3BvbnNlMpYEChRGYWNlRW1iZWRkaW5nU2VydmljZRJlChRVcHNlcnRGYWNlRW1iZWRkaW5ncxIlLmZhY2VzLnYxLlVwc2VydEZhY2VFbWJlZGRpbmdzUmVxdWVzdBomLmZhY2VzLnYxLlVwc2VydEZhY2VFbWJlZGRpbmdzUmVzcG9uc2USXwoSTGlzdEZhY2VFbWJlZGRpbmdzEiMuZmFjZXMudjEuTGlzdEZhY2VFbWJlZGRpbmdzUmVxdWVzdBokLmZhY2VzLnYxLkxpc3RGYWNlRW1iZWRkaW5nc1Jlc3BvbnNlEl8KEkxvYWRGYWNlRW1iZWRkaW5ncxIjLmZhY2VzLnYxLkxvYWRGYWNlRW1iZWRkaW5nc1JlcXVlc3QaJC5mYWNlcy52MS5Mb2FkRmFjZUVtYmVkZGluZ3NSZXNwb25zZRJlChREZWxldGVGYWNlRW1iZWRkaW5ncxIlLmZhY2VzLnYxLkRlbGV0ZUZhY2VFbWJlZGRpbmdzUmVxdWVzdBomLmZhY2VzLnYxLkRlbGV0ZUZhY2VFbWJlZGRpbmdzUmVzcG9uc2USbgoXRGVsZXRlQWxsRmFjZUVtYmVkZGluZ3MSKC5mYWNlcy52MS5EZWxldGVBbGxGYWNlRW1iZWRkaW5nc1JlcXVlc3QaKS5mYWNlcy52MS5EZWxldGVBbGxGYWNlRW1iZWRkaW5nc1Jlc3BvbnNlQo4BCgxjb20uZmFjZXMudjFCCkZhY2VzUHJvdG9QAVoxZ2l0aHViLmNvbS93YXJnYXNpcGlsL2ZhY2Vnby9nZW4vZmFjZXMvdjE7ZmFjZXN2MaICA0ZYWKoCCEZhY2VzLlYxygIIRmFjZXNcVjHiAhRGYWNlc1xWMVxHUEJNZXRhZGF0YeoCCUZhY2VzOjpWMWIGcHJvdG8z", [file_buf_validate_validate]);
 
 /**
  * FaceRecord holds all face embeddings for a single registered student.
@@ -76,11 +76,57 @@ export const UpsertFaceEmbeddingsResponseSchema: GenMessage<UpsertFaceEmbeddings
   messageDesc(file_faces_v1_faces, 2);
 
 /**
- * ListFaceEmbeddings — return every registered face (used on Python startup).
+ * LoadFaceEmbeddings — return all face records with embeddings for in-browser recognition matcher.
+ *
+ * @generated from message faces.v1.LoadFaceEmbeddingsRequest
+ */
+export type LoadFaceEmbeddingsRequest = Message<"faces.v1.LoadFaceEmbeddingsRequest"> & {
+};
+
+/**
+ * Describes the message faces.v1.LoadFaceEmbeddingsRequest.
+ * Use `create(LoadFaceEmbeddingsRequestSchema)` to create a new message.
+ */
+export const LoadFaceEmbeddingsRequestSchema: GenMessage<LoadFaceEmbeddingsRequest> = /*@__PURE__*/
+  messageDesc(file_faces_v1_faces, 3);
+
+/**
+ * @generated from message faces.v1.LoadFaceEmbeddingsResponse
+ */
+export type LoadFaceEmbeddingsResponse = Message<"faces.v1.LoadFaceEmbeddingsResponse"> & {
+  /**
+   * @generated from field: repeated faces.v1.FaceRecord records = 1;
+   */
+  records: FaceRecord[];
+};
+
+/**
+ * Describes the message faces.v1.LoadFaceEmbeddingsResponse.
+ * Use `create(LoadFaceEmbeddingsResponseSchema)` to create a new message.
+ */
+export const LoadFaceEmbeddingsResponseSchema: GenMessage<LoadFaceEmbeddingsResponse> = /*@__PURE__*/
+  messageDesc(file_faces_v1_faces, 4);
+
+/**
+ * ListFaceEmbeddings — paginated list for the registered faces UI tab.
  *
  * @generated from message faces.v1.ListFaceEmbeddingsRequest
  */
 export type ListFaceEmbeddingsRequest = Message<"faces.v1.ListFaceEmbeddingsRequest"> & {
+  /**
+   * @generated from field: string q = 1;
+   */
+  q: string;
+
+  /**
+   * @generated from field: int32 page = 2;
+   */
+  page: number;
+
+  /**
+   * @generated from field: int32 page_size = 3;
+   */
+  pageSize: number;
 };
 
 /**
@@ -88,7 +134,7 @@ export type ListFaceEmbeddingsRequest = Message<"faces.v1.ListFaceEmbeddingsRequ
  * Use `create(ListFaceEmbeddingsRequestSchema)` to create a new message.
  */
 export const ListFaceEmbeddingsRequestSchema: GenMessage<ListFaceEmbeddingsRequest> = /*@__PURE__*/
-  messageDesc(file_faces_v1_faces, 3);
+  messageDesc(file_faces_v1_faces, 5);
 
 /**
  * @generated from message faces.v1.ListFaceEmbeddingsResponse
@@ -98,6 +144,11 @@ export type ListFaceEmbeddingsResponse = Message<"faces.v1.ListFaceEmbeddingsRes
    * @generated from field: repeated faces.v1.FaceRecord records = 1;
    */
   records: FaceRecord[];
+
+  /**
+   * @generated from field: int32 total = 2;
+   */
+  total: number;
 };
 
 /**
@@ -105,7 +156,7 @@ export type ListFaceEmbeddingsResponse = Message<"faces.v1.ListFaceEmbeddingsRes
  * Use `create(ListFaceEmbeddingsResponseSchema)` to create a new message.
  */
 export const ListFaceEmbeddingsResponseSchema: GenMessage<ListFaceEmbeddingsResponse> = /*@__PURE__*/
-  messageDesc(file_faces_v1_faces, 4);
+  messageDesc(file_faces_v1_faces, 6);
 
 /**
  * DeleteFaceEmbeddings — remove a single student's face record by student_id (backend user ID).
@@ -124,7 +175,7 @@ export type DeleteFaceEmbeddingsRequest = Message<"faces.v1.DeleteFaceEmbeddings
  * Use `create(DeleteFaceEmbeddingsRequestSchema)` to create a new message.
  */
 export const DeleteFaceEmbeddingsRequestSchema: GenMessage<DeleteFaceEmbeddingsRequest> = /*@__PURE__*/
-  messageDesc(file_faces_v1_faces, 5);
+  messageDesc(file_faces_v1_faces, 7);
 
 /**
  * @generated from message faces.v1.DeleteFaceEmbeddingsResponse
@@ -137,7 +188,7 @@ export type DeleteFaceEmbeddingsResponse = Message<"faces.v1.DeleteFaceEmbedding
  * Use `create(DeleteFaceEmbeddingsResponseSchema)` to create a new message.
  */
 export const DeleteFaceEmbeddingsResponseSchema: GenMessage<DeleteFaceEmbeddingsResponse> = /*@__PURE__*/
-  messageDesc(file_faces_v1_faces, 6);
+  messageDesc(file_faces_v1_faces, 8);
 
 /**
  * DeleteAllFaceEmbeddings — remove every face record (dangerous).
@@ -152,7 +203,7 @@ export type DeleteAllFaceEmbeddingsRequest = Message<"faces.v1.DeleteAllFaceEmbe
  * Use `create(DeleteAllFaceEmbeddingsRequestSchema)` to create a new message.
  */
 export const DeleteAllFaceEmbeddingsRequestSchema: GenMessage<DeleteAllFaceEmbeddingsRequest> = /*@__PURE__*/
-  messageDesc(file_faces_v1_faces, 7);
+  messageDesc(file_faces_v1_faces, 9);
 
 /**
  * @generated from message faces.v1.DeleteAllFaceEmbeddingsResponse
@@ -165,7 +216,7 @@ export type DeleteAllFaceEmbeddingsResponse = Message<"faces.v1.DeleteAllFaceEmb
  * Use `create(DeleteAllFaceEmbeddingsResponseSchema)` to create a new message.
  */
 export const DeleteAllFaceEmbeddingsResponseSchema: GenMessage<DeleteAllFaceEmbeddingsResponse> = /*@__PURE__*/
-  messageDesc(file_faces_v1_faces, 8);
+  messageDesc(file_faces_v1_faces, 10);
 
 /**
  * @generated from service faces.v1.FaceEmbeddingService
@@ -186,6 +237,14 @@ export const FaceEmbeddingService: GenService<{
     methodKind: "unary";
     input: typeof ListFaceEmbeddingsRequestSchema;
     output: typeof ListFaceEmbeddingsResponseSchema;
+  },
+  /**
+   * @generated from rpc faces.v1.FaceEmbeddingService.LoadFaceEmbeddings
+   */
+  loadFaceEmbeddings: {
+    methodKind: "unary";
+    input: typeof LoadFaceEmbeddingsRequestSchema;
+    output: typeof LoadFaceEmbeddingsResponseSchema;
   },
   /**
    * @generated from rpc faces.v1.FaceEmbeddingService.DeleteFaceEmbeddings
