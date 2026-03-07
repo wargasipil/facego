@@ -74,7 +74,7 @@ export function RegisterTab({ modelsReady, active }: Props) {
             ctx.clearRect(0, 0, ov.width, ov.height)
             if (det) {
               const resized = faceapi.resizeResults(det, { width: rect.width, height: rect.height })
-              const bb = resized.detection.box
+              const bb = resized.box
               ctx.strokeStyle = '#22c55e'
               ctx.lineWidth = 2
               ctx.strokeRect(bb.x, bb.y, bb.width, bb.height)
@@ -224,16 +224,9 @@ export function RegisterTab({ modelsReady, active }: Props) {
           <HStack gap={2} overflowX="auto" px={1} pt={1} pb={2}>
             {samples.map((s, i) => (
               <Box key={i} position="relative" flexShrink={0}>
-                <Box
-                  as="img"
+                <img
                   src={s.dataUrl}
-                  w="128px"
-                  h="96px"
-                  objectFit="cover"
-                  borderRadius="sm"
-                  border="2px solid"
-                  borderColor="green.300"
-                  display="block"
+                  style={{ width: '128px', height: '96px', objectFit: 'cover', borderRadius: '4px', border: '2px solid #86efac', display: 'block' }}
                 />
                 <Box
                   as="button"

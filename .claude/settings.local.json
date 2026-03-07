@@ -32,7 +32,9 @@
       "Bash(go install github.com/google/wire/cmd/wire@latest)",
       "Bash(python3 -c \":*)",
       "Bash(where python3)",
-      "Bash(where python)"
+      "Bash(where python)",
+      "Bash(go version)",
+      "Bash(node --version)"
     ]
   }
 }
