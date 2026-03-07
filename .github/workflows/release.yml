@@ -43,6 +43,10 @@ jobs:
           go-version: '1.25.3'
           cache-dependency-path: backend/go.sum
 
+      - name: Download Go modules
+        working-directory: backend
+        run: go mod download
+
       - name: Build Go backend (Windows amd64)
         working-directory: backend
         env:
