@@ -39,6 +39,9 @@ const (
 	// FaceEmbeddingServiceListFaceEmbeddingsProcedure is the fully-qualified name of the
 	// FaceEmbeddingService's ListFaceEmbeddings RPC.
 	FaceEmbeddingServiceListFaceEmbeddingsProcedure = "/faces.v1.FaceEmbeddingService/ListFaceEmbeddings"
+	// FaceEmbeddingServiceLoadFaceEmbeddingsProcedure is the fully-qualified name of the
+	// FaceEmbeddingService's LoadFaceEmbeddings RPC.
+	FaceEmbeddingServiceLoadFaceEmbeddingsProcedure = "/faces.v1.FaceEmbeddingService/LoadFaceEmbeddings"
 	// FaceEmbeddingServiceDeleteFaceEmbeddingsProcedure is the fully-qualified name of the
 	// FaceEmbeddingService's DeleteFaceEmbeddings RPC.
 	FaceEmbeddingServiceDeleteFaceEmbeddingsProcedure = "/faces.v1.FaceEmbeddingService/DeleteFaceEmbeddings"
@@ -51,6 +54,7 @@ const (
 type FaceEmbeddingServiceClient interface {
 	UpsertFaceEmbeddings(context.Context, *connect.Request[v1.UpsertFaceEmbeddingsRequest]) (*connect.Response[v1.UpsertFaceEmbeddingsResponse], error)
 	ListFaceEmbeddings(context.Context, *connect.Request[v1.ListFaceEmbeddingsRequest]) (*connect.Response[v1.ListFaceEmbeddingsResponse], error)
+	LoadFaceEmbeddings(context.Context, *connect.Request[v1.LoadFaceEmbeddingsRequest]) (*connect.Response[v1.LoadFaceEmbeddingsResponse], error)
 	DeleteFaceEmbeddings(context.Context, *connect.Request[v1.DeleteFaceEmbeddingsRequest]) (*connect.Response[v1.DeleteFaceEmbeddingsResponse], error)
 	DeleteAllFaceEmbeddings(context.Context, *connect.Request[v1.DeleteAllFaceEmbeddingsRequest]) (*connect.Response[v1.DeleteAllFaceEmbeddingsResponse], error)
 }
@@ -78,6 +82,12 @@ func NewFaceEmbeddingServiceClient(httpClient connect.HTTPClient, baseURL string
 			connect.WithSchema(faceEmbeddingServiceMethods.ByName("ListFaceEmbeddings")),
 			connect.WithClientOptions(opts...),
 		),
+		loadFaceEmbeddings: connect.NewClient[v1.LoadFaceEmbeddingsRequest, v1.LoadFaceEmbeddingsResponse](
+			httpClient,
+			baseURL+FaceEmbeddingServiceLoadFaceEmbeddingsProcedure,
+			connect.WithSchema(faceEmbeddingServiceMethods.ByName("LoadFaceEmbeddings")),
+			connect.WithClientOptions(opts...),
+		),
 		deleteFaceEmbeddings: connect.NewClient[v1.DeleteFaceEmbeddingsRequest, v1.DeleteFaceEmbeddingsResponse](
 			httpClient,
 			baseURL+FaceEmbeddingServiceDeleteFaceEmbeddingsProcedure,
@@ -97,6 +107,7 @@ func NewFaceEmbeddingServiceClient(httpClient connect.HTTPClient, baseURL string
 type faceEmbeddingServiceClient struct {
 	upsertFaceEmbeddings    *connect.Client[v1.UpsertFaceEmbeddingsRequest, v1.UpsertFaceEmbeddingsResponse]
 	listFaceEmbeddings      *connect.Client[v1.ListFaceEmbeddingsRequest, v1.ListFaceEmbeddingsResponse]
+	loadFaceEmbeddings      *connect.Client[v1.LoadFaceEmbeddingsRequest, v1.LoadFaceEmbeddingsResponse]
 	deleteFaceEmbeddings    *connect.Client[v1.DeleteFaceEmbeddingsRequest, v1.DeleteFaceEmbeddingsResponse]
 	deleteAllFaceEmbeddings *connect.Client[v1.DeleteAllFaceEmbeddingsRequest, v1.DeleteAllFaceEmbeddingsResponse]
 }
@@ -109,6 +120,11 @@ func (c *faceEmbeddingServiceClient) UpsertFaceEmbeddings(ctx context.Context, r
 // ListFaceEmbeddings calls faces.v1.FaceEmbeddingService.ListFaceEmbeddings.
 func (c *faceEmbeddingServiceClient) ListFaceEmbeddings(ctx context.Context, req *connect.Request[v1.ListFaceEmbeddingsRequest]) (*connect.Response[v1.ListFaceEmbeddingsResponse], error) {
 	return c.listFaceEmbeddings.CallUnary(ctx, req)
+}
+
+// LoadFaceEmbeddings calls faces.v1.FaceEmbeddingService.LoadFaceEmbeddings.
+func (c *faceEmbeddingServiceClient) LoadFaceEmbeddings(ctx context.Context, req *connect.Request[v1.LoadFaceEmbeddingsRequest]) (*connect.Response[v1.LoadFaceEmbeddingsResponse], error) {
+	return c.loadFaceEmbeddings.CallUnary(ctx, req)
 }
 
 // DeleteFaceEmbeddings calls faces.v1.FaceEmbeddingService.DeleteFaceEmbeddings.
@@ -125,6 +141,7 @@ func (c *faceEmbeddingServiceClient) DeleteAllFaceEmbeddings(ctx context.Context
 type FaceEmbeddingServiceHandler interface {
 	UpsertFaceEmbeddings(context.Context, *connect.Request[v1.UpsertFaceEmbeddingsRequest]) (*connect.Response[v1.UpsertFaceEmbeddingsResponse], error)
 	ListFaceEmbeddings(context.Context, *connect.Request[v1.ListFaceEmbeddingsRequest]) (*connect.Response[v1.ListFaceEmbeddingsResponse], error)
+	LoadFaceEmbeddings(context.Context, *connect.Request[v1.LoadFaceEmbeddingsRequest]) (*connect.Response[v1.LoadFaceEmbeddingsResponse], error)
 	DeleteFaceEmbeddings(context.Context, *connect.Request[v1.DeleteFaceEmbeddingsRequest]) (*connect.Response[v1.DeleteFaceEmbeddingsResponse], error)
 	DeleteAllFaceEmbeddings(context.Context, *connect.Request[v1.DeleteAllFaceEmbeddingsRequest]) (*connect.Response[v1.DeleteAllFaceEmbeddingsResponse], error)
 }
@@ -148,6 +165,12 @@ func NewFaceEmbeddingServiceHandler(svc FaceEmbeddingServiceHandler, opts ...con
 		connect.WithSchema(faceEmbeddingServiceMethods.ByName("ListFaceEmbeddings")),
 		connect.WithHandlerOptions(opts...),
 	)
+	faceEmbeddingServiceLoadFaceEmbeddingsHandler := connect.NewUnaryHandler(
+		FaceEmbeddingServiceLoadFaceEmbeddingsProcedure,
+		svc.LoadFaceEmbeddings,
+		connect.WithSchema(faceEmbeddingServiceMethods.ByName("LoadFaceEmbeddings")),
+		connect.WithHandlerOptions(opts...),
+	)
 	faceEmbeddingServiceDeleteFaceEmbeddingsHandler := connect.NewUnaryHandler(
 		FaceEmbeddingServiceDeleteFaceEmbeddingsProcedure,
 		svc.DeleteFaceEmbeddings,
@@ -166,6 +189,8 @@ func NewFaceEmbeddingServiceHandler(svc FaceEmbeddingServiceHandler, opts ...con
 			faceEmbeddingServiceUpsertFaceEmbeddingsHandler.ServeHTTP(w, r)
 		case FaceEmbeddingServiceListFaceEmbeddingsProcedure:
 			faceEmbeddingServiceListFaceEmbeddingsHandler.ServeHTTP(w, r)
+		case FaceEmbeddingServiceLoadFaceEmbeddingsProcedure:
+			faceEmbeddingServiceLoadFaceEmbeddingsHandler.ServeHTTP(w, r)
 		case FaceEmbeddingServiceDeleteFaceEmbeddingsProcedure:
 			faceEmbeddingServiceDeleteFaceEmbeddingsHandler.ServeHTTP(w, r)
 		case FaceEmbeddingServiceDeleteAllFaceEmbeddingsProcedure:
@@ -185,6 +210,10 @@ func (UnimplementedFaceEmbeddingServiceHandler) UpsertFaceEmbeddings(context.Con
 
 func (UnimplementedFaceEmbeddingServiceHandler) ListFaceEmbeddings(context.Context, *connect.Request[v1.ListFaceEmbeddingsRequest]) (*connect.Response[v1.ListFaceEmbeddingsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("faces.v1.FaceEmbeddingService.ListFaceEmbeddings is not implemented"))
+}
+
+func (UnimplementedFaceEmbeddingServiceHandler) LoadFaceEmbeddings(context.Context, *connect.Request[v1.LoadFaceEmbeddingsRequest]) (*connect.Response[v1.LoadFaceEmbeddingsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("faces.v1.FaceEmbeddingService.LoadFaceEmbeddings is not implemented"))
 }
 
 func (UnimplementedFaceEmbeddingServiceHandler) DeleteFaceEmbeddings(context.Context, *connect.Request[v1.DeleteFaceEmbeddingsRequest]) (*connect.Response[v1.DeleteFaceEmbeddingsResponse], error) {

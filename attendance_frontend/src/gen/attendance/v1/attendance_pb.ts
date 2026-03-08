@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file attendance/v1/attendance.proto.
  */
 export const file_attendance_v1_attendance: GenFile = /*@__PURE__*/
-  fileDesc("Ch5hdHRlbmRhbmNlL3YxL2F0dGVuZGFuY2UucHJvdG8SDWF0dGVuZGFuY2UudjEifAoOVXNlckF0dGVuZGFuY2USCgoCaWQYASABKAMSEgoKc3R1ZGVudF9pZBgCIAEoCRIMCgRuYW1lGAMgASgJEhEKCXBob3RvX3VybBgEIAEoCRITCgtwYXJlbnRfbmFtZRgFIAEoCRIUCgxwYXJlbnRfcGhvbmUYBiABKAki/QIKEEF0dGVuZGFuY2VSZWNvcmQSCgoCaWQYASABKAMSDwoHdXNlcl9pZBgCIAEoAxIQCghjbGFzc19pZBgDIAEoAxIZChFjbGFzc19zY2hlZHVsZV9pZBgEIAEoAxInCgNkYXkYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KBnN0YXR1cxgGIAEoDjIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN0YXR1cxIyCg1ub3RpZnlfc3RhdHVzGAcgASgOMhsuYXR0ZW5kYW5jZS52MS5Ob3RpZnlTdGF0dXMSMQoNY2hlY2tfaW5fdGltZRgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoHc3R1ZGVudBgKIAEoCzIdLmF0dGVuZGFuY2UudjEuVXNlckF0dGVuZGFuY2UiQwoRQXR0ZW5kYW5jZVN1bW1hcnkSDQoFdG90YWwYASABKAUSDwoHcHJlc2VudBgCIAEoBRIOCgZhYnNlbnQYAyABKAUiLQoXUmVjb3JkQXR0ZW5kYW5jZVJlcXVlc3QSEgoKZmFjZV9pbWFnZRgBIAEoDCJcChhSZWNvcmRBdHRlbmRhbmNlUmVzcG9uc2USLwoGcmVjb3JkGAEgASgLMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUmVjb3JkEg8KB21hdGNoZWQYAiABKAgidgoYR2V0RGFpbHlBdHRlbmRhbmNlRmlsdGVyEhAKCGNsYXNzX2lkGAEgASgDEhMKC3NjaGVkdWxlX2lkGAIgASgDEigKBGRhdGUYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEgkKAXEYBCABKAkiigEKGUdldERhaWx5QXR0ZW5kYW5jZVJlcXVlc3QSNwoGZmlsdGVyGAEgASgLMicuYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VGaWx0ZXISFQoEcGFnZRgCIAEoBUIHukgEGgIoABIdCglwYWdlX3NpemUYAyABKAVCCrpIBxoFGMgBKAAikAEKGkdldERhaWx5QXR0ZW5kYW5jZVJlc3BvbnNlEjAKB3JlY29yZHMYASADKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQSMQoHc3VtbWFyeRgCIAEoCzIgLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN1bW1hcnkSDQoFdG90YWwYAyABKAUiegoVTGlzdEF0dGVuZGFuY2VSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAMSKAoEZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJgoCdG8YAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkoKFkxpc3RBdHRlbmRhbmNlUmVzcG9uc2USMAoHcmVjb3JkcxgBIAMoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZCIYChZXYXRjaEF0dGVuZGFuY2VSZXF1ZXN0IkoKF1dhdGNoQXR0ZW5kYW5jZVJlc3BvbnNlEi8KBnJlY29yZBgBIAEoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZCLvAQoXQ3JlYXRlQXR0ZW5kYW5jZVJlcXVlc3QSGAoHdXNlcl9pZBgBIAEoA0IHukgEIgIgABI5CgZzdGF0dXMYAiABKA4yHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VTdGF0dXNCCLpIBYIBAhABEg0KBW5vdGVzGAMgASgJEjEKDWNoZWNrX2luX3RpbWUYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhkKCGNsYXNzX2lkGAUgASgDQge6SAQiAigAEiIKEWNsYXNzX3NjaGVkdWxlX2lkGAYgASgDQge6SAQiAigAIksKGENyZWF0ZUF0dGVuZGFuY2VSZXNwb25zZRIvCgZyZWNvcmQYASABKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQiLgoXRGVsZXRlQXR0ZW5kYW5jZVJlcXVlc3QSEwoCaWQYASABKANCB7pIBCICIAAiGgoYRGVsZXRlQXR0ZW5kYW5jZVJlc3BvbnNlIugBChhBdHRlbmRhbmNlUHVzaExvZ1JlcXVlc3QSGwoKc2Vzc2lvbl9pZBgBIAEoCUIHukgEcgIQARIYCgd1c2VyX2lkGAIgASgDQge6SAQiAiAAEhsKCnN0dWRlbnRfaWQYAyABKAlCB7pIBHICEAESFAoMc3R1ZGVudF9uYW1lGAQgASgJEhkKCGNsYXNzX2lkGAUgASgDQge6SAQiAiAAEhIKCmNsYXNzX25hbWUYBiABKAkSMwoHc2Vlbl9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCBrpIA8gBASIbChlBdHRlbmRhbmNlUHVzaExvZ1Jlc3BvbnNlKnIKEEF0dGVuZGFuY2VTdGF0dXMSIQodQVRURU5EQU5DRV9TVEFUVVNfVU5TUEVDSUZJRUQQABIdChlBVFRFTkRBTkNFX1NUQVRVU19QUkVTRU5UEAESHAoYQVRURU5EQU5DRV9TVEFUVVNfQUJTRU5UEAIqZAoMTm90aWZ5U3RhdHVzEh0KGU5PVElGWV9TVEFUVVNfVU5TUEVDSUZJRUQQABIZChVOT1RJRllfU1RBVFVTX1BFTkRJTkcQARIaChZOT1RJRllfU1RBVFVTX05PVElGSUVEEAIy2AUKEUF0dGVuZGFuY2VTZXJ2aWNlEmMKEFJlY29yZEF0dGVuZGFuY2USJi5hdHRlbmRhbmNlLnYxLlJlY29yZEF0dGVuZGFuY2VSZXF1ZXN0GicuYXR0ZW5kYW5jZS52MS5SZWNvcmRBdHRlbmRhbmNlUmVzcG9uc2USaQoSR2V0RGFpbHlBdHRlbmRhbmNlEiguYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VSZXF1ZXN0GikuYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VSZXNwb25zZRJdCg5MaXN0QXR0ZW5kYW5jZRIkLmF0dGVuZGFuY2UudjEuTGlzdEF0dGVuZGFuY2VSZXF1ZXN0GiUuYXR0ZW5kYW5jZS52MS5MaXN0QXR0ZW5kYW5jZVJlc3BvbnNlEmIKD1dhdGNoQXR0ZW5kYW5jZRIlLmF0dGVuZGFuY2UudjEuV2F0Y2hBdHRlbmRhbmNlUmVxdWVzdBomLmF0dGVuZGFuY2UudjEuV2F0Y2hBdHRlbmRhbmNlUmVzcG9uc2UwARJjChBDcmVhdGVBdHRlbmRhbmNlEiYuYXR0ZW5kYW5jZS52MS5DcmVhdGVBdHRlbmRhbmNlUmVxdWVzdBonLmF0dGVuZGFuY2UudjEuQ3JlYXRlQXR0ZW5kYW5jZVJlc3BvbnNlEmMKEERlbGV0ZUF0dGVuZGFuY2USJi5hdHRlbmRhbmNlLnYxLkRlbGV0ZUF0dGVuZGFuY2VSZXF1ZXN0GicuYXR0ZW5kYW5jZS52MS5EZWxldGVBdHRlbmRhbmNlUmVzcG9uc2USZgoRQXR0ZW5kYW5jZVB1c2hMb2cSJy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VQdXNoTG9nUmVxdWVzdBooLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVB1c2hMb2dSZXNwb25zZUK2AQoRY29tLmF0dGVuZGFuY2UudjFCD0F0dGVuZGFuY2VQcm90b1ABWjtnaXRodWIuY29tL3dhcmdhc2lwaWwvZmFjZWdvL2dlbi9hdHRlbmRhbmNlL3YxO2F0dGVuZGFuY2V2MaICA0FYWKoCDUF0dGVuZGFuY2UuVjHKAg1BdHRlbmRhbmNlXFYx4gIZQXR0ZW5kYW5jZVxWMVxHUEJNZXRhZGF0YeoCDkF0dGVuZGFuY2U6OlYxYgZwcm90bzM", [file_buf_validate_validate, file_google_protobuf_timestamp]);
+  fileDesc("Ch5hdHRlbmRhbmNlL3YxL2F0dGVuZGFuY2UucHJvdG8SDWF0dGVuZGFuY2UudjEifAoOVXNlckF0dGVuZGFuY2USCgoCaWQYASABKAMSEgoKc3R1ZGVudF9pZBgCIAEoCRIMCgRuYW1lGAMgASgJEhEKCXBob3RvX3VybBgEIAEoCRITCgtwYXJlbnRfbmFtZRgFIAEoCRIUCgxwYXJlbnRfcGhvbmUYBiABKAki/QIKEEF0dGVuZGFuY2VSZWNvcmQSCgoCaWQYASABKAMSDwoHdXNlcl9pZBgCIAEoAxIQCghjbGFzc19pZBgDIAEoAxIZChFjbGFzc19zY2hlZHVsZV9pZBgEIAEoAxInCgNkYXkYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi8KBnN0YXR1cxgGIAEoDjIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN0YXR1cxIyCg1ub3RpZnlfc3RhdHVzGAcgASgOMhsuYXR0ZW5kYW5jZS52MS5Ob3RpZnlTdGF0dXMSMQoNY2hlY2tfaW5fdGltZRgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoHc3R1ZGVudBgKIAEoCzIdLmF0dGVuZGFuY2UudjEuVXNlckF0dGVuZGFuY2UiQwoRQXR0ZW5kYW5jZVN1bW1hcnkSDQoFdG90YWwYASABKAUSDwoHcHJlc2VudBgCIAEoBRIOCgZhYnNlbnQYAyABKAUiLQoXUmVjb3JkQXR0ZW5kYW5jZVJlcXVlc3QSEgoKZmFjZV9pbWFnZRgBIAEoDCJcChhSZWNvcmRBdHRlbmRhbmNlUmVzcG9uc2USLwoGcmVjb3JkGAEgASgLMh8uYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUmVjb3JkEg8KB21hdGNoZWQYAiABKAgidgoYR2V0RGFpbHlBdHRlbmRhbmNlRmlsdGVyEhAKCGNsYXNzX2lkGAEgASgDEhMKC3NjaGVkdWxlX2lkGAIgASgDEigKBGRhdGUYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEgkKAXEYBCABKAkiigEKGUdldERhaWx5QXR0ZW5kYW5jZVJlcXVlc3QSNwoGZmlsdGVyGAEgASgLMicuYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VGaWx0ZXISFQoEcGFnZRgCIAEoBUIHukgEGgIoABIdCglwYWdlX3NpemUYAyABKAVCCrpIBxoFGMgBKAAikAEKGkdldERhaWx5QXR0ZW5kYW5jZVJlc3BvbnNlEjAKB3JlY29yZHMYASADKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQSMQoHc3VtbWFyeRgCIAEoCzIgLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVN1bW1hcnkSDQoFdG90YWwYAyABKAUiNAoXQXR0ZW5kYW5jZVN0cmVhbVJlcXVlc3QSGQoIY2xhc3NfaWQYASABKANCB7pIBCICIAEiTwoYQXR0ZW5kYW5jZVN0cmVhbVJlc3BvbnNlEjMKCmF0dGVuZGFuY2UYASABKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQiegoVTGlzdEF0dGVuZGFuY2VSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAMSKAoEZnJvbRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASJgoCdG8YAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIkoKFkxpc3RBdHRlbmRhbmNlUmVzcG9uc2USMAoHcmVjb3JkcxgBIAMoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZCIYChZXYXRjaEF0dGVuZGFuY2VSZXF1ZXN0IkoKF1dhdGNoQXR0ZW5kYW5jZVJlc3BvbnNlEi8KBnJlY29yZBgBIAEoCzIfLmF0dGVuZGFuY2UudjEuQXR0ZW5kYW5jZVJlY29yZCLvAQoXQ3JlYXRlQXR0ZW5kYW5jZVJlcXVlc3QSGAoHdXNlcl9pZBgBIAEoA0IHukgEIgIgABI5CgZzdGF0dXMYAiABKA4yHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VTdGF0dXNCCLpIBYIBAhABEg0KBW5vdGVzGAMgASgJEjEKDWNoZWNrX2luX3RpbWUYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhkKCGNsYXNzX2lkGAUgASgDQge6SAQiAigAEiIKEWNsYXNzX3NjaGVkdWxlX2lkGAYgASgDQge6SAQiAigAIksKGENyZWF0ZUF0dGVuZGFuY2VSZXNwb25zZRIvCgZyZWNvcmQYASABKAsyHy5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VSZWNvcmQiLgoXRGVsZXRlQXR0ZW5kYW5jZVJlcXVlc3QSEwoCaWQYASABKANCB7pIBCICIAAiGgoYRGVsZXRlQXR0ZW5kYW5jZVJlc3BvbnNlIugBChhBdHRlbmRhbmNlUHVzaExvZ1JlcXVlc3QSGwoKc2Vzc2lvbl9pZBgBIAEoCUIHukgEcgIQARIYCgd1c2VyX2lkGAIgASgDQge6SAQiAiAAEhsKCnN0dWRlbnRfaWQYAyABKAlCB7pIBHICEAESFAoMc3R1ZGVudF9uYW1lGAQgASgJEhkKCGNsYXNzX2lkGAUgASgDQge6SAQiAiAAEhIKCmNsYXNzX25hbWUYBiABKAkSMwoHc2Vlbl9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCBrpIA8gBASIbChlBdHRlbmRhbmNlUHVzaExvZ1Jlc3BvbnNlKnIKEEF0dGVuZGFuY2VTdGF0dXMSIQodQVRURU5EQU5DRV9TVEFUVVNfVU5TUEVDSUZJRUQQABIdChlBVFRFTkRBTkNFX1NUQVRVU19QUkVTRU5UEAESHAoYQVRURU5EQU5DRV9TVEFUVVNfQUJTRU5UEAIqZAoMTm90aWZ5U3RhdHVzEh0KGU5PVElGWV9TVEFUVVNfVU5TUEVDSUZJRUQQABIZChVOT1RJRllfU1RBVFVTX1BFTkRJTkcQARIaChZOT1RJRllfU1RBVFVTX05PVElGSUVEEAIyvwYKEUF0dGVuZGFuY2VTZXJ2aWNlEmMKEFJlY29yZEF0dGVuZGFuY2USJi5hdHRlbmRhbmNlLnYxLlJlY29yZEF0dGVuZGFuY2VSZXF1ZXN0GicuYXR0ZW5kYW5jZS52MS5SZWNvcmRBdHRlbmRhbmNlUmVzcG9uc2USaQoSR2V0RGFpbHlBdHRlbmRhbmNlEiguYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VSZXF1ZXN0GikuYXR0ZW5kYW5jZS52MS5HZXREYWlseUF0dGVuZGFuY2VSZXNwb25zZRJdCg5MaXN0QXR0ZW5kYW5jZRIkLmF0dGVuZGFuY2UudjEuTGlzdEF0dGVuZGFuY2VSZXF1ZXN0GiUuYXR0ZW5kYW5jZS52MS5MaXN0QXR0ZW5kYW5jZVJlc3BvbnNlEmUKEEF0dGVuZGFuY2VTdHJlYW0SJi5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VTdHJlYW1SZXF1ZXN0GicuYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlU3RyZWFtUmVzcG9uc2UwARJiCg9XYXRjaEF0dGVuZGFuY2USJS5hdHRlbmRhbmNlLnYxLldhdGNoQXR0ZW5kYW5jZVJlcXVlc3QaJi5hdHRlbmRhbmNlLnYxLldhdGNoQXR0ZW5kYW5jZVJlc3BvbnNlMAESYwoQQ3JlYXRlQXR0ZW5kYW5jZRImLmF0dGVuZGFuY2UudjEuQ3JlYXRlQXR0ZW5kYW5jZVJlcXVlc3QaJy5hdHRlbmRhbmNlLnYxLkNyZWF0ZUF0dGVuZGFuY2VSZXNwb25zZRJjChBEZWxldGVBdHRlbmRhbmNlEiYuYXR0ZW5kYW5jZS52MS5EZWxldGVBdHRlbmRhbmNlUmVxdWVzdBonLmF0dGVuZGFuY2UudjEuRGVsZXRlQXR0ZW5kYW5jZVJlc3BvbnNlEmYKEUF0dGVuZGFuY2VQdXNoTG9nEicuYXR0ZW5kYW5jZS52MS5BdHRlbmRhbmNlUHVzaExvZ1JlcXVlc3QaKC5hdHRlbmRhbmNlLnYxLkF0dGVuZGFuY2VQdXNoTG9nUmVzcG9uc2VCtgEKEWNvbS5hdHRlbmRhbmNlLnYxQg9BdHRlbmRhbmNlUHJvdG9QAVo7Z2l0aHViLmNvbS93YXJnYXNpcGlsL2ZhY2Vnby9nZW4vYXR0ZW5kYW5jZS92MTthdHRlbmRhbmNldjGiAgNBWFiqAg1BdHRlbmRhbmNlLlYxygINQXR0ZW5kYW5jZVxWMeICGUF0dGVuZGFuY2VcVjFcR1BCTWV0YWRhdGHqAg5BdHRlbmRhbmNlOjpWMWIGcHJvdG8z", [file_buf_validate_validate, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message attendance.v1.UserAttendance
@@ -286,6 +286,40 @@ export const GetDailyAttendanceResponseSchema: GenMessage<GetDailyAttendanceResp
   messageDesc(file_attendance_v1_attendance, 7);
 
 /**
+ * @generated from message attendance.v1.AttendanceStreamRequest
+ */
+export type AttendanceStreamRequest = Message<"attendance.v1.AttendanceStreamRequest"> & {
+  /**
+   * @generated from field: int64 class_id = 1;
+   */
+  classId: bigint;
+};
+
+/**
+ * Describes the message attendance.v1.AttendanceStreamRequest.
+ * Use `create(AttendanceStreamRequestSchema)` to create a new message.
+ */
+export const AttendanceStreamRequestSchema: GenMessage<AttendanceStreamRequest> = /*@__PURE__*/
+  messageDesc(file_attendance_v1_attendance, 8);
+
+/**
+ * @generated from message attendance.v1.AttendanceStreamResponse
+ */
+export type AttendanceStreamResponse = Message<"attendance.v1.AttendanceStreamResponse"> & {
+  /**
+   * @generated from field: attendance.v1.AttendanceRecord attendance = 1;
+   */
+  attendance?: AttendanceRecord;
+};
+
+/**
+ * Describes the message attendance.v1.AttendanceStreamResponse.
+ * Use `create(AttendanceStreamResponseSchema)` to create a new message.
+ */
+export const AttendanceStreamResponseSchema: GenMessage<AttendanceStreamResponse> = /*@__PURE__*/
+  messageDesc(file_attendance_v1_attendance, 9);
+
+/**
  * ListAttendance ──────────────────────────────────────────────────────────────
  *
  * @generated from message attendance.v1.ListAttendanceRequest
@@ -318,7 +352,7 @@ export type ListAttendanceRequest = Message<"attendance.v1.ListAttendanceRequest
  * Use `create(ListAttendanceRequestSchema)` to create a new message.
  */
 export const ListAttendanceRequestSchema: GenMessage<ListAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 8);
+  messageDesc(file_attendance_v1_attendance, 10);
 
 /**
  * @generated from message attendance.v1.ListAttendanceResponse
@@ -335,7 +369,7 @@ export type ListAttendanceResponse = Message<"attendance.v1.ListAttendanceRespon
  * Use `create(ListAttendanceResponseSchema)` to create a new message.
  */
 export const ListAttendanceResponseSchema: GenMessage<ListAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 9);
+  messageDesc(file_attendance_v1_attendance, 11);
 
 /**
  * WatchAttendance ─────────────────────────────────────────────────────────────
@@ -350,7 +384,7 @@ export type WatchAttendanceRequest = Message<"attendance.v1.WatchAttendanceReque
  * Use `create(WatchAttendanceRequestSchema)` to create a new message.
  */
 export const WatchAttendanceRequestSchema: GenMessage<WatchAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 10);
+  messageDesc(file_attendance_v1_attendance, 12);
 
 /**
  * @generated from message attendance.v1.WatchAttendanceResponse
@@ -367,7 +401,7 @@ export type WatchAttendanceResponse = Message<"attendance.v1.WatchAttendanceResp
  * Use `create(WatchAttendanceResponseSchema)` to create a new message.
  */
 export const WatchAttendanceResponseSchema: GenMessage<WatchAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 11);
+  messageDesc(file_attendance_v1_attendance, 13);
 
 /**
  * CreateAttendance ────────────────────────────────────────────────────────────
@@ -417,7 +451,7 @@ export type CreateAttendanceRequest = Message<"attendance.v1.CreateAttendanceReq
  * Use `create(CreateAttendanceRequestSchema)` to create a new message.
  */
 export const CreateAttendanceRequestSchema: GenMessage<CreateAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 12);
+  messageDesc(file_attendance_v1_attendance, 14);
 
 /**
  * @generated from message attendance.v1.CreateAttendanceResponse
@@ -434,7 +468,7 @@ export type CreateAttendanceResponse = Message<"attendance.v1.CreateAttendanceRe
  * Use `create(CreateAttendanceResponseSchema)` to create a new message.
  */
 export const CreateAttendanceResponseSchema: GenMessage<CreateAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 13);
+  messageDesc(file_attendance_v1_attendance, 15);
 
 /**
  * DeleteAttendance ────────────────────────────────────────────────────────────
@@ -453,7 +487,7 @@ export type DeleteAttendanceRequest = Message<"attendance.v1.DeleteAttendanceReq
  * Use `create(DeleteAttendanceRequestSchema)` to create a new message.
  */
 export const DeleteAttendanceRequestSchema: GenMessage<DeleteAttendanceRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 14);
+  messageDesc(file_attendance_v1_attendance, 16);
 
 /**
  * @generated from message attendance.v1.DeleteAttendanceResponse
@@ -466,7 +500,7 @@ export type DeleteAttendanceResponse = Message<"attendance.v1.DeleteAttendanceRe
  * Use `create(DeleteAttendanceResponseSchema)` to create a new message.
  */
 export const DeleteAttendanceResponseSchema: GenMessage<DeleteAttendanceResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 15);
+  messageDesc(file_attendance_v1_attendance, 17);
 
 /**
  * AttendancePushLog ───────────────────────────────────────────────────────────
@@ -524,7 +558,7 @@ export type AttendancePushLogRequest = Message<"attendance.v1.AttendancePushLogR
  * Use `create(AttendancePushLogRequestSchema)` to create a new message.
  */
 export const AttendancePushLogRequestSchema: GenMessage<AttendancePushLogRequest> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 16);
+  messageDesc(file_attendance_v1_attendance, 18);
 
 /**
  * @generated from message attendance.v1.AttendancePushLogResponse
@@ -537,7 +571,7 @@ export type AttendancePushLogResponse = Message<"attendance.v1.AttendancePushLog
  * Use `create(AttendancePushLogResponseSchema)` to create a new message.
  */
 export const AttendancePushLogResponseSchema: GenMessage<AttendancePushLogResponse> = /*@__PURE__*/
-  messageDesc(file_attendance_v1_attendance, 17);
+  messageDesc(file_attendance_v1_attendance, 19);
 
 /**
  * @generated from enum attendance.v1.AttendanceStatus
@@ -624,6 +658,14 @@ export const AttendanceService: GenService<{
     methodKind: "unary";
     input: typeof ListAttendanceRequestSchema;
     output: typeof ListAttendanceResponseSchema;
+  },
+  /**
+   * @generated from rpc attendance.v1.AttendanceService.AttendanceStream
+   */
+  attendanceStream: {
+    methodKind: "server_streaming";
+    input: typeof AttendanceStreamRequestSchema;
+    output: typeof AttendanceStreamResponseSchema;
   },
   /**
    * Server-streaming: push a new AttendanceRecord every time a face is recognised.

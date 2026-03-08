@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from buf.validate import validate_pb2 as buf_dot_validate_dot_validate__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x14\x66\x61\x63\x65s/v1/faces.proto\x12\x08\x66\x61\x63\x65s.v1\x1a\x1b\x62uf/validate/validate.proto\"\x8f\x01\n\nFaceRecord\x12&\n\nstudent_id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\tstudentId\x12\'\n\nembeddings\x18\x02 \x01(\x0c\x42\x07\xbaH\x04z\x02\x10\x01R\nembeddings\x12\x30\n\x0f\x65mbedding_count\x18\x03 \x01(\x05\x42\x07\xbaH\x04\x1a\x02 \x00R\x0e\x65mbeddingCount\"S\n\x1bUpsertFaceEmbeddingsRequest\x12\x34\n\x06record\x18\x01 \x01(\x0b\x32\x14.faces.v1.FaceRecordB\x06\xbaH\x03\xc8\x01\x01R\x06record\"\x1e\n\x1cUpsertFaceEmbeddingsResponse\"\x1b\n\x19ListFaceEmbeddingsRequest\"L\n\x1aListFaceEmbeddingsResponse\x12.\n\x07records\x18\x01 \x03(\x0b\x32\x14.faces.v1.FaceRecordR\x07records\"E\n\x1b\x44\x65leteFaceEmbeddingsRequest\x12&\n\nstudent_id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\tstudentId\"\x1e\n\x1c\x44\x65leteFaceEmbeddingsResponse\" \n\x1e\x44\x65leteAllFaceEmbeddingsRequest\"!\n\x1f\x44\x65leteAllFaceEmbeddingsResponse2\xb5\x03\n\x14\x46\x61\x63\x65\x45mbeddingService\x12\x65\n\x14UpsertFaceEmbeddings\x12%.faces.v1.UpsertFaceEmbeddingsRequest\x1a&.faces.v1.UpsertFaceEmbeddingsResponse\x12_\n\x12ListFaceEmbeddings\x12#.faces.v1.ListFaceEmbeddingsRequest\x1a$.faces.v1.ListFaceEmbeddingsResponse\x12\x65\n\x14\x44\x65leteFaceEmbeddings\x12%.faces.v1.DeleteFaceEmbeddingsRequest\x1a&.faces.v1.DeleteFaceEmbeddingsResponse\x12n\n\x17\x44\x65leteAllFaceEmbeddings\x12(.faces.v1.DeleteAllFaceEmbeddingsRequest\x1a).faces.v1.DeleteAllFaceEmbeddingsResponseB\x8e\x01\n\x0c\x63om.faces.v1B\nFacesProtoP\x01Z1github.com/wargasipil/facego/gen/faces/v1;facesv1\xa2\x02\x03\x46XX\xaa\x02\x08\x46\x61\x63\x65s.V1\xca\x02\x08\x46\x61\x63\x65s\\V1\xe2\x02\x14\x46\x61\x63\x65s\\V1\\GPBMetadata\xea\x02\tFaces::V1b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x14\x66\x61\x63\x65s/v1/faces.proto\x12\x08\x66\x61\x63\x65s.v1\x1a\x1b\x62uf/validate/validate.proto\"\x8f\x01\n\nFaceRecord\x12&\n\nstudent_id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\tstudentId\x12\'\n\nembeddings\x18\x02 \x01(\x0c\x42\x07\xbaH\x04z\x02\x10\x01R\nembeddings\x12\x30\n\x0f\x65mbedding_count\x18\x03 \x01(\x05\x42\x07\xbaH\x04\x1a\x02 \x00R\x0e\x65mbeddingCount\"S\n\x1bUpsertFaceEmbeddingsRequest\x12\x34\n\x06record\x18\x01 \x01(\x0b\x32\x14.faces.v1.FaceRecordB\x06\xbaH\x03\xc8\x01\x01R\x06record\"\x1e\n\x1cUpsertFaceEmbeddingsResponse\"\x1b\n\x19LoadFaceEmbeddingsRequest\"L\n\x1aLoadFaceEmbeddingsResponse\x12.\n\x07records\x18\x01 \x03(\x0b\x32\x14.faces.v1.FaceRecordR\x07records\"o\n\x19ListFaceEmbeddingsRequest\x12\x0c\n\x01q\x18\x01 \x01(\tR\x01q\x12\x1b\n\x04page\x18\x02 \x01(\x05\x42\x07\xbaH\x04\x1a\x02(\x00R\x04page\x12\'\n\tpage_size\x18\x03 \x01(\x05\x42\n\xbaH\x07\x1a\x05\x18\xc8\x01(\x00R\x08pageSize\"b\n\x1aListFaceEmbeddingsResponse\x12.\n\x07records\x18\x01 \x03(\x0b\x32\x14.faces.v1.FaceRecordR\x07records\x12\x14\n\x05total\x18\x02 \x01(\x05R\x05total\"E\n\x1b\x44\x65leteFaceEmbeddingsRequest\x12&\n\nstudent_id\x18\x01 \x01(\x03\x42\x07\xbaH\x04\"\x02 \x00R\tstudentId\"\x1e\n\x1c\x44\x65leteFaceEmbeddingsResponse\" \n\x1e\x44\x65leteAllFaceEmbeddingsRequest\"!\n\x1f\x44\x65leteAllFaceEmbeddingsResponse2\x96\x04\n\x14\x46\x61\x63\x65\x45mbeddingService\x12\x65\n\x14UpsertFaceEmbeddings\x12%.faces.v1.UpsertFaceEmbeddingsRequest\x1a&.faces.v1.UpsertFaceEmbeddingsResponse\x12_\n\x12ListFaceEmbeddings\x12#.faces.v1.ListFaceEmbeddingsRequest\x1a$.faces.v1.ListFaceEmbeddingsResponse\x12_\n\x12LoadFaceEmbeddings\x12#.faces.v1.LoadFaceEmbeddingsRequest\x1a$.faces.v1.LoadFaceEmbeddingsResponse\x12\x65\n\x14\x44\x65leteFaceEmbeddings\x12%.faces.v1.DeleteFaceEmbeddingsRequest\x1a&.faces.v1.DeleteFaceEmbeddingsResponse\x12n\n\x17\x44\x65leteAllFaceEmbeddings\x12(.faces.v1.DeleteAllFaceEmbeddingsRequest\x1a).faces.v1.DeleteAllFaceEmbeddingsResponseB\x8e\x01\n\x0c\x63om.faces.v1B\nFacesProtoP\x01Z1github.com/wargasipil/facego/gen/faces/v1;facesv1\xa2\x02\x03\x46XX\xaa\x02\x08\x46\x61\x63\x65s.V1\xca\x02\x08\x46\x61\x63\x65s\\V1\xe2\x02\x14\x46\x61\x63\x65s\\V1\\GPBMetadata\xea\x02\tFaces::V1b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -41,6 +41,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_FACERECORD'].fields_by_name['embedding_count']._serialized_options = b'\272H\004\032\002 \000'
   _globals['_UPSERTFACEEMBEDDINGSREQUEST'].fields_by_name['record']._loaded_options = None
   _globals['_UPSERTFACEEMBEDDINGSREQUEST'].fields_by_name['record']._serialized_options = b'\272H\003\310\001\001'
+  _globals['_LISTFACEEMBEDDINGSREQUEST'].fields_by_name['page']._loaded_options = None
+  _globals['_LISTFACEEMBEDDINGSREQUEST'].fields_by_name['page']._serialized_options = b'\272H\004\032\002(\000'
+  _globals['_LISTFACEEMBEDDINGSREQUEST'].fields_by_name['page_size']._loaded_options = None
+  _globals['_LISTFACEEMBEDDINGSREQUEST'].fields_by_name['page_size']._serialized_options = b'\272H\007\032\005\030\310\001(\000'
   _globals['_DELETEFACEEMBEDDINGSREQUEST'].fields_by_name['student_id']._loaded_options = None
   _globals['_DELETEFACEEMBEDDINGSREQUEST'].fields_by_name['student_id']._serialized_options = b'\272H\004\"\002 \000'
   _globals['_FACERECORD']._serialized_start=64
@@ -49,18 +53,22 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_UPSERTFACEEMBEDDINGSREQUEST']._serialized_end=292
   _globals['_UPSERTFACEEMBEDDINGSRESPONSE']._serialized_start=294
   _globals['_UPSERTFACEEMBEDDINGSRESPONSE']._serialized_end=324
-  _globals['_LISTFACEEMBEDDINGSREQUEST']._serialized_start=326
-  _globals['_LISTFACEEMBEDDINGSREQUEST']._serialized_end=353
-  _globals['_LISTFACEEMBEDDINGSRESPONSE']._serialized_start=355
-  _globals['_LISTFACEEMBEDDINGSRESPONSE']._serialized_end=431
-  _globals['_DELETEFACEEMBEDDINGSREQUEST']._serialized_start=433
-  _globals['_DELETEFACEEMBEDDINGSREQUEST']._serialized_end=502
-  _globals['_DELETEFACEEMBEDDINGSRESPONSE']._serialized_start=504
-  _globals['_DELETEFACEEMBEDDINGSRESPONSE']._serialized_end=534
-  _globals['_DELETEALLFACEEMBEDDINGSREQUEST']._serialized_start=536
-  _globals['_DELETEALLFACEEMBEDDINGSREQUEST']._serialized_end=568
-  _globals['_DELETEALLFACEEMBEDDINGSRESPONSE']._serialized_start=570
-  _globals['_DELETEALLFACEEMBEDDINGSRESPONSE']._serialized_end=603
-  _globals['_FACEEMBEDDINGSERVICE']._serialized_start=606
-  _globals['_FACEEMBEDDINGSERVICE']._serialized_end=1043
+  _globals['_LOADFACEEMBEDDINGSREQUEST']._serialized_start=326
+  _globals['_LOADFACEEMBEDDINGSREQUEST']._serialized_end=353
+  _globals['_LOADFACEEMBEDDINGSRESPONSE']._serialized_start=355
+  _globals['_LOADFACEEMBEDDINGSRESPONSE']._serialized_end=431
+  _globals['_LISTFACEEMBEDDINGSREQUEST']._serialized_start=433
+  _globals['_LISTFACEEMBEDDINGSREQUEST']._serialized_end=544
+  _globals['_LISTFACEEMBEDDINGSRESPONSE']._serialized_start=546
+  _globals['_LISTFACEEMBEDDINGSRESPONSE']._serialized_end=644
+  _globals['_DELETEFACEEMBEDDINGSREQUEST']._serialized_start=646
+  _globals['_DELETEFACEEMBEDDINGSREQUEST']._serialized_end=715
+  _globals['_DELETEFACEEMBEDDINGSRESPONSE']._serialized_start=717
+  _globals['_DELETEFACEEMBEDDINGSRESPONSE']._serialized_end=747
+  _globals['_DELETEALLFACEEMBEDDINGSREQUEST']._serialized_start=749
+  _globals['_DELETEALLFACEEMBEDDINGSREQUEST']._serialized_end=781
+  _globals['_DELETEALLFACEEMBEDDINGSRESPONSE']._serialized_start=783
+  _globals['_DELETEALLFACEEMBEDDINGSRESPONSE']._serialized_end=816
+  _globals['_FACEEMBEDDINGSERVICE']._serialized_start=819
+  _globals['_FACEEMBEDDINGSERVICE']._serialized_end=1353
 # @@protoc_insertion_point(module_scope)

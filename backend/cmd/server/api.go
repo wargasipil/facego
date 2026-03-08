@@ -96,9 +96,6 @@ func NewApiRunner(
 		// registering frontend
 		mux.Handle("/", NewFrontendhandler())
 
-		// Background: convert unprocessed DetectionLog rows → Attendance records.
-		attendanceSvc.StartProcessor(wctx)
-
 		addr := cfg.Server.Addr()
 		slog.Info("starting FaceGo api", "addr", addr)
 

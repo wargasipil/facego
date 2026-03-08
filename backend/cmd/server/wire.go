@@ -32,8 +32,10 @@ func initApp() (App, error) {
 		user_service.NewService,
 		teacher_service.NewService,
 		attendance_service.NewService,
+		attendance_service.NewAttendanceProcessor,
 		face_embedding_service.NewService,
 		whatsapp_service.NewService,
+
 		notifier_service.NewService,
 		notifier_service.NewNotifierRunner,
 		NewApiRunner,

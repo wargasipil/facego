@@ -12,6 +12,7 @@ service AttendanceService {
   rpc GetDailyAttendance(GetDailyAttendanceRequest) returns (GetDailyAttendanceResponse);
   // Fetch historical records for a student or date range.
   rpc ListAttendance(ListAttendanceRequest) returns (ListAttendanceResponse);
+  rpc AttendanceStream(AttendanceStreamRequest) returns (stream AttendanceStreamResponse);
   // Server-streaming: push a new AttendanceRecord every time a face is recognised.
   rpc WatchAttendance(WatchAttendanceRequest) returns (stream WatchAttendanceResponse);
   // Manually create an attendance record (operator/teacher).
@@ -90,6 +91,13 @@ message GetDailyAttendanceResponse {
   repeated AttendanceRecord records = 1;
   AttendanceSummary summary = 2;
   int32 total = 3;
+}
+
+message AttendanceStreamRequest {
+  int64 class_id = 1 [(buf.validate.field).int64.gt = 1];
+}
+message AttendanceStreamResponse {
+  AttendanceRecord attendance = 1;
 }
 
 // ListAttendance ──────────────────────────────────────────────────────────────

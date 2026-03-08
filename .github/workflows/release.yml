@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows:
+    name: Build Windows release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Frontend ────────────────────────────────────────────────────────────
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: attendance_frontend/package-lock.json
+
+      - name: Install frontend deps
+        working-directory: attendance_frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: attendance_frontend
+        run: npm run build
+
+      # ── Copy dist into Go embed dir ─────────────────────────────────────────
+      - name: Copy frontend dist to embed directory
+        run: |
+          rm -rf backend/cmd/server/frontend
+          cp -r attendance_frontend/dist backend/cmd/server/frontend
+
+      # ── Backend ─────────────────────────────────────────────────────────────
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.3'
+          cache-dependency-path: backend/go.sum
+
+      - name: Tidy Go modules
+        working-directory: backend
+        run: go mod tidy
+
+      - name: Build Go backend (Windows amd64)
+        working-directory: backend
+        env:
+          GOOS: windows
+          GOARCH: amd64
+          CGO_ENABLED: 0
+        run: go build -mod=mod -ldflags="-s -w" -o facego.exe ./cmd/server
+
+      # ── Package ─────────────────────────────────────────────────────────────
+      - name: Package release
+        run: |
+          mkdir -p dist/windows/configs
+          mv backend/facego.exe dist/windows/facego.exe
+          cp backend/configs/sample.yaml dist/windows/configs/sample.yaml
+          cd dist/windows
+          zip -r ../facego-windows.zip facego.exe configs/
+
+      # ── Release ─────────────────────────────────────────────────────────────
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/facego-windows.zip
+          generate_release_notes: true

@@ -27,15 +27,33 @@ class UpsertFaceEmbeddingsResponse(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...
 
-class ListFaceEmbeddingsRequest(_message.Message):
+class LoadFaceEmbeddingsRequest(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...
 
-class ListFaceEmbeddingsResponse(_message.Message):
+class LoadFaceEmbeddingsResponse(_message.Message):
     __slots__ = ("records",)
     RECORDS_FIELD_NUMBER: _ClassVar[int]
     records: _containers.RepeatedCompositeFieldContainer[FaceRecord]
     def __init__(self, records: _Optional[_Iterable[_Union[FaceRecord, _Mapping]]] = ...) -> None: ...
+
+class ListFaceEmbeddingsRequest(_message.Message):
+    __slots__ = ("q", "page", "page_size")
+    Q_FIELD_NUMBER: _ClassVar[int]
+    PAGE_FIELD_NUMBER: _ClassVar[int]
+    PAGE_SIZE_FIELD_NUMBER: _ClassVar[int]
+    q: str
+    page: int
+    page_size: int
+    def __init__(self, q: _Optional[str] = ..., page: _Optional[int] = ..., page_size: _Optional[int] = ...) -> None: ...
+
+class ListFaceEmbeddingsResponse(_message.Message):
+    __slots__ = ("records", "total")
+    RECORDS_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_FIELD_NUMBER: _ClassVar[int]
+    records: _containers.RepeatedCompositeFieldContainer[FaceRecord]
+    total: int
+    def __init__(self, records: _Optional[_Iterable[_Union[FaceRecord, _Mapping]]] = ..., total: _Optional[int] = ...) -> None: ...
 
 class DeleteFaceEmbeddingsRequest(_message.Message):
     __slots__ = ("student_id",)
