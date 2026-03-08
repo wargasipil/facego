@@ -1,7 +1,7 @@
 import {
   Box, Button, Flex, HStack, Text, VStack, Badge, Center,
 } from '@chakra-ui/react'
-import { FiCamera, FiCameraOff, FiEye } from 'react-icons/fi'
+import { FiCamera, FiCameraOff, FiEye, FiMaximize, FiMinimize } from 'react-icons/fi'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import * as faceapi from 'face-api.js'
 import { type FaceRecord } from '../../../gen/faces/v1/faces_pb'
@@ -23,7 +23,8 @@ type Recognition = { name: string; studentId: string; distance: number; time: st
 export function RecognizeTab({ modelsReady, active }: Props) {
   const videoRef   = useRef<HTMLVideoElement>(null)
   const canvasRef  = useRef<HTMLCanvasElement>(null)
-  const rafRef      = useRef<number | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const rafRef       = useRef<number | null>(null)
   const matcherRef  = useRef<faceapi.FaceMatcher | null>(null)
   const sessionRef  = useRef<string>('')
   const classRef    = useRef<ClassOption | null>(null)
@@ -35,6 +36,7 @@ export function RecognizeTab({ modelsReady, active }: Props) {
   const [fps, setFps]                   = useState(0)
   const [recognitions, setRecognitions] = useState<Recognition[]>([])
   const [error, setError]               = useState<string | null>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const lastTsRef                       = useRef(0)
 
   const [classes, setClasses]             = useState<ClassOption[]>([])
@@ -61,6 +63,20 @@ export function RecognizeTab({ modelsReady, active }: Props) {
 
   useEffect(() => () => stopCamera(), [stopCamera])
   useEffect(() => { if (!active) stopCamera() }, [active, stopCamera])
+
+  useEffect(() => {
+    const handler = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', handler)
+    return () => document.removeEventListener('fullscreenchange', handler)
+  }, [])
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen()
+    } else {
+      document.exitFullscreen()
+    }
+  }, [])
 
   const startCamera = useCallback(async () => {
     setError(null)
@@ -154,7 +170,6 @@ export function RecognizeTab({ modelsReady, active }: Props) {
 
               // Push to backend
               const cls = classRef.current
-              console.log(cls, userId)
               if (cls && userId > 0n) {
                 attendanceService.attendancePushLog({
                   sessionId:   sessionRef.current,
@@ -194,7 +209,12 @@ export function RecognizeTab({ modelsReady, active }: Props) {
   const canStart = modelsReady && !loading && !!selectedClass
 
   return (
-    <VStack gap={4} align="stretch">
+    <VStack ref={containerRef} gap={4} align="stretch"
+      bg={isFullscreen ? 'white' : undefined}
+      p={isFullscreen ? 6 : undefined}
+      h={isFullscreen ? '100vh' : undefined}
+      overflowY={isFullscreen ? 'auto' : undefined}
+    >
       <Flex align="center" justify="space-between" gap={3}>
         <HStack gap={2} flex={1}>
           {!running && (
@@ -215,22 +235,36 @@ export function RecognizeTab({ modelsReady, active }: Props) {
           {running && <Badge colorPalette="blue"  variant="subtle">{faceCount} face{faceCount !== 1 ? 's' : ''}</Badge>}
           {running && <Badge colorPalette="gray"  variant="subtle">{fps} fps</Badge>}
         </HStack>
-        <Button size="sm" colorPalette={running ? 'red' : 'blue'}
-          disabled={!running && !canStart}
-          loading={loading} loadingText="Loading…"
-          onClick={running ? stopCamera : startCamera}
-        >
-          {running
-            ? <><FiCameraOff size={14} /> Stop</>
-            : <><FiCamera size={14} /> Start Recognition</>
-          }
-        </Button>
+        <HStack gap={2}>
+          <Box
+            as="button"
+            p="6px"
+            borderRadius="md"
+            bg="gray.100"
+            color="gray.600"
+            _hover={{ bg: 'gray.200' }}
+            onClick={toggleFullscreen}
+            title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          >
+            {isFullscreen ? <FiMinimize size={16} /> : <FiMaximize size={16} />}
+          </Box>
+          <Button size="sm" colorPalette={running ? 'red' : 'blue'}
+            disabled={!running && !canStart}
+            loading={loading} loadingText="Loading…"
+            onClick={running ? stopCamera : startCamera}
+          >
+            {running
+              ? <><FiCameraOff size={14} /> Stop</>
+              : <><FiCamera size={14} /> Start Recognition</>
+            }
+          </Button>
+        </HStack>
       </Flex>
 
       {error && <Text fontSize="sm" color="red.500">{error}</Text>}
 
       <Box borderRadius="md" overflow="hidden" bg="black" position="relative">
-        <video ref={videoRef} style={{ display: 'block', width: '100%', height: 'auto' }} muted playsInline />
+        <video ref={videoRef} style={{ display: 'block', width: '100%', height: isFullscreen ? 'calc(100vh - 200px)' : 'auto' }} muted playsInline />
         <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
         {!running && (
           <Center position="absolute" inset={0} bg="gray.900" color="gray.500" flexDirection="column" gap={2} minH="200px">
@@ -243,7 +277,7 @@ export function RecognizeTab({ modelsReady, active }: Props) {
       {recognitions.length > 0 && (
         <Box>
           <Text fontSize="sm" fontWeight="medium" mb={2} color="gray.700">Recognition Log</Text>
-          <VStack gap={1} align="stretch" maxH="200px" overflowY="auto">
+          <VStack gap={1} align="stretch" maxH={isFullscreen ? '400px' : '200px'} overflowY="auto">
             {recognitions.map((r, i) => (
               <Flex key={i} px={3} py={2} borderRadius="md" bg="green.50"
                 border="1px solid" borderColor="green.100" align="center" justify="space-between"
