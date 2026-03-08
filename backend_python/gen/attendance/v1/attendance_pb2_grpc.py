@@ -29,6 +29,11 @@ class AttendanceServiceStub(object):
                 request_serializer=attendance_dot_v1_dot_attendance__pb2.ListAttendanceRequest.SerializeToString,
                 response_deserializer=attendance_dot_v1_dot_attendance__pb2.ListAttendanceResponse.FromString,
                 _registered_method=True)
+        self.AttendanceStream = channel.unary_stream(
+                '/attendance.v1.AttendanceService/AttendanceStream',
+                request_serializer=attendance_dot_v1_dot_attendance__pb2.AttendanceStreamRequest.SerializeToString,
+                response_deserializer=attendance_dot_v1_dot_attendance__pb2.AttendanceStreamResponse.FromString,
+                _registered_method=True)
         self.WatchAttendance = channel.unary_stream(
                 '/attendance.v1.AttendanceService/WatchAttendance',
                 request_serializer=attendance_dot_v1_dot_attendance__pb2.WatchAttendanceRequest.SerializeToString,
@@ -71,6 +76,12 @@ class AttendanceServiceServicer(object):
     def ListAttendance(self, request, context):
         """Fetch historical records for a student or date range.
         """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AttendanceStream(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -120,6 +131,11 @@ def add_AttendanceServiceServicer_to_server(servicer, server):
                     servicer.ListAttendance,
                     request_deserializer=attendance_dot_v1_dot_attendance__pb2.ListAttendanceRequest.FromString,
                     response_serializer=attendance_dot_v1_dot_attendance__pb2.ListAttendanceResponse.SerializeToString,
+            ),
+            'AttendanceStream': grpc.unary_stream_rpc_method_handler(
+                    servicer.AttendanceStream,
+                    request_deserializer=attendance_dot_v1_dot_attendance__pb2.AttendanceStreamRequest.FromString,
+                    response_serializer=attendance_dot_v1_dot_attendance__pb2.AttendanceStreamResponse.SerializeToString,
             ),
             'WatchAttendance': grpc.unary_stream_rpc_method_handler(
                     servicer.WatchAttendance,
@@ -223,6 +239,33 @@ class AttendanceService(object):
             '/attendance.v1.AttendanceService/ListAttendance',
             attendance_dot_v1_dot_attendance__pb2.ListAttendanceRequest.SerializeToString,
             attendance_dot_v1_dot_attendance__pb2.ListAttendanceResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AttendanceStream(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(
+            request,
+            target,
+            '/attendance.v1.AttendanceService/AttendanceStream',
+            attendance_dot_v1_dot_attendance__pb2.AttendanceStreamRequest.SerializeToString,
+            attendance_dot_v1_dot_attendance__pb2.AttendanceStreamResponse.FromString,
             options,
             channel_credentials,
             insecure,

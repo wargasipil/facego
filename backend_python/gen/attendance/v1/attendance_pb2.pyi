@@ -125,6 +125,18 @@ class GetDailyAttendanceResponse(_message.Message):
     total: int
     def __init__(self, records: _Optional[_Iterable[_Union[AttendanceRecord, _Mapping]]] = ..., summary: _Optional[_Union[AttendanceSummary, _Mapping]] = ..., total: _Optional[int] = ...) -> None: ...
 
+class AttendanceStreamRequest(_message.Message):
+    __slots__ = ("class_id",)
+    CLASS_ID_FIELD_NUMBER: _ClassVar[int]
+    class_id: int
+    def __init__(self, class_id: _Optional[int] = ...) -> None: ...
+
+class AttendanceStreamResponse(_message.Message):
+    __slots__ = ("attendance",)
+    ATTENDANCE_FIELD_NUMBER: _ClassVar[int]
+    attendance: AttendanceRecord
+    def __init__(self, attendance: _Optional[_Union[AttendanceRecord, _Mapping]] = ...) -> None: ...
+
 class ListAttendanceRequest(_message.Message):
     __slots__ = ("user_id", "to")
     USER_ID_FIELD_NUMBER: _ClassVar[int]

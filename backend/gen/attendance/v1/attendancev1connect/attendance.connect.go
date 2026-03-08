@@ -42,6 +42,9 @@ const (
 	// AttendanceServiceListAttendanceProcedure is the fully-qualified name of the AttendanceService's
 	// ListAttendance RPC.
 	AttendanceServiceListAttendanceProcedure = "/attendance.v1.AttendanceService/ListAttendance"
+	// AttendanceServiceAttendanceStreamProcedure is the fully-qualified name of the AttendanceService's
+	// AttendanceStream RPC.
+	AttendanceServiceAttendanceStreamProcedure = "/attendance.v1.AttendanceService/AttendanceStream"
 	// AttendanceServiceWatchAttendanceProcedure is the fully-qualified name of the AttendanceService's
 	// WatchAttendance RPC.
 	AttendanceServiceWatchAttendanceProcedure = "/attendance.v1.AttendanceService/WatchAttendance"
@@ -64,6 +67,7 @@ type AttendanceServiceClient interface {
 	GetDailyAttendance(context.Context, *connect.Request[v1.GetDailyAttendanceRequest]) (*connect.Response[v1.GetDailyAttendanceResponse], error)
 	// Fetch historical records for a student or date range.
 	ListAttendance(context.Context, *connect.Request[v1.ListAttendanceRequest]) (*connect.Response[v1.ListAttendanceResponse], error)
+	AttendanceStream(context.Context, *connect.Request[v1.AttendanceStreamRequest]) (*connect.ServerStreamForClient[v1.AttendanceStreamResponse], error)
 	// Server-streaming: push a new AttendanceRecord every time a face is recognised.
 	WatchAttendance(context.Context, *connect.Request[v1.WatchAttendanceRequest]) (*connect.ServerStreamForClient[v1.WatchAttendanceResponse], error)
 	// Manually create an attendance record (operator/teacher).
@@ -103,6 +107,12 @@ func NewAttendanceServiceClient(httpClient connect.HTTPClient, baseURL string, o
 			connect.WithSchema(attendanceServiceMethods.ByName("ListAttendance")),
 			connect.WithClientOptions(opts...),
 		),
+		attendanceStream: connect.NewClient[v1.AttendanceStreamRequest, v1.AttendanceStreamResponse](
+			httpClient,
+			baseURL+AttendanceServiceAttendanceStreamProcedure,
+			connect.WithSchema(attendanceServiceMethods.ByName("AttendanceStream")),
+			connect.WithClientOptions(opts...),
+		),
 		watchAttendance: connect.NewClient[v1.WatchAttendanceRequest, v1.WatchAttendanceResponse](
 			httpClient,
 			baseURL+AttendanceServiceWatchAttendanceProcedure,
@@ -135,6 +145,7 @@ type attendanceServiceClient struct {
 	recordAttendance   *connect.Client[v1.RecordAttendanceRequest, v1.RecordAttendanceResponse]
 	getDailyAttendance *connect.Client[v1.GetDailyAttendanceRequest, v1.GetDailyAttendanceResponse]
 	listAttendance     *connect.Client[v1.ListAttendanceRequest, v1.ListAttendanceResponse]
+	attendanceStream   *connect.Client[v1.AttendanceStreamRequest, v1.AttendanceStreamResponse]
 	watchAttendance    *connect.Client[v1.WatchAttendanceRequest, v1.WatchAttendanceResponse]
 	createAttendance   *connect.Client[v1.CreateAttendanceRequest, v1.CreateAttendanceResponse]
 	deleteAttendance   *connect.Client[v1.DeleteAttendanceRequest, v1.DeleteAttendanceResponse]
@@ -154,6 +165,11 @@ func (c *attendanceServiceClient) GetDailyAttendance(ctx context.Context, req *c
 // ListAttendance calls attendance.v1.AttendanceService.ListAttendance.
 func (c *attendanceServiceClient) ListAttendance(ctx context.Context, req *connect.Request[v1.ListAttendanceRequest]) (*connect.Response[v1.ListAttendanceResponse], error) {
 	return c.listAttendance.CallUnary(ctx, req)
+}
+
+// AttendanceStream calls attendance.v1.AttendanceService.AttendanceStream.
+func (c *attendanceServiceClient) AttendanceStream(ctx context.Context, req *connect.Request[v1.AttendanceStreamRequest]) (*connect.ServerStreamForClient[v1.AttendanceStreamResponse], error) {
+	return c.attendanceStream.CallServerStream(ctx, req)
 }
 
 // WatchAttendance calls attendance.v1.AttendanceService.WatchAttendance.
@@ -184,6 +200,7 @@ type AttendanceServiceHandler interface {
 	GetDailyAttendance(context.Context, *connect.Request[v1.GetDailyAttendanceRequest]) (*connect.Response[v1.GetDailyAttendanceResponse], error)
 	// Fetch historical records for a student or date range.
 	ListAttendance(context.Context, *connect.Request[v1.ListAttendanceRequest]) (*connect.Response[v1.ListAttendanceResponse], error)
+	AttendanceStream(context.Context, *connect.Request[v1.AttendanceStreamRequest], *connect.ServerStream[v1.AttendanceStreamResponse]) error
 	// Server-streaming: push a new AttendanceRecord every time a face is recognised.
 	WatchAttendance(context.Context, *connect.Request[v1.WatchAttendanceRequest], *connect.ServerStream[v1.WatchAttendanceResponse]) error
 	// Manually create an attendance record (operator/teacher).
@@ -219,6 +236,12 @@ func NewAttendanceServiceHandler(svc AttendanceServiceHandler, opts ...connect.H
 		connect.WithSchema(attendanceServiceMethods.ByName("ListAttendance")),
 		connect.WithHandlerOptions(opts...),
 	)
+	attendanceServiceAttendanceStreamHandler := connect.NewServerStreamHandler(
+		AttendanceServiceAttendanceStreamProcedure,
+		svc.AttendanceStream,
+		connect.WithSchema(attendanceServiceMethods.ByName("AttendanceStream")),
+		connect.WithHandlerOptions(opts...),
+	)
 	attendanceServiceWatchAttendanceHandler := connect.NewServerStreamHandler(
 		AttendanceServiceWatchAttendanceProcedure,
 		svc.WatchAttendance,
@@ -251,6 +274,8 @@ func NewAttendanceServiceHandler(svc AttendanceServiceHandler, opts ...connect.H
 			attendanceServiceGetDailyAttendanceHandler.ServeHTTP(w, r)
 		case AttendanceServiceListAttendanceProcedure:
 			attendanceServiceListAttendanceHandler.ServeHTTP(w, r)
+		case AttendanceServiceAttendanceStreamProcedure:
+			attendanceServiceAttendanceStreamHandler.ServeHTTP(w, r)
 		case AttendanceServiceWatchAttendanceProcedure:
 			attendanceServiceWatchAttendanceHandler.ServeHTTP(w, r)
 		case AttendanceServiceCreateAttendanceProcedure:
@@ -278,6 +303,10 @@ func (UnimplementedAttendanceServiceHandler) GetDailyAttendance(context.Context,
 
 func (UnimplementedAttendanceServiceHandler) ListAttendance(context.Context, *connect.Request[v1.ListAttendanceRequest]) (*connect.Response[v1.ListAttendanceResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("attendance.v1.AttendanceService.ListAttendance is not implemented"))
+}
+
+func (UnimplementedAttendanceServiceHandler) AttendanceStream(context.Context, *connect.Request[v1.AttendanceStreamRequest], *connect.ServerStream[v1.AttendanceStreamResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("attendance.v1.AttendanceService.AttendanceStream is not implemented"))
 }
 
 func (UnimplementedAttendanceServiceHandler) WatchAttendance(context.Context, *connect.Request[v1.WatchAttendanceRequest], *connect.ServerStream[v1.WatchAttendanceResponse]) error {

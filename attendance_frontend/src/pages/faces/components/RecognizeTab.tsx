@@ -12,23 +12,22 @@ import { classService } from '../../../services/class_service'
 import { attendanceService } from '../../../services/attendance_service'
 import { bytesToDescriptors, MATCH_THRESHOLD } from './models'
 import { ClassSelector, type ClassOption } from '../../../components/ClassSelector'
+import { AttendanceStream, type Recognition } from './AttendanceStream'
 
 interface Props {
   modelsReady: boolean
   active: boolean
 }
 
-type Recognition = { name: string; studentId: string; distance: number; time: string }
-
 export function RecognizeTab({ modelsReady, active }: Props) {
-  const videoRef   = useRef<HTMLVideoElement>(null)
-  const canvasRef  = useRef<HTMLCanvasElement>(null)
+  const videoRef     = useRef<HTMLVideoElement>(null)
+  const canvasRef    = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const rafRef       = useRef<number | null>(null)
-  const matcherRef  = useRef<faceapi.FaceMatcher | null>(null)
-  const sessionRef  = useRef<string>('')
-  const classRef    = useRef<ClassOption | null>(null)
-  const pushedRef   = useRef<Map<string, number>>(new Map()) // studentId → last push ms
+  const matcherRef   = useRef<faceapi.FaceMatcher | null>(null)
+  const sessionRef   = useRef<string>('')
+  const classRef     = useRef<ClassOption | null>(null)
+  const pushedRef    = useRef<Map<string, number>>(new Map()) // studentId → last push ms
 
   const [running, setRunning]           = useState(false)
   const [loading, setLoading]           = useState(false)
@@ -168,7 +167,6 @@ export function RecognizeTab({ modelsReady, active }: Props) {
             if (seenAt.getTime() - lastPush >= 5000) {
               pushedRef.current.set(studentId, seenAt.getTime())
 
-              // Push to backend
               const cls = classRef.current
               if (cls && userId > 0n) {
                 attendanceService.attendancePushLog({
@@ -209,12 +207,15 @@ export function RecognizeTab({ modelsReady, active }: Props) {
   const canStart = modelsReady && !loading && !!selectedClass
 
   return (
-    <VStack ref={containerRef} gap={4} align="stretch"
+    <VStack
+      ref={containerRef}
+      gap={3}
+      align="stretch"
       bg={isFullscreen ? 'white' : undefined}
-      p={isFullscreen ? 6 : undefined}
+      p={isFullscreen ? 4 : undefined}
       h={isFullscreen ? '100vh' : undefined}
-      overflowY={isFullscreen ? 'auto' : undefined}
     >
+      {/* Controls */}
       <Flex align="center" justify="space-between" gap={3}>
         <HStack gap={2} flex={1}>
           {!running && (
@@ -232,8 +233,8 @@ export function RecognizeTab({ modelsReady, active }: Props) {
           )}
           {running && <Badge colorPalette="green" variant="subtle">Live</Badge>}
           {running && selectedClass && <Badge colorPalette="blue" variant="subtle">{selectedClass.name}</Badge>}
-          {running && <Badge colorPalette="blue"  variant="subtle">{faceCount} face{faceCount !== 1 ? 's' : ''}</Badge>}
-          {running && <Badge colorPalette="gray"  variant="subtle">{fps} fps</Badge>}
+          {running && <Badge colorPalette="blue" variant="subtle">{faceCount} face{faceCount !== 1 ? 's' : ''}</Badge>}
+          {running && <Badge colorPalette="gray" variant="subtle">{fps} fps</Badge>}
         </HStack>
         <HStack gap={2}>
           <Box
@@ -248,9 +249,12 @@ export function RecognizeTab({ modelsReady, active }: Props) {
           >
             {isFullscreen ? <FiMinimize size={16} /> : <FiMaximize size={16} />}
           </Box>
-          <Button size="sm" colorPalette={running ? 'red' : 'blue'}
+          <Button
+            size="sm"
+            colorPalette={running ? 'red' : 'blue'}
             disabled={!running && !canStart}
-            loading={loading} loadingText="Loading…"
+            loading={loading}
+            loadingText="Loading…"
             onClick={running ? stopCamera : startCamera}
           >
             {running
@@ -263,41 +267,35 @@ export function RecognizeTab({ modelsReady, active }: Props) {
 
       {error && <Text fontSize="sm" color="red.500">{error}</Text>}
 
-      <Box borderRadius="md" overflow="hidden" bg="black" position="relative">
-        <video ref={videoRef} style={{ display: 'block', width: '100%', height: isFullscreen ? 'calc(100vh - 200px)' : 'auto' }} muted playsInline />
-        <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
-        {!running && (
-          <Center position="absolute" inset={0} bg="gray.900" color="gray.500" flexDirection="column" gap={2} minH="200px">
-            <FiEye size={32} />
-            {selectedClass ? 'Start recognition to identify faces' : 'Select a class first'}
-          </Center>
-        )}
-      </Box>
-
-      {recognitions.length > 0 && (
-        <Box>
-          <Text fontSize="sm" fontWeight="medium" mb={2} color="gray.700">Recognition Log</Text>
-          <VStack gap={1} align="stretch" maxH={isFullscreen ? '400px' : '200px'} overflowY="auto">
-            {recognitions.map((r, i) => (
-              <Flex key={i} px={3} py={2} borderRadius="md" bg="green.50"
-                border="1px solid" borderColor="green.100" align="center" justify="space-between"
-              >
-                <HStack gap={2}>
-                  <Box w={2} h={2} borderRadius="full" bg="green.400" />
-                  <Text fontSize="sm" fontWeight="medium">{r.name}</Text>
-                  <Text fontSize="xs" color="gray.500">{r.studentId}</Text>
-                </HStack>
-                <HStack gap={2}>
-                  <Badge colorPalette="green" variant="subtle" fontSize="xs">
-                    {Math.round((1 - r.distance) * 100)}%
-                  </Badge>
-                  <Text fontSize="xs" color="gray.400">{r.time}</Text>
-                </HStack>
-              </Flex>
-            ))}
-          </VStack>
+      {/* Main content: camera left, stream right */}
+      <Flex gap={3} align="stretch" flex={1} minH={isFullscreen ? 0 : '600px'}>
+        {/* Camera */}
+        <Box flex={1}>
+          <Box borderRadius="md" overflow="hidden" bg="black" position="relative" h="100%">
+            <video
+              ref={videoRef}
+              style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+              muted
+              playsInline
+            />
+            <canvas
+              ref={canvasRef}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+            />
+            {!running && (
+              <Center position="absolute" inset={0} bg="gray.900" color="gray.500" flexDirection="column" gap={2} minH="200px">
+                <FiEye size={32} />
+                {selectedClass ? 'Start recognition to identify faces' : 'Select a class first'}
+              </Center>
+            )}
+          </Box>
         </Box>
-      )}
+
+        {/* Attendance stream */}
+        <Box w={isFullscreen ? '480px' : '340px'} flexShrink={0} h={isFullscreen ? 'calc(100vh - 80px)' : '600px'}>
+          <AttendanceStream recognitions={recognitions} running={running} classId={selectedClass?.id ?? null} />
+        </Box>
+      </Flex>
     </VStack>
   )
 }

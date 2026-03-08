@@ -667,6 +667,94 @@ func (x *GetDailyAttendanceResponse) GetTotal() int32 {
 	return 0
 }
 
+type AttendanceStreamRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ClassId       int64                  `protobuf:"varint,1,opt,name=class_id,json=classId,proto3" json:"class_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttendanceStreamRequest) Reset() {
+	*x = AttendanceStreamRequest{}
+	mi := &file_attendance_v1_attendance_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttendanceStreamRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttendanceStreamRequest) ProtoMessage() {}
+
+func (x *AttendanceStreamRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_attendance_v1_attendance_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttendanceStreamRequest.ProtoReflect.Descriptor instead.
+func (*AttendanceStreamRequest) Descriptor() ([]byte, []int) {
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *AttendanceStreamRequest) GetClassId() int64 {
+	if x != nil {
+		return x.ClassId
+	}
+	return 0
+}
+
+type AttendanceStreamResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Attendance    *AttendanceRecord      `protobuf:"bytes,1,opt,name=attendance,proto3" json:"attendance,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttendanceStreamResponse) Reset() {
+	*x = AttendanceStreamResponse{}
+	mi := &file_attendance_v1_attendance_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttendanceStreamResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttendanceStreamResponse) ProtoMessage() {}
+
+func (x *AttendanceStreamResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_attendance_v1_attendance_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttendanceStreamResponse.ProtoReflect.Descriptor instead.
+func (*AttendanceStreamResponse) Descriptor() ([]byte, []int) {
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *AttendanceStreamResponse) GetAttendance() *AttendanceRecord {
+	if x != nil {
+		return x.Attendance
+	}
+	return nil
+}
+
 // ListAttendance ──────────────────────────────────────────────────────────────
 type ListAttendanceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -679,7 +767,7 @@ type ListAttendanceRequest struct {
 
 func (x *ListAttendanceRequest) Reset() {
 	*x = ListAttendanceRequest{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[8]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -691,7 +779,7 @@ func (x *ListAttendanceRequest) String() string {
 func (*ListAttendanceRequest) ProtoMessage() {}
 
 func (x *ListAttendanceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[8]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -704,7 +792,7 @@ func (x *ListAttendanceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAttendanceRequest.ProtoReflect.Descriptor instead.
 func (*ListAttendanceRequest) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{8}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListAttendanceRequest) GetUserId() int64 {
@@ -737,7 +825,7 @@ type ListAttendanceResponse struct {
 
 func (x *ListAttendanceResponse) Reset() {
 	*x = ListAttendanceResponse{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[9]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -749,7 +837,7 @@ func (x *ListAttendanceResponse) String() string {
 func (*ListAttendanceResponse) ProtoMessage() {}
 
 func (x *ListAttendanceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[9]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -762,7 +850,7 @@ func (x *ListAttendanceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAttendanceResponse.ProtoReflect.Descriptor instead.
 func (*ListAttendanceResponse) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{9}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListAttendanceResponse) GetRecords() []*AttendanceRecord {
@@ -781,7 +869,7 @@ type WatchAttendanceRequest struct {
 
 func (x *WatchAttendanceRequest) Reset() {
 	*x = WatchAttendanceRequest{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[10]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -793,7 +881,7 @@ func (x *WatchAttendanceRequest) String() string {
 func (*WatchAttendanceRequest) ProtoMessage() {}
 
 func (x *WatchAttendanceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[10]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -806,7 +894,7 @@ func (x *WatchAttendanceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchAttendanceRequest.ProtoReflect.Descriptor instead.
 func (*WatchAttendanceRequest) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{10}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{12}
 }
 
 type WatchAttendanceResponse struct {
@@ -818,7 +906,7 @@ type WatchAttendanceResponse struct {
 
 func (x *WatchAttendanceResponse) Reset() {
 	*x = WatchAttendanceResponse{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[11]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -830,7 +918,7 @@ func (x *WatchAttendanceResponse) String() string {
 func (*WatchAttendanceResponse) ProtoMessage() {}
 
 func (x *WatchAttendanceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[11]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -843,7 +931,7 @@ func (x *WatchAttendanceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WatchAttendanceResponse.ProtoReflect.Descriptor instead.
 func (*WatchAttendanceResponse) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{11}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *WatchAttendanceResponse) GetRecord() *AttendanceRecord {
@@ -868,7 +956,7 @@ type CreateAttendanceRequest struct {
 
 func (x *CreateAttendanceRequest) Reset() {
 	*x = CreateAttendanceRequest{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[12]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -880,7 +968,7 @@ func (x *CreateAttendanceRequest) String() string {
 func (*CreateAttendanceRequest) ProtoMessage() {}
 
 func (x *CreateAttendanceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[12]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -893,7 +981,7 @@ func (x *CreateAttendanceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAttendanceRequest.ProtoReflect.Descriptor instead.
 func (*CreateAttendanceRequest) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{12}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *CreateAttendanceRequest) GetUserId() int64 {
@@ -947,7 +1035,7 @@ type CreateAttendanceResponse struct {
 
 func (x *CreateAttendanceResponse) Reset() {
 	*x = CreateAttendanceResponse{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[13]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -959,7 +1047,7 @@ func (x *CreateAttendanceResponse) String() string {
 func (*CreateAttendanceResponse) ProtoMessage() {}
 
 func (x *CreateAttendanceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[13]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -972,7 +1060,7 @@ func (x *CreateAttendanceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAttendanceResponse.ProtoReflect.Descriptor instead.
 func (*CreateAttendanceResponse) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{13}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *CreateAttendanceResponse) GetRecord() *AttendanceRecord {
@@ -992,7 +1080,7 @@ type DeleteAttendanceRequest struct {
 
 func (x *DeleteAttendanceRequest) Reset() {
 	*x = DeleteAttendanceRequest{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[14]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1004,7 +1092,7 @@ func (x *DeleteAttendanceRequest) String() string {
 func (*DeleteAttendanceRequest) ProtoMessage() {}
 
 func (x *DeleteAttendanceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[14]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1017,7 +1105,7 @@ func (x *DeleteAttendanceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAttendanceRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAttendanceRequest) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{14}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *DeleteAttendanceRequest) GetId() int64 {
@@ -1035,7 +1123,7 @@ type DeleteAttendanceResponse struct {
 
 func (x *DeleteAttendanceResponse) Reset() {
 	*x = DeleteAttendanceResponse{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[15]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1047,7 +1135,7 @@ func (x *DeleteAttendanceResponse) String() string {
 func (*DeleteAttendanceResponse) ProtoMessage() {}
 
 func (x *DeleteAttendanceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[15]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1060,7 +1148,7 @@ func (x *DeleteAttendanceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAttendanceResponse.ProtoReflect.Descriptor instead.
 func (*DeleteAttendanceResponse) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{15}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{17}
 }
 
 // AttendancePushLog ───────────────────────────────────────────────────────────
@@ -1082,7 +1170,7 @@ type AttendancePushLogRequest struct {
 
 func (x *AttendancePushLogRequest) Reset() {
 	*x = AttendancePushLogRequest{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[16]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1094,7 +1182,7 @@ func (x *AttendancePushLogRequest) String() string {
 func (*AttendancePushLogRequest) ProtoMessage() {}
 
 func (x *AttendancePushLogRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[16]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1107,7 +1195,7 @@ func (x *AttendancePushLogRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttendancePushLogRequest.ProtoReflect.Descriptor instead.
 func (*AttendancePushLogRequest) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{16}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *AttendancePushLogRequest) GetSessionId() string {
@@ -1167,7 +1255,7 @@ type AttendancePushLogResponse struct {
 
 func (x *AttendancePushLogResponse) Reset() {
 	*x = AttendancePushLogResponse{}
-	mi := &file_attendance_v1_attendance_proto_msgTypes[17]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1179,7 +1267,7 @@ func (x *AttendancePushLogResponse) String() string {
 func (*AttendancePushLogResponse) ProtoMessage() {}
 
 func (x *AttendancePushLogResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_attendance_v1_attendance_proto_msgTypes[17]
+	mi := &file_attendance_v1_attendance_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1192,7 +1280,7 @@ func (x *AttendancePushLogResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttendancePushLogResponse.ProtoReflect.Descriptor instead.
 func (*AttendancePushLogResponse) Descriptor() ([]byte, []int) {
-	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{17}
+	return file_attendance_v1_attendance_proto_rawDescGZIP(), []int{19}
 }
 
 var File_attendance_v1_attendance_proto protoreflect.FileDescriptor
@@ -1246,7 +1334,13 @@ const file_attendance_v1_attendance_proto_rawDesc = "" +
 	"\x1aGetDailyAttendanceResponse\x129\n" +
 	"\arecords\x18\x01 \x03(\v2\x1f.attendance.v1.AttendanceRecordR\arecords\x12:\n" +
 	"\asummary\x18\x02 \x01(\v2 .attendance.v1.AttendanceSummaryR\asummary\x12\x14\n" +
-	"\x05total\x18\x03 \x01(\x05R\x05total\"\x8c\x01\n" +
+	"\x05total\x18\x03 \x01(\x05R\x05total\"=\n" +
+	"\x17AttendanceStreamRequest\x12\"\n" +
+	"\bclass_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x01R\aclassId\"[\n" +
+	"\x18AttendanceStreamResponse\x12?\n" +
+	"\n" +
+	"attendance\x18\x01 \x01(\v2\x1f.attendance.v1.AttendanceRecordR\n" +
+	"attendance\"\x8c\x01\n" +
 	"\x15ListAttendanceRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12.\n" +
 	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
@@ -1287,11 +1381,12 @@ const file_attendance_v1_attendance_proto_rawDesc = "" +
 	"\fNotifyStatus\x12\x1d\n" +
 	"\x19NOTIFY_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15NOTIFY_STATUS_PENDING\x10\x01\x12\x1a\n" +
-	"\x16NOTIFY_STATUS_NOTIFIED\x10\x022\xd8\x05\n" +
+	"\x16NOTIFY_STATUS_NOTIFIED\x10\x022\xbf\x06\n" +
 	"\x11AttendanceService\x12c\n" +
 	"\x10RecordAttendance\x12&.attendance.v1.RecordAttendanceRequest\x1a'.attendance.v1.RecordAttendanceResponse\x12i\n" +
 	"\x12GetDailyAttendance\x12(.attendance.v1.GetDailyAttendanceRequest\x1a).attendance.v1.GetDailyAttendanceResponse\x12]\n" +
-	"\x0eListAttendance\x12$.attendance.v1.ListAttendanceRequest\x1a%.attendance.v1.ListAttendanceResponse\x12b\n" +
+	"\x0eListAttendance\x12$.attendance.v1.ListAttendanceRequest\x1a%.attendance.v1.ListAttendanceResponse\x12e\n" +
+	"\x10AttendanceStream\x12&.attendance.v1.AttendanceStreamRequest\x1a'.attendance.v1.AttendanceStreamResponse0\x01\x12b\n" +
 	"\x0fWatchAttendance\x12%.attendance.v1.WatchAttendanceRequest\x1a&.attendance.v1.WatchAttendanceResponse0\x01\x12c\n" +
 	"\x10CreateAttendance\x12&.attendance.v1.CreateAttendanceRequest\x1a'.attendance.v1.CreateAttendanceResponse\x12c\n" +
 	"\x10DeleteAttendance\x12&.attendance.v1.DeleteAttendanceRequest\x1a'.attendance.v1.DeleteAttendanceResponse\x12f\n" +
@@ -1311,7 +1406,7 @@ func file_attendance_v1_attendance_proto_rawDescGZIP() []byte {
 }
 
 var file_attendance_v1_attendance_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_attendance_v1_attendance_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_attendance_v1_attendance_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_attendance_v1_attendance_proto_goTypes = []any{
 	(AttendanceStatus)(0),              // 0: attendance.v1.AttendanceStatus
 	(NotifyStatus)(0),                  // 1: attendance.v1.NotifyStatus
@@ -1323,57 +1418,62 @@ var file_attendance_v1_attendance_proto_goTypes = []any{
 	(*GetDailyAttendanceFilter)(nil),   // 7: attendance.v1.GetDailyAttendanceFilter
 	(*GetDailyAttendanceRequest)(nil),  // 8: attendance.v1.GetDailyAttendanceRequest
 	(*GetDailyAttendanceResponse)(nil), // 9: attendance.v1.GetDailyAttendanceResponse
-	(*ListAttendanceRequest)(nil),      // 10: attendance.v1.ListAttendanceRequest
-	(*ListAttendanceResponse)(nil),     // 11: attendance.v1.ListAttendanceResponse
-	(*WatchAttendanceRequest)(nil),     // 12: attendance.v1.WatchAttendanceRequest
-	(*WatchAttendanceResponse)(nil),    // 13: attendance.v1.WatchAttendanceResponse
-	(*CreateAttendanceRequest)(nil),    // 14: attendance.v1.CreateAttendanceRequest
-	(*CreateAttendanceResponse)(nil),   // 15: attendance.v1.CreateAttendanceResponse
-	(*DeleteAttendanceRequest)(nil),    // 16: attendance.v1.DeleteAttendanceRequest
-	(*DeleteAttendanceResponse)(nil),   // 17: attendance.v1.DeleteAttendanceResponse
-	(*AttendancePushLogRequest)(nil),   // 18: attendance.v1.AttendancePushLogRequest
-	(*AttendancePushLogResponse)(nil),  // 19: attendance.v1.AttendancePushLogResponse
-	(*timestamppb.Timestamp)(nil),      // 20: google.protobuf.Timestamp
+	(*AttendanceStreamRequest)(nil),    // 10: attendance.v1.AttendanceStreamRequest
+	(*AttendanceStreamResponse)(nil),   // 11: attendance.v1.AttendanceStreamResponse
+	(*ListAttendanceRequest)(nil),      // 12: attendance.v1.ListAttendanceRequest
+	(*ListAttendanceResponse)(nil),     // 13: attendance.v1.ListAttendanceResponse
+	(*WatchAttendanceRequest)(nil),     // 14: attendance.v1.WatchAttendanceRequest
+	(*WatchAttendanceResponse)(nil),    // 15: attendance.v1.WatchAttendanceResponse
+	(*CreateAttendanceRequest)(nil),    // 16: attendance.v1.CreateAttendanceRequest
+	(*CreateAttendanceResponse)(nil),   // 17: attendance.v1.CreateAttendanceResponse
+	(*DeleteAttendanceRequest)(nil),    // 18: attendance.v1.DeleteAttendanceRequest
+	(*DeleteAttendanceResponse)(nil),   // 19: attendance.v1.DeleteAttendanceResponse
+	(*AttendancePushLogRequest)(nil),   // 20: attendance.v1.AttendancePushLogRequest
+	(*AttendancePushLogResponse)(nil),  // 21: attendance.v1.AttendancePushLogResponse
+	(*timestamppb.Timestamp)(nil),      // 22: google.protobuf.Timestamp
 }
 var file_attendance_v1_attendance_proto_depIdxs = []int32{
-	20, // 0: attendance.v1.AttendanceRecord.day:type_name -> google.protobuf.Timestamp
+	22, // 0: attendance.v1.AttendanceRecord.day:type_name -> google.protobuf.Timestamp
 	0,  // 1: attendance.v1.AttendanceRecord.status:type_name -> attendance.v1.AttendanceStatus
 	1,  // 2: attendance.v1.AttendanceRecord.notify_status:type_name -> attendance.v1.NotifyStatus
-	20, // 3: attendance.v1.AttendanceRecord.check_in_time:type_name -> google.protobuf.Timestamp
-	20, // 4: attendance.v1.AttendanceRecord.created_at:type_name -> google.protobuf.Timestamp
+	22, // 3: attendance.v1.AttendanceRecord.check_in_time:type_name -> google.protobuf.Timestamp
+	22, // 4: attendance.v1.AttendanceRecord.created_at:type_name -> google.protobuf.Timestamp
 	2,  // 5: attendance.v1.AttendanceRecord.student:type_name -> attendance.v1.UserAttendance
 	3,  // 6: attendance.v1.RecordAttendanceResponse.record:type_name -> attendance.v1.AttendanceRecord
-	20, // 7: attendance.v1.GetDailyAttendanceFilter.date:type_name -> google.protobuf.Timestamp
+	22, // 7: attendance.v1.GetDailyAttendanceFilter.date:type_name -> google.protobuf.Timestamp
 	7,  // 8: attendance.v1.GetDailyAttendanceRequest.filter:type_name -> attendance.v1.GetDailyAttendanceFilter
 	3,  // 9: attendance.v1.GetDailyAttendanceResponse.records:type_name -> attendance.v1.AttendanceRecord
 	4,  // 10: attendance.v1.GetDailyAttendanceResponse.summary:type_name -> attendance.v1.AttendanceSummary
-	20, // 11: attendance.v1.ListAttendanceRequest.from:type_name -> google.protobuf.Timestamp
-	20, // 12: attendance.v1.ListAttendanceRequest.to:type_name -> google.protobuf.Timestamp
-	3,  // 13: attendance.v1.ListAttendanceResponse.records:type_name -> attendance.v1.AttendanceRecord
-	3,  // 14: attendance.v1.WatchAttendanceResponse.record:type_name -> attendance.v1.AttendanceRecord
-	0,  // 15: attendance.v1.CreateAttendanceRequest.status:type_name -> attendance.v1.AttendanceStatus
-	20, // 16: attendance.v1.CreateAttendanceRequest.check_in_time:type_name -> google.protobuf.Timestamp
-	3,  // 17: attendance.v1.CreateAttendanceResponse.record:type_name -> attendance.v1.AttendanceRecord
-	20, // 18: attendance.v1.AttendancePushLogRequest.seen_at:type_name -> google.protobuf.Timestamp
-	5,  // 19: attendance.v1.AttendanceService.RecordAttendance:input_type -> attendance.v1.RecordAttendanceRequest
-	8,  // 20: attendance.v1.AttendanceService.GetDailyAttendance:input_type -> attendance.v1.GetDailyAttendanceRequest
-	10, // 21: attendance.v1.AttendanceService.ListAttendance:input_type -> attendance.v1.ListAttendanceRequest
-	12, // 22: attendance.v1.AttendanceService.WatchAttendance:input_type -> attendance.v1.WatchAttendanceRequest
-	14, // 23: attendance.v1.AttendanceService.CreateAttendance:input_type -> attendance.v1.CreateAttendanceRequest
-	16, // 24: attendance.v1.AttendanceService.DeleteAttendance:input_type -> attendance.v1.DeleteAttendanceRequest
-	18, // 25: attendance.v1.AttendanceService.AttendancePushLog:input_type -> attendance.v1.AttendancePushLogRequest
-	6,  // 26: attendance.v1.AttendanceService.RecordAttendance:output_type -> attendance.v1.RecordAttendanceResponse
-	9,  // 27: attendance.v1.AttendanceService.GetDailyAttendance:output_type -> attendance.v1.GetDailyAttendanceResponse
-	11, // 28: attendance.v1.AttendanceService.ListAttendance:output_type -> attendance.v1.ListAttendanceResponse
-	13, // 29: attendance.v1.AttendanceService.WatchAttendance:output_type -> attendance.v1.WatchAttendanceResponse
-	15, // 30: attendance.v1.AttendanceService.CreateAttendance:output_type -> attendance.v1.CreateAttendanceResponse
-	17, // 31: attendance.v1.AttendanceService.DeleteAttendance:output_type -> attendance.v1.DeleteAttendanceResponse
-	19, // 32: attendance.v1.AttendanceService.AttendancePushLog:output_type -> attendance.v1.AttendancePushLogResponse
-	26, // [26:33] is the sub-list for method output_type
-	19, // [19:26] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	3,  // 11: attendance.v1.AttendanceStreamResponse.attendance:type_name -> attendance.v1.AttendanceRecord
+	22, // 12: attendance.v1.ListAttendanceRequest.from:type_name -> google.protobuf.Timestamp
+	22, // 13: attendance.v1.ListAttendanceRequest.to:type_name -> google.protobuf.Timestamp
+	3,  // 14: attendance.v1.ListAttendanceResponse.records:type_name -> attendance.v1.AttendanceRecord
+	3,  // 15: attendance.v1.WatchAttendanceResponse.record:type_name -> attendance.v1.AttendanceRecord
+	0,  // 16: attendance.v1.CreateAttendanceRequest.status:type_name -> attendance.v1.AttendanceStatus
+	22, // 17: attendance.v1.CreateAttendanceRequest.check_in_time:type_name -> google.protobuf.Timestamp
+	3,  // 18: attendance.v1.CreateAttendanceResponse.record:type_name -> attendance.v1.AttendanceRecord
+	22, // 19: attendance.v1.AttendancePushLogRequest.seen_at:type_name -> google.protobuf.Timestamp
+	5,  // 20: attendance.v1.AttendanceService.RecordAttendance:input_type -> attendance.v1.RecordAttendanceRequest
+	8,  // 21: attendance.v1.AttendanceService.GetDailyAttendance:input_type -> attendance.v1.GetDailyAttendanceRequest
+	12, // 22: attendance.v1.AttendanceService.ListAttendance:input_type -> attendance.v1.ListAttendanceRequest
+	10, // 23: attendance.v1.AttendanceService.AttendanceStream:input_type -> attendance.v1.AttendanceStreamRequest
+	14, // 24: attendance.v1.AttendanceService.WatchAttendance:input_type -> attendance.v1.WatchAttendanceRequest
+	16, // 25: attendance.v1.AttendanceService.CreateAttendance:input_type -> attendance.v1.CreateAttendanceRequest
+	18, // 26: attendance.v1.AttendanceService.DeleteAttendance:input_type -> attendance.v1.DeleteAttendanceRequest
+	20, // 27: attendance.v1.AttendanceService.AttendancePushLog:input_type -> attendance.v1.AttendancePushLogRequest
+	6,  // 28: attendance.v1.AttendanceService.RecordAttendance:output_type -> attendance.v1.RecordAttendanceResponse
+	9,  // 29: attendance.v1.AttendanceService.GetDailyAttendance:output_type -> attendance.v1.GetDailyAttendanceResponse
+	13, // 30: attendance.v1.AttendanceService.ListAttendance:output_type -> attendance.v1.ListAttendanceResponse
+	11, // 31: attendance.v1.AttendanceService.AttendanceStream:output_type -> attendance.v1.AttendanceStreamResponse
+	15, // 32: attendance.v1.AttendanceService.WatchAttendance:output_type -> attendance.v1.WatchAttendanceResponse
+	17, // 33: attendance.v1.AttendanceService.CreateAttendance:output_type -> attendance.v1.CreateAttendanceResponse
+	19, // 34: attendance.v1.AttendanceService.DeleteAttendance:output_type -> attendance.v1.DeleteAttendanceResponse
+	21, // 35: attendance.v1.AttendanceService.AttendancePushLog:output_type -> attendance.v1.AttendancePushLogResponse
+	28, // [28:36] is the sub-list for method output_type
+	20, // [20:28] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_attendance_v1_attendance_proto_init() }
@@ -1387,7 +1487,7 @@ func file_attendance_v1_attendance_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_attendance_v1_attendance_proto_rawDesc), len(file_attendance_v1_attendance_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   18,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
