@@ -5,9 +5,13 @@ import { FiCamera, FiCameraOff, FiEye } from 'react-icons/fi'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import * as faceapi from 'face-api.js'
 import { type FaceRecord } from '../../../gen/faces/v1/faces_pb'
+import { timestampFromDate } from '@bufbuild/protobuf/wkt'
 import { faceService } from '../../../services/face_service'
 import { userService } from '../../../services/user_service'
+import { classService } from '../../../services/class_service'
+import { attendanceService } from '../../../services/attendance_service'
 import { bytesToDescriptors, MATCH_THRESHOLD } from './models'
+import { ClassSelector, type ClassOption } from '../../../components/ClassSelector'
 
 interface Props {
   modelsReady: boolean
@@ -19,8 +23,11 @@ type Recognition = { name: string; studentId: string; distance: number; time: st
 export function RecognizeTab({ modelsReady, active }: Props) {
   const videoRef   = useRef<HTMLVideoElement>(null)
   const canvasRef  = useRef<HTMLCanvasElement>(null)
-  const rafRef     = useRef<number | null>(null)
-  const matcherRef = useRef<faceapi.FaceMatcher | null>(null)
+  const rafRef      = useRef<number | null>(null)
+  const matcherRef  = useRef<faceapi.FaceMatcher | null>(null)
+  const sessionRef  = useRef<string>('')
+  const classRef    = useRef<ClassOption | null>(null)
+  const pushedRef   = useRef<Map<string, number>>(new Map()) // studentId → last push ms
 
   const [running, setRunning]           = useState(false)
   const [loading, setLoading]           = useState(false)
@@ -29,6 +36,15 @@ export function RecognizeTab({ modelsReady, active }: Props) {
   const [recognitions, setRecognitions] = useState<Recognition[]>([])
   const [error, setError]               = useState<string | null>(null)
   const lastTsRef                       = useRef(0)
+
+  const [classes, setClasses]             = useState<ClassOption[]>([])
+  const [selectedClass, setSelectedClass] = useState<ClassOption | null>(null)
+
+  useEffect(() => {
+    classService.listClasses({ gradeIdFilter: 0n, search: '', page: 0, pageSize: 6 })
+      .then(r => setClasses(r.classes.map(c => ({ id: Number(c.id), name: c.name }))))
+      .catch(() => {})
+  }, [])
 
   const stopCamera = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current)
@@ -63,7 +79,7 @@ export function RecognizeTab({ modelsReady, active }: Props) {
       const labeled = records
         .map((r: FaceRecord) => {
           const u     = userMap.get(String(r.studentId))
-          const label = u ? `${u.name}||${u.studentId}` : String(r.studentId)
+          const label = u ? `${u.name}||${u.studentId}||${u.id}` : String(r.studentId)
           const descs = bytesToDescriptors(r.embeddings, r.embeddingCount)
           if (descs.length === 0) return null
           return new faceapi.LabeledFaceDescriptors(label, descs)
@@ -71,6 +87,9 @@ export function RecognizeTab({ modelsReady, active }: Props) {
         .filter(Boolean) as faceapi.LabeledFaceDescriptors[]
 
       matcherRef.current = new faceapi.FaceMatcher(labeled, MATCH_THRESHOLD)
+      sessionRef.current = crypto.randomUUID()
+      classRef.current   = selectedClass
+      pushedRef.current.clear()
 
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
@@ -126,18 +145,38 @@ export function RecognizeTab({ modelsReady, active }: Props) {
 
           if (!isUnknown) {
             const studentId = parts[1] ?? ''
-            setRecognitions(prev => {
-              const last = prev.find(r => r.studentId === studentId)
-              const now  = new Date()
-              if (last && (now.getTime() - new Date(last.time).getTime()) < 5000) return prev
-              const entry: Recognition = {
-                name:      parts[0],
-                studentId: studentId,
-                distance:  match.distance,
-                time:      now.toLocaleTimeString(),
+            const userId    = BigInt(parts[2] ?? '0')
+            const seenAt    = new Date()
+            const lastPush  = pushedRef.current.get(studentId) ?? 0
+
+            if (seenAt.getTime() - lastPush >= 5000) {
+              pushedRef.current.set(studentId, seenAt.getTime())
+
+              // Push to backend
+              const cls = classRef.current
+              console.log(cls, userId)
+              if (cls && userId > 0n) {
+                attendanceService.attendancePushLog({
+                  sessionId:   sessionRef.current,
+                  userId:      userId,
+                  studentId:   studentId,
+                  studentName: parts[0],
+                  classId:     BigInt(cls.id),
+                  className:   cls.name,
+                  seenAt:      timestampFromDate(seenAt),
+                }).catch(() => {})
               }
-              return [entry, ...prev].slice(0, 200)
-            })
+
+              setRecognitions(prev => {
+                const entry: Recognition = {
+                  name:      parts[0],
+                  studentId: studentId,
+                  distance:  match.distance,
+                  time:      seenAt.toLocaleTimeString(),
+                }
+                return [entry, ...prev].slice(0, 200)
+              })
+            }
           }
         }
 
@@ -150,18 +189,34 @@ export function RecognizeTab({ modelsReady, active }: Props) {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [selectedClass])
+
+  const canStart = modelsReady && !loading && !!selectedClass
 
   return (
     <VStack gap={4} align="stretch">
-      <Flex align="center" justify="space-between">
-        <HStack gap={2}>
+      <Flex align="center" justify="space-between" gap={3}>
+        <HStack gap={2} flex={1}>
+          {!running && (
+            <>
+              <Text fontSize="sm" fontWeight="medium" color="gray.600" whiteSpace="nowrap">Class</Text>
+              <ClassSelector
+                classes={classes}
+                value={selectedClass ? String(selectedClass.id) : ''}
+                onChange={id => setSelectedClass(classes.find(c => String(c.id) === id) ?? null)}
+                placeholder="Select a class"
+                w="100%"
+                size="sm"
+              />
+            </>
+          )}
           {running && <Badge colorPalette="green" variant="subtle">Live</Badge>}
+          {running && selectedClass && <Badge colorPalette="blue" variant="subtle">{selectedClass.name}</Badge>}
           {running && <Badge colorPalette="blue"  variant="subtle">{faceCount} face{faceCount !== 1 ? 's' : ''}</Badge>}
           {running && <Badge colorPalette="gray"  variant="subtle">{fps} fps</Badge>}
         </HStack>
         <Button size="sm" colorPalette={running ? 'red' : 'blue'}
-          disabled={!modelsReady || loading}
+          disabled={!running && !canStart}
           loading={loading} loadingText="Loading…"
           onClick={running ? stopCamera : startCamera}
         >
@@ -180,7 +235,7 @@ export function RecognizeTab({ modelsReady, active }: Props) {
         {!running && (
           <Center position="absolute" inset={0} bg="gray.900" color="gray.500" flexDirection="column" gap={2} minH="200px">
             <FiEye size={32} />
-            <Text fontSize="sm">Start recognition to identify faces</Text>
+            {selectedClass ? 'Start recognition to identify faces' : 'Select a class first'}
           </Center>
         )}
       </Box>

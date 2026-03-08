@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"log/slog"
 	"time"
 )
 
@@ -28,7 +29,7 @@ func (w *RunnerContext) Run(handler RunnerFunc) {
 	}()
 }
 
-func (w *RunnerContext) RunPeriodic(interval time.Duration, handler RunnerFunc) {
+func (w *RunnerContext) RunPeriodic(label string, interval time.Duration, handler RunnerFunc) {
 
 	go func() {
 		var err error
@@ -41,13 +42,18 @@ func (w *RunnerContext) RunPeriodic(interval time.Duration, handler RunnerFunc) 
 			case <-w.ctx.Done():
 				break Loop
 			case <-ticker.C:
+				slog.Info("start runner", "label", label)
 				err = handler(w)
 				if err != nil {
+					slog.Error(label, "err", err.Error())
 					w.SetError(err)
 				}
 				ticker.Reset(interval)
+				slog.Info("completed", "label", label)
 			}
 		}
+
+		slog.Info("stop runner", "label", label)
 	}()
 }
 
